@@ -1,0 +1,60 @@
+# dependencias
+/node_modules
+/.pnp
+.pnp.js
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+
+# build de Next: /out es lo que se publica en Hostinger, pero se regenera
+# entero en cada `npm run build`. Nunca va al repositorio.
+/.next/
+/out/
+/build
+/dist
+
+# entorno (las claves reales nunca al repositorio)
+# .env.example SI se versiona: es la plantilla sin valores.
+.env
+.env.local
+.env*.local
+.env.development
+.env.production
+.env.test
+!.env.example
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# cache de herramientas
+.eslintcache
+.cache/
+.turbo/
+.swc/
+/coverage
+.vercel
+
+# estado que deja la accion de despliegue por FTP
+.ftp-deploy-sync-state.json
+
+# sistema y editores
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+*.pem
+*.swp
+.idea/
+.vscode/
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ajustes locales de Claude Code (rutas absolutas de esta maquina)
+.claude/settings.local.json

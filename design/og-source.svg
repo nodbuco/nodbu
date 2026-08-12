@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 -285 1200 1200">
+  <defs>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#FF5C00" stop-opacity="0.34"/>
+      <stop offset="60%" stop-color="#FF5C00" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#FF5C00" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" width="32" height="32" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#FFFFFF" fill-opacity="0.06"/>
+    </pattern>
+  </defs>
+
+  <rect x="0" y="-285" width="1200" height="1200" fill="#090909"/>
+  <ellipse cx="1010" cy="120" rx="620" ry="480" fill="url(#glow)"/>
+  <rect x="0" y="-285" width="1200" height="1200" fill="url(#dots)"/>
+
+  <!-- Isotipo grande a la derecha, atenuado: mismo arco del kit -->
+  <g transform="translate(958, 300) scale(1.2) translate(-256, -256)" opacity="0.16">
+    <path d="M 386.424 218.602 A 135.68 135.68 0 1 1 293.398 125.576" fill="none" stroke="#FFFFFF" stroke-width="55.296" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(958, 300) scale(1.2) translate(-256, -256)">
+    <circle cx="351.94" cy="160.06" r="33.28" fill="#FF5C00"/>
+  </g>
+
+  <!-- Logotipo real, trazos vectorizados del kit -->
+  <g transform="translate(88, 148) scale(0.6058) translate(-112, -66)">
+    <path d="M 120 226 L 153.398 226 L 153.398 168.377 C 153.398 162.647 153.309 151.217 152.834 137.769 C 159.989 150.772 166.58 162.083 170.558 168.466 L 206.569 226 L 241.155 226 L 241.155 87.775 L 207.756 87.775 L 207.756 147.684 C 207.756 153.919 207.964 165.141 208.231 176.095 C 202.858 166.15 197.009 155.759 193.744 150.564 L 154.527 87.775 L 120 87.775 L 120 226 Z" fill="#FFFFFF" fill-rule="nonzero"/>
+    <path d="M 392.954 136.638 A 67.972 67.972 0 1 1 348.567 92.251" fill="none" stroke="#FFFFFF" stroke-width="30.78" stroke-linecap="round"/>
+    <circle cx="376.191" cy="109.014" r="15.01" fill="#FF5C00"/>
+    <path d="M 466.78 226 C 509.262 226 535.803 199.103 535.803 156.887 C 535.803 114.672 508.906 87.775 466.78 87.775 L 415.48 87.775 L 415.48 226 L 466.78 226 Z M 448.878 198.153 L 448.878 115.592 L 464.731 115.592 C 490.173 115.592 502.227 129.605 502.227 156.887 C 502.227 184.052 490.441 198.153 465.117 198.153 L 448.878 198.153 Z M 549.537 226 L 611.228 226 C 641.954 226 659.292 209.85 659.292 186.931 C 659.292 167.367 646.022 154.75 628.773 153.622 L 628.773 153.444 C 644.359 150.03 654.453 138.778 654.453 122.836 C 654.453 102.144 637.769 87.775 607.072 87.775 L 549.537 87.775 L 549.537 226 Z M 582.104 200.38 L 582.104 168.198 L 605.944 168.198 C 617.908 168.198 625.24 174.522 625.24 184.527 C 625.24 194.442 617.819 200.38 605.765 200.38 L 582.104 200.38 Z M 582.104 143.884 L 582.104 113.366 L 603.895 113.366 C 614.583 113.366 621.173 119.303 621.173 128.595 C 621.173 137.947 614.583 143.884 603.895 143.884 L 582.104 143.884 Z M 730.531 228.227 C 765.711 228.227 788.718 207.92 788.718 177.372 L 788.718 87.775 L 756.151 87.775 L 756.151 174.7 C 756.151 189.366 745.939 199.845 730.531 199.845 C 715.242 199.845 704.851 189.247 704.851 174.7 L 704.851 87.775 L 672.284 87.775 L 672.284 177.372 C 672.284 207.92 695.203 228.227 730.531 228.227 Z" fill="#FFFFFF" fill-rule="nonzero"/>
+  </g>
+
+  <!-- Titular -->
+  <text x="88" y="360" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="60" font-weight="600" fill="#FFFFFF" letter-spacing="-1.6">Deja de copiar</text>
+  <text x="88" y="428" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="60" font-weight="600" fill="#FFFFFF" fill-opacity="0.62" letter-spacing="-1.6">datos a mano.</text>
+
+  <!-- Pie -->
+  <rect x="88" y="486" width="640" height="1" fill="#FFFFFF" fill-opacity="0.12"/>
+  <text x="88" y="536" font-family="Menlo, Consolas, monospace" font-size="21" fill="#FFFFFF" fill-opacity="0.62" letter-spacing="3">AUTOMATIZACIONES E INTEGRACIONES</text>
+  <text x="88" y="572" font-family="Menlo, Consolas, monospace" font-size="21" fill="#FF5C00" letter-spacing="3">NODBU.COM</text>
+</svg>

@@ -1,0 +1,89 @@
+name: Desplegar en Hostinger
+
+# Cada push a main compila la web y sube el contenido de /out a public_html por FTP.
+# Los secretos se configuran en GitHub: Settings -> Secrets and variables -> Actions.
+# Ver DEPLOY.md, paso 3.
+
+on:
+  push:
+    branches: [main]
+  # Permite lanzarlo a mano desde la pestana Actions.
+  workflow_dispatch:
+
+# Evita que dos despliegues pisen el mismo servidor a la vez.
+concurrency:
+  group: deploy-hostinger
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar el codigo
+        uses: actions/checkout@v4
+
+      - name: Preparar Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Compilar el sitio estatico
+        # Las NEXT_PUBLIC_* se incrustan aqui, en tiempo de compilacion.
+        # Si el secreto no existe, la variable queda vacia y el sitio se publica
+        # igual: el formulario avisa de que no esta conectado y GTM no se carga.
+        env:
+          NEXT_PUBLIC_WEB3FORMS_KEY: ${{ secrets.NEXT_PUBLIC_WEB3FORMS_KEY }}
+          NEXT_PUBLIC_GTM_ID: ${{ secrets.NEXT_PUBLIC_GTM_ID }}
+        run: npm run build
+
+      - name: Comprobar que el build es correcto
+        # Si falta algo, mejor parar aqui que dejar la web rota en produccion.
+        run: |
+          set -e
+          for f in out/index.html out/privacidad/index.html out/aviso-legal/index.html \
+                   out/terminos/index.html out/sobre-nodbu/index.html \
+                   out/recursos/index.html out/gracias/index.html \
+                   out/.htaccess out/sitemap.xml out/robots.txt out/rss.xml \
+                   out/llms.txt out/og.png out/404.html; do
+            if [ ! -f "$f" ]; then
+              echo "FALTA $f — se cancela el despliegue"
+              exit 1
+            fi
+            echo "OK $f"
+          done
+
+          # Cada .mdx de src/content/recursos tiene que haber generado su
+          # carpeta. Se comprueba contando en vez de listando archivo a archivo:
+          # asi publicar un articulo nuevo no obliga a tocar este workflow.
+          esperados=$(find src/content/recursos -name '*.mdx' ! -name '_*' | wc -l | tr -d ' ')
+          generados=$(find out/recursos -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')
+          if [ "$esperados" != "$generados" ]; then
+            echo "Hay $esperados articulos en src/content/recursos y $generados en out/recursos"
+            echo "Si la diferencia no son borradores (draft: true), algo falla — se cancela"
+            exit 1
+          fi
+          echo "OK $generados articulos generados"
+
+      - name: Subir por FTP a public_html
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # La barra final es obligatoria en las dos rutas.
+          # local-dir apunta DENTRO de out: se sube su contenido, no la carpeta.
+          local-dir: ./out/
+          server-dir: ./public_html/
+          # Borra en el servidor lo que ya no existe en el build.
+          dangerous-clean-slate: false
+          # No toques la carpeta del blog si algun dia instalas WordPress ahi.
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            blog/**

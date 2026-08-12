@@ -1,0 +1,173 @@
+---
+title: "Conectar Excel o Google Sheets con el CRM y la facturación"
+description: "Qué opciones hay para que la hoja de cálculo, el CRM y la facturación dejen de estar desconectados, cuánto cuesta cada una y cuándo compensa cada camino."
+tldr: "Hay tres caminos: la integración nativa entre las herramientas que ya tienes, una plataforma de automatización que haga de puente, o desarrollo a medida. La nativa es gratis pero solo cubre lo que sus fabricantes decidieron. La plataforma cubre casi todo por una cuota mensual. El desarrollo a medida compensa cuando el proceso es propio del negocio o el volumen dispara el coste por operación."
+publishedAt: 2026-08-02
+updatedAt: 2026-08-02
+category: herramientas
+tags: [excel, google-sheets, crm, facturacion]
+featured: false
+draft: false
+faq:
+  - q: "¿Puedo dejar de usar Excel del todo?"
+    a: "Se puede, pero pocas veces conviene de golpe. La hoja de cálculo es insustituible para explorar datos y hacer cálculos puntuales. Lo que sí conviene es sacar de ahí lo que es un registro operativo compartido —pedidos, clientes, inventario— y dejar la hoja para analizar, no para ser la base de datos del negocio."
+  - q: "¿Se puede sincronizar en los dos sentidos?"
+    a: "Sí, pero es donde más proyectos se tuercen. Si el mismo dato se puede editar en la hoja y en el CRM, hay que decidir cuál gana cuando los dos cambian. Lo más seguro es definir un sistema como dueño de cada dato y que el otro solo lo lea."
+  - q: "¿Qué pasa si alguien inserta una columna en la hoja?"
+    a: "Que la conexión puede dejar de encontrar los datos, si se montó apuntando a posiciones de columna. Por eso conviene referirse a las columnas por su nombre de cabecera y proteger la primera fila. Es el fallo más frecuente y el más fácil de evitar."
+  - q: "¿Google Sheets y Excel se comportan igual para esto?"
+    a: "Google Sheets es más sencillo de conectar porque vive en la nube y su API es directa. Excel depende de dónde esté el archivo: en OneDrive o SharePoint se conecta bien; en el escritorio de alguien, no hay nada que conectar hasta que se suba."
+  - q: "¿Cuánto tarda en montarse una conexión de estas?"
+    a: "La conexión técnica suele ser lo rápido. Lo que marca el plazo es limpiar los datos que ya hay y acordar las reglas: qué campos son obligatorios, qué se hace con los duplicados y qué pasa cuando un dato llega incompleto."
+---
+
+En casi todas las PyMEs hay una hoja de cálculo que empezó como algo provisional y acabó siendo
+el sistema más importante de la empresa. Está el CRM por un lado, el programa de facturación
+por otro, y en medio una hoja que alguien mantiene a mano porque es la única que tiene la foto
+completa.
+
+Funciona hasta que deja de funcionar: dos versiones del mismo archivo, un cliente facturado dos
+veces, un pedido que nadie preparó porque se quedó en la fila 340 sin marcar.
+
+## ¿Por qué la hoja de cálculo acaba siendo el problema?
+
+Porque se le pide algo para lo que no está diseñada: ser la fuente única de verdad de varias
+personas a la vez. Una hoja es excelente para calcular y explorar; es frágil como registro
+compartido, y los síntomas siempre son los mismos.
+
+- **No hay control de quién cambió qué.** Cuando aparece un dato raro, no se puede reconstruir
+  cómo llegó ahí.
+- **No hay reglas.** Nada impide escribir un NIF en la columna del teléfono, ni dejar en blanco
+  algo obligatorio.
+- **Se duplica sola.** `pedidos_v2_final_BUENO.xlsx` no es un chiste, es lo que pasa cuando dos
+  personas necesitan editar a la vez.
+- **Los datos no salen de ahí.** Como el CRM no la lee, alguien tiene que teclear otra vez lo
+  mismo, y ese alguien se equivoca de vez en cuando.
+
+El objetivo no es eliminar la hoja. Es que deje de ser el sitio donde se copian datos a mano
+desde otros sitios.
+
+## ¿Qué opciones hay para conectarlas?
+
+Hay tres, y se diferencian en cuánto cubren y en dónde está el coste: por adelantado o cada
+mes.
+
+| | Integración nativa | Plataforma de automatización | Desarrollo a medida |
+|---|---|---|---|
+| **Qué es** | La conexión que ya trae tu CRM o tu facturación | Un intermediario que conecta casi todo con casi todo | Software escrito para tu proceso |
+| **Coste inicial** | Ninguno | Bajo | Alto |
+| **Coste mensual** | Ninguno | Cuota, normalmente por volumen de operaciones | Solo mantenimiento |
+| **Qué cubre** | Solo lo que sus fabricantes previeron | Prácticamente cualquier combinación | Exactamente tu proceso |
+| **Quién lo mantiene** | El fabricante | Tú o quien lo montó | Quien lo desarrolló |
+| **Se rompe cuando** | El fabricante cambia o retira la integración | Cambia una API o subes de tramo de precio | Casi nunca, si está bien hecho |
+
+### La integración nativa
+
+Es la primera que hay que mirar, siempre, aunque casi nadie lo hace. Muchas herramientas ya se
+hablan entre sí y la conexión está apagada por defecto. Si tu facturación ya puede leer
+contactos de tu CRM, has terminado antes de empezar.
+
+El límite es que cubre lo que sus fabricantes decidieron cubrir, que casi nunca incluye tus
+particularidades. Y cuando uno de los dos cambia de estrategia, la integración puede
+desaparecer sin que tú puedas hacer nada.
+
+### La plataforma de automatización
+
+Es un intermediario que conecta herramientas que no se hablan. Se define un disparador ("entra
+un pedido nuevo") y una serie de acciones ("créalo en el CRM, réstalo del inventario, avisa a
+producción").
+
+Cubre casi cualquier combinación y se monta rápido. Los dos inconvenientes van juntos: **se
+paga por volumen** —lo que sale barato con cien operaciones al mes puede no salirlo con veinte
+mil— y **añade una pieza más que puede fallar** entre tus sistemas.
+
+### El desarrollo a medida
+
+Es software escrito para tu proceso concreto. Cuesta más de entrada y deja de tener cuota
+mensual por operación.
+
+Compensa en dos situaciones: cuando el proceso es lo bastante propio del negocio como para que
+ninguna herramienta lo cubra sin retorcerla, y cuando el volumen es alto y el coste por
+operación de una plataforma deja de compensar. El criterio general para elegir entre automatizar
+lo existente o construir algo nuevo está en [qué procesos compensa automatizar de
+verdad](/recursos/que-procesos-automatizar-pyme/).
+
+## ¿Cuándo conviene cada camino?
+
+Estas preguntas, en este orden, resuelven la mayoría de los casos:
+
+1. **¿Existe integración nativa entre las dos herramientas?** Si existe y cubre lo que
+   necesitas, se acabó. No pagues por un puente que ya tienes.
+2. **¿El proceso es estándar?** Un contacto que entra por un formulario y va al CRM lo hace
+   cualquier plataforma. Empieza por ahí.
+3. **¿Cuántas operaciones al mes?** Con volúmenes altos, el coste de una plataforma crece de
+   forma continua y conviene calcular a tres años, no a uno.
+4. **¿El proceso es parte de lo que diferencia al negocio?** Si tu forma de gestionar pedidos es
+   una ventaja competitiva, encajarla en una herramienta genérica la destruye.
+
+Solo la cuarta pregunta justifica por sí sola el desarrollo a medida. Las otras tres son
+cálculo.
+
+## ¿Qué se rompe al conectar hojas de cálculo?
+
+Tres cosas, y las tres se evitan si se saben de antemano.
+
+**Las columnas cambiadas de sitio.** Si la conexión se monta apuntando a "la columna C", el día
+que alguien inserte una columna, la conexión escribirá el teléfono en el campo del importe. Se
+resuelve refiriéndose a las cabeceras por su nombre y protegiendo la primera fila.
+
+**Los formatos.** Una hoja acepta `12/03/2026`, `12-3-26` y `12 de marzo` en la misma columna.
+Un sistema que lea eso necesita que el formato sea uno solo, y conviene decidirlo antes de
+conectar nada, no después.
+
+**Los duplicados.** Al volcar una hoja a un CRM aparece siempre la misma pregunta: ¿"Comercial
+García SL" y "COMERCIAL GARCIA S.L." son el mismo cliente? Hay que decidir qué campo identifica
+de forma única a cada registro —normalmente el NIF o el correo— antes de la primera carga. Si se
+decide después, ya hay dos fichas de la mitad de los clientes.
+
+## ¿Qué cambia para el equipo?
+
+Cambia menos de lo que la gente teme y en un sitio distinto del que espera. Nadie tiene que
+aprender un programa nuevo: los datos siguen apareciendo en las mismas herramientas. Lo que
+cambia es **dónde se escribe cada cosa**, y esa es la parte que hay que acordar con las
+personas que lo usan a diario, no anunciarla el día del arranque.
+
+El punto incómodo es que, cuando un sistema pasa a ser el dueño de un dato, el resto se
+vuelven de solo lectura para ese dato. Quien llevaba años corrigiendo el nombre de un cliente
+directamente en la hoja tendrá que hacerlo en el CRM. Es un cambio pequeño y genera más
+resistencia que cualquier detalle técnico, porque toca la costumbre de alguien.
+
+Dos cosas ayudan bastante:
+
+- **Explicar el porqué con un caso real de la empresa.** "El mes pasado facturamos dos veces a
+  este cliente porque su ficha estaba en dos sitios" convence más que cualquier argumento sobre
+  integridad de datos.
+- **Dejar la hoja donde estaba, en modo lectura.** Quitarla de golpe genera la sensación de
+  haber perdido el control. Si sigue ahí y se actualiza sola, la gente comprueba durante unas
+  semanas que los números cuadran y deja de mirarla por su cuenta.
+
+También conviene decidir quién es el responsable de los datos maestros —clientes, artículos,
+precios— antes de conectar nada. No es un cargo nuevo: es reconocer quién ya lo hacía de hecho,
+para que las reglas de la conexión coincidan con cómo trabaja la empresa de verdad.
+
+## ¿Por dónde se empieza?
+
+Por **un solo flujo, en un solo sentido**, y funcionando dos semanas antes de añadir el
+siguiente. Un sistema es el dueño del dato y los demás lo leen. La sincronización en los dos
+sentidos es lo último, si es que hace falta.
+
+Un orden habitual:
+
+1. Definir qué sistema manda sobre cada dato. Clientes en el CRM, artículos en el inventario,
+   importes en la facturación.
+2. Limpiar lo que ya hay: duplicados, formatos y campos obligatorios vacíos.
+3. Montar el primer flujo, en un sentido, con el caso más frecuente.
+4. Dejarlo correr y revisar los casos que se salieron de lo previsto.
+5. Añadir el siguiente.
+
+En NODBU, agencia de automatización de procesos y desarrollo a medida para PyMEs, el paso 2 es
+casi siempre el más largo, y también el que decide si el resto sale bien. Conectar datos sucios
+no los arregla: los reparte.
+
+Puedes ver [los servicios con los que trabajamos esto](/#servicios) o escribirnos y lo miramos
+sobre tus herramientas concretas.

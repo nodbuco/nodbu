@@ -1,0 +1,537 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ base -- */
+
+@layer base {
+  /**
+   * TEMAS.
+   *
+   * Los valores literales viven en tailwind.config.ts (themeTokens); aqui solo
+   * se vuelcan en variables. Las clases de Tailwind leen estas variables, asi
+   * que cambiar de tema es cambiar data-theme en <html> y nada mas.
+   *
+   * El OSCURO es el predeterminado: se declara en :root sin condiciones y no se
+   * consulta prefers-color-scheme. Quien quiera claro lo elige y se le recuerda.
+   */
+  :root {
+    /* Altura de la navbar: la usan los anclajes para no quedar tapados. */
+    --nav-h: 76px;
+
+    --c-ink: theme('themeTokens.dark.ink');
+    --c-ink-raised: theme('themeTokens.dark.ink-raised');
+    --c-paper: theme('themeTokens.dark.paper');
+    --c-nodbu: theme('themeTokens.dark.nodbu');
+    --c-paper-muted: theme('themeTokens.dark.paper-muted');
+    --c-paper-faint: theme('themeTokens.dark.paper-faint');
+    --c-hairline: theme('themeTokens.dark.hairline');
+    --c-dot: theme('themeTokens.dark.dot');
+    --c-nodbu-glow: theme('themeTokens.dark.nodbu-glow');
+
+    --glass-bg: theme('themeTokens.dark.glass-bg');
+    --glass-border: theme('themeTokens.dark.glass-border');
+    --glass-shadow: theme('themeTokens.dark.glass-shadow');
+    --glow-strong: theme('themeTokens.dark.glow-strong');
+    --glow-soft: theme('themeTokens.dark.glow-soft');
+    --glow-drop: 0 18px 50px -24px rgba(0, 0, 0, 0.9);
+
+    /* Portatil de "Piloto automatico". El porque de que tenga tokens propios
+       y no reuse los de marca esta en tailwind.config.ts, junto a `device`. */
+    --c-device-edge: theme('themeTokens.dark.device-edge');
+    --c-device-bezel: theme('themeTokens.dark.device-bezel');
+    --c-device-lens: theme('themeTokens.dark.device-lens');
+    --c-device-glass: theme('themeTokens.dark.device-glass');
+    --c-device-led: theme('themeTokens.dark.device-led');
+    --c-device-base-top: theme('themeTokens.dark.device-base-top');
+    --c-device-base-bottom: theme('themeTokens.dark.device-base-bottom');
+    --c-device-lip: theme('themeTokens.dark.device-lip');
+    --c-device-shadow: theme('themeTokens.dark.device-shadow');
+
+    --c-node-web: theme('themeTokens.dark.node-web');
+    --c-node-mail: theme('themeTokens.dark.node-mail');
+    --c-node-crm: theme('themeTokens.dark.node-crm');
+    --c-node-stock: theme('themeTokens.dark.node-stock');
+    --c-node-data: theme('themeTokens.dark.node-data');
+
+    /* Opacidad del grano. El mismo valor sirve en los dos temas: al pasar el
+       ruido a monocromo (ver .noise-layer) su medio queda en ~128/255, casi
+       equidistante entre el negro (9) y el crema (250) del fondo de cada
+       tema, asi que un unico numero da una intensidad percibida casi
+       identica en ambos. Ver DESIGN.md §11 para las cuentas. */
+    --noise-opacity: 0.045;
+    color-scheme: dark;
+  }
+
+  :root[data-theme='light'] {
+    --c-ink: theme('themeTokens.light.ink');
+    --c-ink-raised: theme('themeTokens.light.ink-raised');
+    --c-paper: theme('themeTokens.light.paper');
+    --c-nodbu: theme('themeTokens.light.nodbu');
+    --c-paper-muted: theme('themeTokens.light.paper-muted');
+    --c-paper-faint: theme('themeTokens.light.paper-faint');
+    --c-hairline: theme('themeTokens.light.hairline');
+    --c-dot: theme('themeTokens.light.dot');
+    --c-nodbu-glow: theme('themeTokens.light.nodbu-glow');
+
+    --glass-bg: theme('themeTokens.light.glass-bg');
+    --glass-border: theme('themeTokens.light.glass-border');
+    --glass-shadow: theme('themeTokens.light.glass-shadow');
+    --glow-strong: theme('themeTokens.light.glow-strong');
+    --glow-soft: theme('themeTokens.light.glow-soft');
+    --glow-drop: 0 18px 50px -24px rgba(13, 13, 13, 0.35);
+
+    --c-device-edge: theme('themeTokens.light.device-edge');
+    --c-device-bezel: theme('themeTokens.light.device-bezel');
+    --c-device-lens: theme('themeTokens.light.device-lens');
+    --c-device-glass: theme('themeTokens.light.device-glass');
+    --c-device-led: theme('themeTokens.light.device-led');
+    --c-device-base-top: theme('themeTokens.light.device-base-top');
+    --c-device-base-bottom: theme('themeTokens.light.device-base-bottom');
+    --c-device-lip: theme('themeTokens.light.device-lip');
+    --c-device-shadow: theme('themeTokens.light.device-shadow');
+
+    --c-node-web: theme('themeTokens.light.node-web');
+    --c-node-mail: theme('themeTokens.light.node-mail');
+    --c-node-crm: theme('themeTokens.light.node-crm');
+    --c-node-stock: theme('themeTokens.light.node-stock');
+    --c-node-data: theme('themeTokens.light.node-data');
+
+    --noise-opacity: 0.045;
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    background-color: rgb(var(--c-ink));
+    transition: background-color 0.28s ease;
+  }
+
+  body {
+    @apply text-paper font-sans antialiased;
+    /* El fondo base en el elemento raiz evita el flash blanco del sobredesplazamiento en iOS. */
+    overflow-x: hidden;
+    /* Transicion de tema: corta. NO se anima transform ni opacity, que son las
+       que usan Reveal, InteractiveLogo y la barra de progreso: asi cambiar de
+       tema a mitad de un scroll no interrumpe ninguna animacion en curso. */
+    transition: color 0.28s ease;
+  }
+
+  .glass,
+  .glass-flat {
+    transition:
+      background 0.28s ease,
+      border-color 0.28s ease,
+      box-shadow 0.28s ease;
+  }
+
+  /* Cada seccion con ancla se compensa la altura de la navbar flotante. */
+  section[id] {
+    scroll-margin-top: calc(var(--nav-h) + 24px);
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display font-medium text-balance;
+  }
+
+  ::selection {
+    @apply bg-nodbu text-ink;
+  }
+
+  /* Foco de teclado siempre visible, nunca solo por hover. */
+  :focus-visible {
+    outline: 2px solid rgb(var(--c-nodbu));
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* El anillo por defecto de Tailwind no aplica en :focus sin teclado. */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+/* ------------------------------------------------------------ componentes -- */
+
+@layer components {
+  /* Vidrio REAL: lleva backdrop-filter. Reservado a navbar, menu movil y
+     boton flotante. Maximo 3 simultaneos en pantalla (ver DESIGN.md §4). */
+  .glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    backdrop-filter: blur(20px) saturate(140%);
+    border-radius: theme('borderRadius.glass');
+    box-shadow: var(--glass-shadow);
+  }
+
+  /* Vidrio SIN blur: mismo aspecto, coste casi cero. Para las rejillas de 6
+     tarjetas (servicios, resenas, planes), donde 6 backdrop-filter animados
+     hunden los FPS en moviles de gama baja. */
+  .glass-flat {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: theme('borderRadius.glass');
+    box-shadow: var(--glass-shadow);
+  }
+
+  .shell {
+    @apply mx-auto w-full max-w-shell px-gutter;
+  }
+
+  /* Etiqueta utilitaria: siempre mayusculas, siempre mono. */
+  .eyebrow {
+    @apply font-mono text-mono uppercase text-paper-faint;
+  }
+
+  /* Texto corrido de las paginas legales. Se estila aqui para no repetir
+     clases en cada parrafo del contenido legal. */
+  .legal h2 {
+    @apply mt-14 text-display-m;
+  }
+
+  .legal h3 {
+    @apply mt-9 font-sans text-body-l font-medium text-paper;
+  }
+
+  .legal p,
+  .legal li {
+    @apply mt-4 text-body-s text-paper-muted;
+  }
+
+  .legal ul {
+    @apply mt-4 list-disc pl-6 marker:text-paper-faint;
+  }
+
+  .legal a {
+    @apply text-paper underline underline-offset-2;
+  }
+
+  .legal strong {
+    @apply font-medium text-paper;
+  }
+
+  /* Los marcadores que hay que rellenar antes de publicar. */
+  .legal .placeholder {
+    @apply rounded bg-nodbu/15 px-1.5 py-0.5 font-mono text-mono-l uppercase text-nodbu;
+  }
+
+  /* ---------------------------------------------- prosa de los articulos -- */
+
+  /**
+   * Estilos del cuerpo MDX de /recursos.
+   *
+   * NO se usa @tailwindcss/typography a proposito. El plugin trae su propia
+   * escala de grises en hexadecimal y su propio `prose-invert`, que son
+   * exactamente las dos cosas que este proyecto no permite: colores fuera de
+   * tailwind.config.ts y duplicar clases por tema. Aqui cada color sale de un
+   * token, asi que el modo claro funciona sin escribir una regla mas.
+   *
+   * El ancho de linea NO se fija aqui: lo pone el contenedor de la plantilla
+   * (max-w-[68ch]), porque las tablas y los bloques de codigo tienen que poder
+   * salirse de esa medida.
+   */
+  .prose-nodbu {
+    @apply text-body-l text-paper-muted;
+    line-height: 1.75;
+  }
+
+  .prose-nodbu > * + * {
+    @apply mt-6;
+  }
+
+  /* Los h2 son las preguntas del articulo: necesitan aire por encima para que
+     se lean como el inicio de un bloque y no como un parrafo en negrita. */
+  .prose-nodbu h2 {
+    @apply mt-14 font-display text-display-m font-medium text-paper;
+    scroll-margin-top: calc(var(--nav-h) + 32px);
+  }
+
+  .prose-nodbu h3 {
+    @apply mt-10 font-display text-body-l font-medium text-paper;
+    scroll-margin-top: calc(var(--nav-h) + 32px);
+  }
+
+  .prose-nodbu strong {
+    @apply font-medium text-paper;
+  }
+
+  .prose-nodbu a {
+    @apply text-nodbu underline decoration-nodbu/40 underline-offset-4 transition-colors;
+  }
+
+  .prose-nodbu a:hover {
+    @apply decoration-nodbu;
+  }
+
+  .prose-nodbu ul,
+  .prose-nodbu ol {
+    @apply mt-6 flex flex-col gap-3 pl-6;
+  }
+
+  .prose-nodbu ul {
+    @apply list-disc marker:text-nodbu;
+  }
+
+  /* Los pasos numerados son medio contenido: el numero tiene que verse tanto
+     como el texto, porque el orden es la informacion. */
+  .prose-nodbu ol {
+    @apply list-decimal marker:font-mono marker:text-nodbu;
+  }
+
+  .prose-nodbu li::marker {
+    font-size: 0.9em;
+  }
+
+  .prose-nodbu blockquote {
+    @apply my-8 border-l-2 border-hairline pl-6 text-paper-muted;
+  }
+
+  .prose-nodbu code {
+    @apply rounded bg-ink-raised px-1.5 py-0.5 font-mono text-[.85em] text-paper;
+    letter-spacing: 0;
+  }
+
+  .prose-nodbu pre {
+    @apply my-8 overflow-x-auto rounded-glass border border-hairline bg-ink-raised p-5;
+  }
+
+  /* Dentro de un bloque el code no lleva su propio fondo ni su padding: ya los
+     pone el <pre>. */
+  .prose-nodbu pre code {
+    @apply bg-transparent p-0 text-body-s;
+  }
+
+  .prose-nodbu hr {
+    @apply my-12 border-hairline;
+  }
+
+  /* Las tablas son el formato que mejor extraen los buscadores de IA, asi que
+     tienen que sobrevivir a un movil: se desplazan dentro de su envoltorio en
+     vez de desbordar la pagina. Ver .table-scroll en el mapa de componentes. */
+  .prose-nodbu table {
+    @apply w-full border-collapse text-left text-body-s;
+  }
+
+  .prose-nodbu thead {
+    @apply border-b border-hairline;
+  }
+
+  .prose-nodbu th {
+    @apply px-4 py-3 font-mono text-mono uppercase text-paper-faint;
+  }
+
+  .prose-nodbu td {
+    @apply border-b border-hairline px-4 py-3 align-top text-paper-muted;
+  }
+
+  .prose-nodbu tbody tr:last-child td {
+    @apply border-b-0;
+  }
+
+  /* Ancla de los encabezados (rehype-autolink-headings). Invisible hasta que se
+     pasa por encima o se llega con el tabulador. */
+  .prose-nodbu .heading-anchor {
+    @apply ml-2 text-paper-faint no-underline opacity-0 transition-opacity;
+  }
+
+  .prose-nodbu h2:hover .heading-anchor,
+  .prose-nodbu h3:hover .heading-anchor,
+  .prose-nodbu .heading-anchor:focus-visible {
+    @apply opacity-100;
+  }
+}
+
+/* --------------------------------------------------------------- utilidades */
+
+@layer utilities {
+  /* Capa de grano sobre todo el fondo.
+     Tres ajustes respecto a la version anterior, cada uno resuelve un defecto
+     concreto (ver DESIGN.md §11 para las mediciones):
+       1. feColorMatrix satura a 0 -> ruido MONOCROMO. feTurbulence genera por
+          defecto un canal de ruido independiente por cada componente R/G/B, y
+          eso mete una churretada de color casi invisible pero perceptible como
+          "artefacto digital" en vez de grano. Con canales R=G=B desaparece.
+       2. numOctaves baja de 4 a 2: menos bandas de frecuencia apiladas, menos
+          "ruido de estatica" y mas grano de una sola escala.
+       3. feGaussianBlur de .45 redondea los bordes duros pixel a pixel, que es
+          la diferencia real entre "grano fotografico" y "estatica de TV".
+     No se recalcula nunca: es un <img> de fondo, rasterizado una vez por el
+     navegador al decodificar el data-URI, igual que antes. */
+  .noise-layer {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch' result='noise'/%3E%3CfeColorMatrix in='noise' type='saturate' values='0'/%3E%3CfeGaussianBlur stdDeviation='.45'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: var(--noise-opacity);
+  }
+
+  /* Malla de puntos: 1.5px de radio cada 32px.
+     961 puntos por cada 1000x1000px, 0.307% de cobertura de pantalla.
+
+     OJO, ESTO NO ES LO QUE DICE DESIGN.md §11.4. Alli se midio y se decidio
+     espaciar a 48px SIN tocar la opacidad (0.136% de cobertura), con el
+     argumento de que bajar la opacidad arriesga volver a la invisibilidad que
+     ya se corrigio una vez. El codigo actual hace lo contrario en los dos
+     ejes: sigue a 32px y el token `dot` bajo de .12/.11 a .07/.07.
+     Es una decision pendiente de revisar, no un descuido de este comentario.
+     Si se retoma, hay que mover LAS DOS cosas a la vez. */
+  .dot-grid {
+    background-image: radial-gradient(var(--c-dot) 1.5px, transparent 1.5px);
+    background-size: 32px 32px;
+  }
+
+  /* Vinieta muy leve: oscurece las esquinas un pelin para dar profundidad sin
+     dibujar un marco visible. Se construye con el propio token `ink`, asi que
+     sigue al tema sin declarar un color nuevo. `transparent` hasta el 60% del
+     radio: solo toca las esquinas, nunca el centro donde esta el contenido. */
+  .vignette {
+    background-image: radial-gradient(ellipse at 50% 40%, transparent 60%, rgb(var(--c-ink) / .3) 100%);
+  }
+
+  /* Mascara de degradado en los extremos del marquee. En una mascara solo
+     cuenta el canal alfa, asi que el color solo tiene que ser opaco. */
+  .marquee-mask {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      theme('colors.mask') 12%,
+      theme('colors.mask') 88%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      theme('colors.mask') 12%,
+      theme('colors.mask') 88%,
+      transparent
+    );
+  }
+
+  /* La cinta se pausa al pasar por encima. Solo la fila senalada, no las dos. */
+  .marquee-row:hover .marquee-track,
+  .marquee-row:focus-within .marquee-track {
+    animation-play-state: paused;
+  }
+
+  /* Difuminado horizontal de las capas de fondo.
+     Sin esto, un resplandor mas ancho que la pantalla se corta en seco contra
+     el borde del viewport y se ve la linea vertical donde el overflow lo
+     recorta. Con la mascara, la textura y los halos se desvanecen hacia los
+     lados y el fondo se siente continuo.
+     Solo cuenta el canal alfa de la mascara, asi que el color solo tiene que
+     ser opaco: se usa el token en vez de un hexadecimal. */
+  .edge-mask {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      theme('colors.mask') 7%,
+      theme('colors.mask') 93%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      theme('colors.mask') 7%,
+      theme('colors.mask') 93%,
+      transparent
+    );
+  }
+
+  /* Difuminado horizontal MAS el desvanecido del final de la pagina.
+     Las dos mascaras se combinan con mask-composite: intersect, asi que la
+     capa se apaga tanto por los lados como al llegar abajo y el fondo no
+     corta en seco justo encima del footer. El corte vertical es leve (96%):
+     los ultimos ~4% de la capa, no un degradado dramatico. */
+  .edge-mask-bottom {
+    -webkit-mask-image:
+      linear-gradient(
+        to right,
+        transparent,
+        theme('colors.mask') 7%,
+        theme('colors.mask') 93%,
+        transparent
+      ),
+      linear-gradient(to bottom, theme('colors.mask'), theme('colors.mask') 96%, transparent);
+    mask-image:
+      linear-gradient(
+        to right,
+        transparent,
+        theme('colors.mask') 7%,
+        theme('colors.mask') 93%,
+        transparent
+      ),
+      linear-gradient(to bottom, theme('colors.mask'), theme('colors.mask') 96%, transparent);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+
+  /* Mostrar/ocultar por tema sin JavaScript. Lo usa <Logo>, que pinta las dos
+     variantes del logotipo y enseña la que toca: asi no hay parpadeo al
+     hidratar ni salto de layout, y display:none saca la oculta del arbol de
+     accesibilidad (no se anuncia dos veces). */
+  .theme-light-only {
+    display: none;
+  }
+
+  :root[data-theme='light'] .theme-dark-only {
+    display: none;
+  }
+
+  :root[data-theme='light'] .theme-light-only {
+    display: block;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}
+
+/* ------------------------------------------------- resplandor del cursor -- */
+
+/* Se usa en las tarjetas de servicio: un halo naranja que sigue al puntero.
+   Las coordenadas llegan como variables CSS desde el componente. El color sale
+   del token, aqui tampoco hay hexadecimales. */
+.spotlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    340px circle at var(--mx, 50%) var(--my, 50%),
+    var(--c-nodbu-glow),
+    transparent 62%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.spotlight:hover::before,
+.spotlight:focus-within::before {
+  opacity: 1;
+}
+
+/* --------------------------------------------------- movimiento reducido -- */
+
+/* Regla unica y global: si el sistema pide menos movimiento, se apaga todo.
+   Los componentes ademas consultan useReducedMotion() para no montar
+   animaciones de Framer Motion, pero esto es la red de seguridad. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
