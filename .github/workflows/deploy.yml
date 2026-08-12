@@ -77,13 +77,22 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           # La barra final es obligatoria en las dos rutas.
           # local-dir apunta DENTRO de out: se sube su contenido, no la carpeta.
+          # El .htaccess viaja aqui dentro: vive en public/ y Next lo copia a
+          # out/ en cada build, asi que se sube como un archivo mas y el paso de
+          # comprobacion de arriba cancela el despliegue si faltara.
           local-dir: ./out/
           server-dir: ./public_html/
-          # Borra en el servidor lo que ya no existe en el build.
+          # En false la accion sincroniza contra su propio registro
+          # (.ftp-deploy-sync-state.json en el servidor) y solo toca lo que ella
+          # misma subio. En true borraria public_html entero antes de subir, que
+          # es justo lo que no queremos con blog/ delante.
           dangerous-clean-slate: false
-          # No toques la carpeta del blog si algun dia instalas WordPress ahi.
+          # Lo excluido no se sube NI se borra del servidor.
+          # blog/ queda reservado para una futura instalacion de WordPress
+          # (CONTEXT.md, regla 10): no se toca nunca.
           exclude: |
             **/.git*
             **/.git*/**
             **/node_modules/**
+            **/.DS_Store
             blog/**
