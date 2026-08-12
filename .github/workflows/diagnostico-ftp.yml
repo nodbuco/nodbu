@@ -1,0 +1,165 @@
+name: Diagnostico FTP (no sube nada)
+
+# Herramienta de un solo uso: se conecta al FTP de Hostinger, dice en que
+# carpeta te deja al entrar y ensena el arbol de directorios. Sirve para
+# averiguar que valor debe tener server-dir en deploy.yml.
+#
+# NO sube, NO borra y NO modifica nada en el servidor: solo lee.
+#
+# Cuando el despliegue quede confirmado, este archivo se puede borrar.
+
+# Solo a mano desde la pestana Actions. Nunca se dispara con un push.
+on:
+  workflow_dispatch:
+
+jobs:
+  mirar-el-servidor:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Listar el arbol del FTP
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          python3 - <<'PY'
+          import ftplib, os, sys
+
+          host = os.environ.get("FTP_SERVER", "").strip()
+          user = os.environ.get("FTP_USERNAME", "").strip()
+          pw   = os.environ.get("FTP_PASSWORD", "")
+
+          if not host or not user or not pw:
+              faltan = [n for n, v in
+                        (("FTP_SERVER", host), ("FTP_USERNAME", user), ("FTP_PASSWORD", pw))
+                        if not v]
+              sys.exit("Faltan estos secrets en GitHub: " + ", ".join(faltan))
+
+          # El campo del secret puede venir como "ftp://host", "host:21" o "host".
+          for pref in ("ftps://", "ftp://", "sftp://"):
+              if host.lower().startswith(pref):
+                  host = host[len(pref):]
+          host = host.strip("/")
+          port = 21
+          if ":" in host:
+              host, p = host.rsplit(":", 1)
+              if p.isdigit():
+                  port = int(p)
+
+          # La contrasena NUNCA se imprime. Solo el host y el usuario, que ya
+          # aparecen en el panel de Hostinger.
+          print(f"Servidor : {host}:{port}")
+          print(f"Usuario  : {user}")
+          print()
+
+          def conectar():
+              errores = []
+              for tipo in ("FTPS (TLS explicito)", "FTP plano"):
+                  try:
+                      if tipo.startswith("FTPS"):
+                          c = ftplib.FTP_TLS()
+                          c.connect(host, port, timeout=30)
+                          c.login(user, pw)
+                          c.prot_p()
+                      else:
+                          c = ftplib.FTP()
+                          c.connect(host, port, timeout=30)
+                          c.login(user, pw)
+                      c.set_pasv(True)
+                      print(f"Conectado por {tipo}")
+                      return c
+                  except Exception as e:
+                      errores.append(f"  {tipo}: {type(e).__name__}: {e}")
+              print("No se pudo conectar de ninguna forma:")
+              print("\n".join(errores))
+              sys.exit(1)
+
+          c = conectar()
+
+          home = c.pwd()
+          print()
+          print("=" * 62)
+          print(f"CARPETA DONDE ENTRA LA CUENTA FTP:  {home}")
+          print("=" * 62)
+          print("Todo lo que server-dir diga en deploy.yml es RELATIVO a esta ruta.")
+          print()
+
+          MAX_POR_CARPETA = 30
+
+          def listar(ruta, nivel=0, tope=3):
+              sangria = "    " * nivel
+              try:
+                  entradas = sorted(c.mlsd(ruta), key=lambda e: (e[1].get("type") != "dir", e[0]))
+                  usa_mlsd = True
+              except Exception:
+                  try:
+                      entradas = [(n.rsplit("/", 1)[-1], {}) for n in sorted(c.nlst(ruta))]
+                      usa_mlsd = False
+                  except Exception as e:
+                      print(f"{sangria}(no se pudo listar: {e})")
+                      return
+              mostradas = 0
+              for nombre, datos in entradas:
+                  if nombre in (".", ".."):
+                      continue
+                  if mostradas >= MAX_POR_CARPETA:
+                      print(f"{sangria}... y mas archivos (recortado)")
+                      break
+                  mostradas += 1
+                  tipo = datos.get("type", "")
+                  hijo = ruta.rstrip("/") + "/" + nombre
+                  if tipo == "dir" or (not usa_mlsd and "." not in nombre):
+                      print(f"{sangria}[DIR] {nombre}/")
+                      if nivel < tope:
+                          listar(hijo, nivel + 1, tope)
+                  else:
+                      tam = datos.get("size", "")
+                      tam = f"  ({int(tam):,} bytes)" if str(tam).isdigit() else ""
+                      print(f"{sangria}      {nombre}{tam}")
+
+          print("ARBOL DESDE LA CARPETA DE ENTRADA")
+          print("-" * 62)
+          listar(home, 0, 2)
+
+          # Busca el index.html del sitio, que pesa unos 230 KB, para saber si
+          # el despliegue anterior dejo los archivos en algun sitio y donde.
+          print()
+          print("DONDE ESTA EL index.html DE LA WEB")
+          print("-" * 62)
+          encontrados = []
+
+          def buscar(ruta, nivel=0, tope=4):
+              if len(encontrados) >= 12:
+                  return
+              try:
+                  entradas = list(c.mlsd(ruta))
+              except Exception:
+                  return
+              for nombre, datos in entradas:
+                  if nombre in (".", ".."):
+                      continue
+                  hijo = ruta.rstrip("/") + "/" + nombre
+                  if datos.get("type") == "dir":
+                      if nivel < tope:
+                          buscar(hijo, nivel + 1, tope)
+                  elif nombre == "index.html":
+                      try:
+                          tam = c.size(hijo) or 0
+                      except Exception:
+                          tam = 0
+                      encontrados.append((hijo, tam))
+
+          buscar(home)
+          if encontrados:
+              for ruta, tam in encontrados:
+                  pista = "  <-- parece la web de NODBU" if tam > 100_000 else ""
+                  print(f"  {ruta}  ({tam:,} bytes){pista}")
+          else:
+              print("  Ningun index.html por debajo de la carpeta de entrada.")
+
+          try:
+              c.quit()
+          except Exception:
+              pass
+          PY
