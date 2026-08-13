@@ -101,8 +101,18 @@ out/
 
 3. En el menú de la izquierda busca **Archivos → Administrador de archivos**.
 
-4. Verás una lista de carpetas. Entra en **`public_html`**. Es la carpeta que se publica en
-   internet: todo lo que esté ahí dentro se ve desde el navegador.
+4. Verás una lista de carpetas. Entra en **`domains/nodbu.com/public_html`**. Es la carpeta que
+   se publica en internet: todo lo que esté ahí dentro se ve desde el navegador.
+
+   > **Ojo con el `public_html` de la raíz: NO es ese.** En este plan hay dos carpetas con ese
+   > nombre. La de primer nivel es un resto de la estructura antigua y no la sirve nadie —
+   > Hostinger la marca con un archivo vacío llamado `DO_NOT_UPLOAD_HERE`. Si subes ahí, todo
+   > parece ir bien y la web no cambia.
+   >
+   > Cómo distinguirlas sin dudar: la carpeta buena es la que contiene el `default.php` de la
+   > "Página por defecto" de Hostinger, mientras esa página siga puesta. La cuenta FTP, además,
+   > entra directamente en la carpeta equivocada, por eso el workflow usa la ruta absoluta
+   > `/domains/nodbu.com/public_html/`.
 
 5. **Activa la vista de archivos ocultos.** Arriba a la derecha hay un icono de engranaje o de
    tres puntos → **Configuración** → marca **Mostrar archivos ocultos (dotfiles)**. Sin esto
