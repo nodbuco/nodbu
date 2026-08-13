@@ -118,19 +118,38 @@ jobs:
                       tam = f"  ({int(tam):,} bytes)" if str(tam).isdigit() else ""
                       print(f"{sangria}      {nombre}{tam}")
 
-          print("ARBOL DESDE LA CARPETA DE ENTRADA")
+          # La carpeta de entrada NO tiene por que ser la que sirve el dominio.
+          # Se sube a la raiz del FTP para ver la estructura completa: en los
+          # planes con varios sitios, cada dominio cuelga de domains/<dominio>/.
+          print("NIVEL 1 — RAIZ DEL FTP (por encima de la carpeta de entrada)")
           print("-" * 62)
-          listar(home, 0, 2)
-
-          # Busca el index.html del sitio, que pesa unos 230 KB, para saber si
-          # el despliegue anterior dejo los archivos en algun sitio y donde.
+          try:
+              c.cwd("/")
+              print("Se puede subir a / — este es el contenido:")
+              listar("/", 0, 1)
+          except Exception as e:
+              print(f"No se puede subir por encima de la carpeta de entrada: {e}")
           print()
-          print("DONDE ESTA EL index.html DE LA WEB")
+
+          print("NIVEL 2 — ARBOL DESDE LA CARPETA DE ENTRADA")
           print("-" * 62)
-          encontrados = []
+          listar(home, 0, 1)
+
+          # Localiza la carpeta que sirve de verdad el dominio. La pista buena
+          # es el PHP: nodbu.com responde con x-powered-by PHP y una "Pagina por
+          # defecto", asi que la carpeta que contenga ese index.php/default.php
+          # ES el directorio raiz del dominio. Ahi es donde hay que subir.
+          print("NIVEL 3 — BUSQUEDA DE LA RAIZ REAL DEL DOMINIO")
+          print("-" * 62)
+          try:
+              c.voidcmd("TYPE I")   # sin esto el comando SIZE falla y todo sale a 0
+          except Exception:
+              pass
+
+          php, webs = [], []
 
           def buscar(ruta, nivel=0, tope=4):
-              if len(encontrados) >= 12:
+              if len(php) + len(webs) >= 40:
                   return
               try:
                   entradas = list(c.mlsd(ruta))
@@ -143,20 +162,34 @@ jobs:
                   if datos.get("type") == "dir":
                       if nivel < tope:
                           buscar(hijo, nivel + 1, tope)
-                  elif nombre == "index.html":
-                      try:
-                          tam = c.size(hijo) or 0
-                      except Exception:
-                          tam = 0
-                      encontrados.append((hijo, tam))
+                      continue
+                  if nombre in ("index.php", "default.php", "index.html"):
+                      tam = datos.get("size")
+                      if not str(tam).isdigit():
+                          try:
+                              tam = c.size(hijo) or 0
+                          except Exception:
+                              tam = 0
+                      tam = int(tam)
+                      (php if nombre.endswith(".php") else webs).append((hijo, tam))
 
-          buscar(home)
-          if encontrados:
-              for ruta, tam in encontrados:
-                  pista = "  <-- parece la web de NODBU" if tam > 100_000 else ""
-                  print(f"  {ruta}  ({tam:,} bytes){pista}")
+          buscar("/")
+
+          print("Archivos PHP de inicio (la pagina por defecto de Hostinger):")
+          if php:
+              for ruta, tam in php:
+                  carpeta = ruta.rsplit("/", 1)[0] or "/"
+                  print(f"  {ruta}  ({tam:,} bytes)")
+                  print(f"      -> ESTA es la raiz del dominio: {carpeta}")
           else:
-              print("  Ningun index.html por debajo de la carpeta de entrada.")
+              print("  Ninguno. La pagina por defecto no se sirve desde este FTP:")
+              print("  el dominio apunta a otro sitio web del plan.")
+
+          print()
+          print("index.html encontrados (los de +200 KB son la portada de NODBU):")
+          for ruta, tam in sorted(webs, key=lambda x: -x[1])[:15]:
+              pista = "  <-- portada de NODBU" if tam > 200_000 else ""
+              print(f"  {ruta}  ({tam:,} bytes){pista}")
 
           try:
               c.quit()
