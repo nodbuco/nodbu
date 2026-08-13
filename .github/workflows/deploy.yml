@@ -69,7 +69,7 @@ jobs:
           fi
           echo "OK $generados articulos generados"
 
-      - name: Subir por FTP a public_html
+      - name: Subir por FTP a la raiz de nodbu.com
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -81,7 +81,14 @@ jobs:
           # out/ en cada build, asi que se sube como un archivo mas y el paso de
           # comprobacion de arriba cancela el despliegue si faltara.
           local-dir: ./out/
-          server-dir: ./public_html/
+          # RUTA ABSOLUTA, y no es un descuido. La cuenta FTP entra en
+          # /public_html, que en este plan es un resto de la estructura antigua
+          # que no sirve a nadie: Hostinger lo marca con un archivo
+          # DO_NOT_UPLOAD_HERE. El dominio se sirve desde domains/nodbu.com/,
+          # comprobado por el default.php que respondia en nodbu.com.
+          # Si aqui pones ./public_html/ el despliegue dice "Success" y la web
+          # no cambia: acaba en /public_html/public_html/, que no mira nadie.
+          server-dir: /domains/nodbu.com/public_html/
           # En false la accion sincroniza contra su propio registro
           # (.ftp-deploy-sync-state.json en el servidor) y solo toca lo que ella
           # misma subio. En true borraria public_html entero antes de subir, que
