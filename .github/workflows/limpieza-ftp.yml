@@ -1,0 +1,162 @@
+name: Limpieza FTP (borra las copias sueltas de /public_html)
+
+# Herramienta de un solo uso. Cuando se corrigio server-dir en deploy.yml
+# (commit e8f33ad) quedaron dos copias del build en la carpeta equivocada:
+#   /public_html/                y   /public_html/public_html/
+# Ninguna de las dos la sirve nadie: el dominio se sirve desde
+# /domains/nodbu.com/public_html/, que este workflow NO toca.
+#
+# Vacia /public_html/ por completo, EXCEPTO el archivo DO_NOT_UPLOAD_HERE
+# que deja Hostinger como aviso. Antes de borrar nada comprueba que la
+# cuenta FTP sigue entrando exactamente en /public_html: si algo cambio,
+# se cancela sin tocar un solo archivo.
+#
+# Se borra este archivo del repo despues de usarlo una vez.
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmar:
+        description: 'Escribe BORRAR (en mayusculas) para vaciar /public_html'
+        required: true
+
+jobs:
+  limpiar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Vaciar /public_html (no toca domains/nodbu.com)
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          CONFIRMAR: ${{ inputs.confirmar }}
+        run: |
+          python3 - <<'PY'
+          import ftplib, os, sys
+
+          if os.environ.get("CONFIRMAR", "").strip() != "BORRAR":
+              sys.exit("Confirmacion incorrecta. Hay que escribir exactamente BORRAR. No se toco nada.")
+
+          host = os.environ.get("FTP_SERVER", "").strip()
+          user = os.environ.get("FTP_USERNAME", "").strip()
+          pw   = os.environ.get("FTP_PASSWORD", "")
+          if not host or not user or not pw:
+              sys.exit("Faltan secrets de FTP.")
+          for pref in ("ftps://", "ftp://", "sftp://"):
+              if host.lower().startswith(pref):
+                  host = host[len(pref):]
+          host = host.strip("/")
+          port = 21
+          if ":" in host:
+              host, p = host.rsplit(":", 1)
+              if p.isdigit():
+                  port = int(p)
+
+          def conectar():
+              for tipo, cls in (("FTPS", ftplib.FTP_TLS), ("FTP plano", ftplib.FTP)):
+                  try:
+                      c = cls()
+                      c.connect(host, port, timeout=30)
+                      c.login(user, pw)
+                      if tipo == "FTPS":
+                          c.prot_p()
+                      c.set_pasv(True)
+                      print(f"Conectado por {tipo}")
+                      return c
+                  except Exception as e:
+                      print(f"  {tipo} fallo: {type(e).__name__}: {e}")
+              sys.exit("No se pudo conectar.")
+
+          c = conectar()
+          home = c.pwd()
+          print(f"Carpeta de entrada: {home}")
+
+          # Salvaguarda dura: si la cuenta no entra exactamente donde se
+          # comprobo a mano, no se borra nada.
+          if home != "/public_html":
+              sys.exit(f"Seguridad: se esperaba /public_html y la cuenta entro en {home!r}. Se cancela sin borrar nada.")
+
+          RESPETAR = {"DO_NOT_UPLOAD_HERE", ".", ".."}
+
+          def borrar_recursivo(ruta):
+              try:
+                  entradas = list(c.mlsd(ruta))
+              except Exception as e:
+                  print(f"  no se pudo listar {ruta}: {e}")
+                  return
+              for nombre, datos in entradas:
+                  if nombre in (".", ".."):
+                      continue
+                  hijo = ruta.rstrip("/") + "/" + nombre
+                  if datos.get("type") == "dir":
+                      borrar_recursivo(hijo)
+                      try:
+                          c.rmd(hijo)
+                          print(f"  [DIR borrado] {hijo}")
+                      except Exception as e:
+                          print(f"  [DIR fallo] {hijo}: {e}")
+                  else:
+                      try:
+                          c.delete(hijo)
+                          print(f"  [archivo borrado] {hijo}")
+                      except Exception as e:
+                          print(f"  [archivo fallo] {hijo}: {e}")
+
+          print()
+          print(f"Vaciando {home} (se respeta DO_NOT_UPLOAD_HERE)...")
+          print("-" * 62)
+          raiz = list(c.mlsd(home))
+          objetivo = [n for n, d in raiz if n not in RESPETAR]
+          if not objetivo:
+              print("No hay nada que borrar salvo DO_NOT_UPLOAD_HERE. Nada que hacer.")
+          for nombre, datos in raiz:
+              if nombre in RESPETAR:
+                  continue
+              ruta = home + "/" + nombre
+              if datos.get("type") == "dir":
+                  borrar_recursivo(ruta)
+                  try:
+                      c.rmd(ruta)
+                      print(f"  [DIR borrado] {ruta}")
+                  except Exception as e:
+                      print(f"  [DIR fallo] {ruta}: {e}")
+              else:
+                  try:
+                      c.delete(ruta)
+                      print(f"  [archivo borrado] {ruta}")
+                  except Exception as e:
+                      print(f"  [archivo fallo] {ruta}: {e}")
+
+          print()
+          print("Estado final de /public_html:")
+          print("-" * 62)
+          restantes = sorted(n for n, _ in c.mlsd(home) if n not in (".", ".."))
+          for n in restantes:
+              print(f"  {n}")
+          if restantes == ["DO_NOT_UPLOAD_HERE"]:
+              print()
+              print("Limpieza OK: solo queda el aviso de Hostinger.")
+          elif not restantes:
+              print()
+              print("Aviso: tambien desaparecio DO_NOT_UPLOAD_HERE (no deberia).")
+          else:
+              print()
+              print("Aviso: quedan restos sin borrar, revisar la lista de arriba.")
+
+          try:
+              c.quit()
+          except Exception:
+              pass
+          PY
+
+      - name: Comprobar que nodbu.com sigue en pie
+        run: |
+          set -e
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 https://nodbu.com/)
+          echo "https://nodbu.com/ -> $code"
+          if [ "$code" != "200" ]; then
+            echo "AVISO: la web no responde 200. Revisar manualmente."
+            exit 1
+          fi
+          echo "OK, la web sigue respondiendo."
