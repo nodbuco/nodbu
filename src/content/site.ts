@@ -43,8 +43,8 @@ export const site = {
    * en variables. Si cambia algun dato, hay que tocar los tres sitios.
    */
   legalEntity: {
-    holder: '[NOMBRE FISCAL]',
-    taxId: '[NIT]',
+    holder: 'Diego Alonso Torres Alvarado',
+    taxId: '1005259304',
     address: 'CR 1 G # 38 Sur - 09',
     city: 'Bogotá',
     country: 'Colombia',

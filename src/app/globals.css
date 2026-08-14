@@ -214,11 +214,6 @@
     @apply font-medium text-paper;
   }
 
-  /* Los marcadores que hay que rellenar antes de publicar. */
-  .legal .placeholder {
-    @apply rounded bg-nodbu/15 px-1.5 py-0.5 font-mono text-mono-l uppercase text-nodbu;
-  }
-
   /* ---------------------------------------------- prosa de los articulos -- */
 
   /**

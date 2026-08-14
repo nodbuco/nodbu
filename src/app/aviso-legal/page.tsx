@@ -7,10 +7,11 @@ import { absoluteUrl } from '@/lib/seo';
  * CONTENIDO BASE, NO ASESORAMIENTO JURIDICO.
  *
  * Datos del titular ya rellenados (persona natural con NIT colombiano y
- * domicilio en Bogota). Al ser titular colombiano que ademas capta datos de
- * residentes en Espana, conviven dos marcos: la LSSI-CE espanola por dirigir el
- * servicio a Espana, y la ley colombiana como ley del domicilio del titular.
- * Que lo revise un abogado antes de publicar.
+ * domicilio en Bogota, en site.legalEntity). Al ser titular colombiano que
+ * ademas capta datos de residentes en Espana, conviven dos marcos: la
+ * LSSI-CE espanola por dirigir el servicio a Espana, y la ley colombiana
+ * como ley del domicilio del titular. Que lo revise un abogado antes de
+ * publicar.
  */
 
 export const metadata: Metadata = {
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
 
 export default function AvisoLegalPage() {
   return (
-    <LegalShell eyebrow="Legal" title="Aviso legal" updatedAt="Julio de 2026">
+    <LegalShell eyebrow="Legal" title="Aviso legal" updatedAt="Agosto de 2026">
       <p>
         Este aviso regula el acceso y el uso del sitio web {site.domain}. Al navegar por él
         aceptas estas condiciones. Se publica en cumplimiento de la Ley 34/2002 de Servicios de la
@@ -32,6 +33,12 @@ export default function AvisoLegalPage() {
       <h2>Datos del titular</h2>
       <ul>
 
+        <li>
+          <strong>Titular:</strong> {site.legalEntity.holder}
+        </li>
+        <li>
+          <strong>NIT:</strong> {site.legalEntity.taxId}
+        </li>
         <li>
           <strong>Correo de contacto:</strong>{' '}
           <a href={`mailto:${site.email}`}>{site.email}</a>
@@ -91,8 +98,8 @@ export default function AvisoLegalPage() {
       <p>
         El tratamiento de los datos que dejas en el formulario se explica en la{' '}
         <a href="/privacidad/">política de privacidad</a>. El responsable de datos es{' '}
-        [NOMBRE FISCAL] y el correo de contacto para ejercer
-        tus derechos es <a href={`mailto:${site.email}`}>{site.email}</a>.
+        {site.legalEntity.holder} y el correo de contacto para ejercer tus derechos es{' '}
+        <a href={`mailto:${site.email}`}>{site.email}</a>.
       </p>
 
       <h2>Legislación aplicable</h2>

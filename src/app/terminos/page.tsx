@@ -17,11 +17,10 @@ import { absoluteUrl } from '@/lib/seo';
  * contrata exactamente, como se acuerda, quien es dueno de lo que se entrega y
  * que pasa si algo se tuerce.
  *
- * LOS BLOQUES MARCADOS CON .placeholder SON LOS UNICOS QUE FALTAN, y faltan a
- * proposito: son decisiones comerciales del titular (plazos de pago, plazos de
- * entrega, cancelaciones) que este proyecto no puede inventarse. Una condicion
- * de pago inventada es una obligacion contractual inventada. Rellenalos antes
- * de enlazar esta pagina desde ningun sitio comercial.
+ * Las condiciones de pago, facturacion y cancelacion ya las decidio el
+ * titular (no son una inferencia de este proyecto). Incluye tambien una
+ * seccion sobre el uso de la Plataforma de WhatsApp Business, necesaria para
+ * el App Review de Meta como Tech Provider de WhatsApp Business.
  */
 
 export const metadata: Metadata = {
@@ -91,21 +90,61 @@ export default function TerminosPage() {
         cliente no son imputables a {site.name} y desplazan los plazos acordados.
       </p>
 
-      <h2>Precio, pago y plazos</h2>
+      <h2>Precios y forma de pago</h2>
       <p>
-        Cada proyecto se presupuesta de forma individual, porque el trabajo depende de los sistemas
-        que ya tenga la empresa. El presupuesto aceptado por escrito es el precio del proyecto.
+        Cada proyecto se cotiza de forma individual tras la llamada de diagnóstico. La cotización
+        detalla el alcance, el plazo y el precio total, y tiene una validez de 30 días. Salvo pacto
+        distinto por escrito, el pago se estructura así:
       </p>
+      <ul>
+        <li>
+          <strong>30%</strong> al aceptar la cotización, como anticipo para iniciar el trabajo.
+        </li>
+        <li>
+          El <strong>70% restante</strong> contra entrega y aceptación.
+        </li>
+        <li>
+          Los <strong>servicios recurrentes</strong> (mantenimiento, alojamiento de instancias,
+          soporte) se facturan por mensualidades / anualidades anticipadas.
+        </li>
+        <li>
+          Los precios se expresan en <strong>COP (Pesos Colombianos)</strong> y no incluyen IVA
+          salvo indicación expresa.
+        </li>
+      </ul>
+
+      <h2>Facturación</h2>
       <p>
-        <span className="placeholder">Pendiente de rellenar</span> — forma de pago, calendario de
-        facturación, impuestos aplicables y plazo de entrega estándar.
+        Emitimos factura electrónica conforme a la normativa colombiana. El plazo de pago es de 7
+        días calendario desde la emisión. El retraso en el pago de una factura vencida faculta a{' '}
+        {site.name} a suspender la prestación del servicio previo aviso con 3 días de antelación,
+        sin que ello genere responsabilidad alguna por nuestra parte.
       </p>
 
       <h2>Cancelación</h2>
-      <p>
-        <span className="placeholder">Pendiente de rellenar</span> — condiciones de cancelación por
-        cada parte y tratamiento del trabajo ya ejecutado en el momento de la cancelación.
-      </p>
+      <ul>
+        <li>
+          <strong>Proyectos puntuales.</strong> El cliente puede cancelar en cualquier momento
+          comunicándolo por escrito. Se facturará el trabajo efectivamente realizado hasta la
+          fecha de cancelación. El anticipo no es reembolsable una vez iniciado el trabajo.
+        </li>
+        <li>
+          <strong>Servicios recurrentes.</strong> Cualquiera de las partes puede darlos por
+          terminados comunicándolo por escrito con 1 día de antelación. No hay permanencia mínima
+          ni penalización por terminación.
+        </li>
+        <li>
+          <strong>Qué pasa con tus datos al terminar.</strong> El cliente puede solicitar la
+          exportación completa de sus datos hasta 30 días después de la terminación. Transcurrido
+          ese plazo, los eliminamos definitivamente de nuestros servidores.
+        </li>
+        <li>
+          <strong>Terminación por nuestra parte.</strong> {site.name} puede terminar el servicio de
+          forma inmediata si el cliente lo usa para fines ilícitos, para enviar comunicaciones no
+          solicitadas o de forma que infrinja las políticas de las plataformas de terceros que
+          integramos, incluidas las de WhatsApp y Meta.
+        </li>
+      </ul>
 
       <h2>De quién es lo que se entrega</h2>
       <p>
@@ -151,6 +190,14 @@ export default function TerminosPage() {
         El cliente sigue siendo responsable del cumplimiento normativo de su propia actividad,
         incluida la protección de los datos personales que trate a través de los flujos
         implantados.
+      </p>
+
+      <h2>Uso de la Plataforma de WhatsApp Business</h2>
+      <p>
+        Los clientes que usen la integración con WhatsApp a través de {site.name} quedan sujetos,
+        además de a estas condiciones, a las Condiciones de WhatsApp Business y a las políticas de
+        mensajería y comercio de Meta. El cliente es responsable del contenido que envía y de
+        contar con el consentimiento de los destinatarios cuando la normativa lo exija.
       </p>
 
       <h2>Cambios en estas condiciones</h2>
