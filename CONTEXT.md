@@ -603,3 +603,12 @@ sesión"** (URLs de muestra N/D). Diagnóstico de esta sesión, con datos:
 - Acción pendiente del titular (fuera de este repo): proteger esos paneles (acceso por IP /
   Cloudflare Access / auth básica), `noindex` + `robots.txt` en los cuatro, valorar moverlos a
   un dominio que no sea el de la marca, y después pedir revisión en Search Console.
+
+**Acción tomada (2026-09-04, misma sesión):** se borró el registro `A evolution → 2.25.185.60`
+en la zona DNS de hPanel (verificado contra los nameservers autoritativos de Hostinger:
+`evolution.nodbu.com` ya no resuelve). Era el único de los cuatro con una interfaz de login
+con marca de WhatsApp (Evolution Manager) y el titular no lo usa. `chat`, `n8n` y `panel` se
+mantienen por decisión del titular: los webhooks de WhatsApp y de n8n necesitan ser públicos,
+así que no se pueden cerrar por IP ni con auth básica sin romperlos; la protección realista es
+2FA en los tres, registros cerrados (ya lo están) y, a medio plazo, moverlos a un dominio que
+no sea el de la marca.
