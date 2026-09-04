@@ -256,7 +256,7 @@ src/
 │   ├── integraciones/      IntegrationCard, IntegrationPair
 │   ├── recursos/           Mdx, ArticleCard, TableOfContents…
 │   ├── ui/                 Reveal, Button, Logo, Background…
-│   ├── logos/              las 21 marcas del carrusel
+│   ├── logos/              BrandMark + registro slug -> archivo de /public/logos
 │   ├── Analytics.tsx       Google Tag Manager
 │   └── LegalShell.tsx      envoltorio de las páginas legales
 ├── content/                TODO el texto editable
@@ -281,6 +281,7 @@ public/
 ├── .htaccess               HTTPS, www, gzip, caché, 404
 ├── brand/                  archivos del kit
 ├── fonts/                  los .woff2
+├── logos/                  los SVG oficiales a color de las 21 marcas (+ variantes .light)
 ├── og/                     una imagen OG por artículo (generadas, versionadas)
 ├── og.png                  1200×630, la genérica
 └── favicon.ico, icon-*.png, apple-touch-icon.png

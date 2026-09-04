@@ -21,7 +21,7 @@
 export type IntegrationTool = {
   /** Nombre visible, tal cual se escribe la marca. */
   name: string;
-  /** Clave en logoRegistry. Sin ella, icono generico. */
+  /** Clave en brandMarks (components/logos/index.ts). Sin ella, icono generico. */
   mark?: string;
 };
 

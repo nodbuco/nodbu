@@ -1,5 +1,6 @@
 import { Plus, Workflow } from 'lucide-react';
-import { logoRegistry } from '@/components/logos';
+import { BrandMark } from '@/components/logos/BrandMark';
+import { brandMarks } from '@/components/logos';
 import type { IntegrationTool } from '@/content/integraciones';
 import { cn } from '@/lib/cn';
 
@@ -8,12 +9,13 @@ import { cn } from '@/lib/cn';
  * medio. Es el elemento que identifica cada pagina del directorio y por eso
  * se dibuja siempre igual, en el hub y en la pagina.
  *
- * Los logos salen del mismo registro que el carrusel de la portada. Una
- * herramienta sin logo (como "Facturacion electronica", que es una categoria
- * y no una marca) cae a un icono generico: la pagina no se rompe por no tener
- * un dibujo.
+ * Los logotipos son los oficiales a color, del mismo registro que el
+ * carrusel de la portada (BrandMark). Una herramienta sin logotipo (como
+ * "Facturacion electronica", que es una categoria y no una marca) cae a un
+ * icono generico en paper: la pagina no se rompe por no tener un dibujo.
  *
- * Cero naranja: son marcas de terceros y el acento de la pagina va en el CTA.
+ * Cero naranja propio: los colores que se ven son de las marcas, y el acento
+ * de la pagina va en el CTA.
  */
 
 type IntegrationPairProps = {
@@ -24,7 +26,7 @@ type IntegrationPairProps = {
 };
 
 function Tool({ tool, size }: { tool: IntegrationTool; size: 'sm' | 'lg' }) {
-  const Mark = tool.mark ? logoRegistry[tool.mark] : undefined;
+  const hasMark = tool.mark !== undefined && tool.mark in brandMarks;
   const box = size === 'lg' ? 'h-16 w-16 sm:h-20 sm:w-20' : 'h-12 w-12';
   const glyph = size === 'lg' ? 'h-8 w-8 sm:h-10 sm:w-10' : 'h-6 w-6';
 
@@ -34,7 +36,11 @@ function Tool({ tool, size }: { tool: IntegrationTool; size: 'sm' | 'lg' }) {
       // El nombre va como texto al lado; el dibujo es decorativo.
       aria-hidden="true"
     >
-      {Mark ? <Mark className={glyph} /> : <Workflow className={glyph} strokeWidth={1.6} />}
+      {hasMark ? (
+        <BrandMark slug={tool.mark as string} size={size === 'lg' ? 'lg' : 'sm'} />
+      ) : (
+        <Workflow className={glyph} strokeWidth={1.6} />
+      )}
     </span>
   );
 }

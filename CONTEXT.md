@@ -576,3 +576,30 @@ entidad nombrada una vez, 3–5 FAQ, sin cifras sin fuente):
 - **Sitemap**: servicios (hub 0.9, páginas 0.8) e integraciones entran desde sus helpers, no
   a mano. 33 URLs. `llms.txt` con sección "Servicios". El workflow comprueba `out/servicios` y
   el recuento.
+
+### 2026-09-04 — Logotipos oficiales a color y aviso de seguridad en Search Console
+
+**Logotipos.** Los 21 dibujos monocromos del carrusel (`components/logos/*.tsx`) se retiran.
+En su lugar, los SVG oficiales a color en `public/logos/` (svgl, Simple Icons y tres recortados
+de los archivos oficiales en Wikimedia Commons: monday, Pipedrive, ActiveCampaign) pintados por
+`<BrandMark>` con `<img>`. Variantes `.light.svg` para Zendesk, Mailchimp y Typeform. Altura fija
+por tamaño, marcas anchas con caja algo mayor. Sin `opacity`, `fill-current` ni `text-*` sobre
+el dibujo. Lo usan el carrusel de la portada y `IntegrationPair` (hub y páginas de
+integraciones y servicios). Bajo el carrusel, una línea visible de "marcas de sus titulares".
+
+**Search Console marcó el dominio como "Páginas engañosas" + "phishing en inicios de
+sesión"** (URLs de muestra N/D). Diagnóstico de esta sesión, con datos:
+
+- El sitio en sí está limpio: sin scripts externos salvo GTM (`GTM-NLZZ2FFC`), sin
+  `type="password"`, formulario sin `action`, `.htaccess` solo con HTTPS/www.
+- Safe Browsing (Transparency Report) marca **`nodbu.com` (apex) con ingeniería social =
+  true**, última comprobación 2026-08-18; `www` y cada subdominio salen limpios por separado.
+- `crt.sh` revela cuatro subdominios que NO son esta web y tienen **login público**:
+  `chat.nodbu.com` (Chatwoot, con WhatsApp/Meta por todo el HTML), `evolution.nodbu.com`
+  (Evolution API + `/manager` público), `n8n.nodbu.com` (n8n) y `panel.nodbu.com`
+  (Easypanel). Es el patrón clásico del aviso "phishing en inicios de sesión": Chrome ve a
+  usuarios escribiendo contraseñas en páginas de login de un dominio joven, con marca de
+  WhatsApp alrededor.
+- Acción pendiente del titular (fuera de este repo): proteger esos paneles (acceso por IP /
+  Cloudflare Access / auth básica), `noindex` + `robots.txt` en los cuatro, valorar moverlos a
+  un dominio que no sea el de la marca, y después pedir revisión en Search Console.

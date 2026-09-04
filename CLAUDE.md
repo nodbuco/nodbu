@@ -432,8 +432,28 @@ completa para la columna "Secciones" del pie.
   veces y a 26px se lee como ruido.
 - **"Cómo funciona" es un eje vertical con línea de progreso de scroll,** no cuatro tarjetas en
   fila. Cuatro tarjetas horizontales se leen como opciones equivalentes y aquí el orden importa.
-- **Los logos del carrusel no llevan texto dentro del SVG.** El nombre va como texto HTML al
-  lado, para controlar la tipografía y evitar recortes.
+- **Los logos del carrusel son los oficiales de cada marca, a color, y viven en
+  `public/logos/`.** Los pinta `<BrandMark>` (`components/logos/BrandMark.tsx`) con `<img>`,
+  desde el registro `brandMarks` de `components/logos/index.ts`. Antes eran dibujos propios en
+  monocromo (paper al 55%); se cambió por decisión del titular en septiembre de 2026.
+  - **Sus colores no son tokens ni cuentan como acento.** Son marcas ajenas con su color
+    corporativo fijo, como los `node-*` del portátil. Por eso los SVG llevan hexadecimales y
+    están en `public/`, no en `src/`: la regla 2 protege lo que diseñamos nosotros.
+  - **Nada fuerza el color**: ni `fill-current`, ni `text-*`, ni `opacity`, ni `grayscale`
+    sobre el dibujo. Las marcas que no se ven bien sobre uno de los dos fondos traen variante
+    `.light.svg` (Zendesk, Mailchimp, Typeform) y `BrandMark` enseña la que toca con
+    `.theme-dark-only` / `.theme-light-only`, como `<Logo>`.
+  - **Tamaño uniforme**: altura fija por tamaño y ancho igual a la altura, salvo las marcas
+    anchas (`wide`) que reciben algo más. `object-contain` centra cada una en su caja.
+  - **El nombre sigue yendo como texto HTML al lado**, no dentro del SVG. Zapier, Salesforce y
+    Typeform llevan su nombre dentro porque ese ES su logotipo oficial; no es una excepción,
+    es la marca.
+  - De dónde sale cada archivo está en la cabecera del registro (svgl, Simple Icons, y tres
+    recortados de Wikimedia Commons). Para añadir una marca: SVG oficial a `public/logos/`,
+    entrada en `brandMarks`, y el slug en el contenido.
+  - Bajo el carrusel hay una línea visible que dice que son marcas de terceros mostradas por
+    compatibilidad. No la quites: con los logotipos a color, un revisor tiene que poder leerlo
+    ahí mismo, no solo en el aviso legal.
 - **`public_html/blog` se deja libre** por si algún día se instala WordPress ahí. El workflow
   de despliegue lo excluye.
 - **El hero es el isotipo, no un lienzo de flujo.** El lienzo (`FlowCanvas`) se retiró; la
