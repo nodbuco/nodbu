@@ -2,7 +2,8 @@ import type { MetadataRoute } from 'next';
 import { site } from '@/content/site';
 import { getAllArticles } from '@/lib/articles';
 import { getAllIntegrations } from '@/lib/integraciones';
-import { absoluteUrl, articleUrl, integrationUrl } from '@/lib/seo';
+import { getAllServices } from '@/lib/servicios';
+import { absoluteUrl, articleUrl, integrationUrl, serviceUrl } from '@/lib/seo';
 
 /**
  * Con output: 'export' esto se resuelve en el build y deja un sitemap.xml
@@ -40,6 +41,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...articles.map((article) => ({
       url: articleUrl(article.slug),
       lastModified: asDate(article.updatedAt),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
+    // Servicios: son la oferta, van justo por debajo de la portada. Como las
+    // integraciones, no llevan fecha propia: cambian cuando se recompila.
+    {
+      url: absoluteUrl(site.routes.services),
+      lastModified: buildDate,
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    ...getAllServices().map((service) => ({
+      url: serviceUrl(service.slug),
+      lastModified: buildDate,
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     })),

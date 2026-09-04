@@ -333,13 +333,37 @@ out/privacidad/index.html out/aviso-legal/index.html    out/terminos/index.html
 out/gracias/index.html    out/.htaccess                 out/sitemap.xml
 out/robots.txt            out/rss.xml                   out/llms.txt
 out/og.png                out/404.html
+out/servicios/index.html
 out/recursos/<slug>/index.html       (uno por artículo)
 out/integraciones/<slug>/index.html  (uno por par de herramientas)
+out/servicios/<slug>/index.html      (uno por servicio de la portada)
+out/og/<slug>.png                    (una por artículo, si se generó)
 ```
 
 El workflow de despliegue comprueba esta lista y además que el número de carpetas en
-`out/recursos` coincida con el de `.mdx` publicados, y el de `out/integraciones` con el de
-entradas de `src/content/integraciones.ts`. Si no cuadra, cancela la subida.
+`out/recursos` coincida con el de `.mdx` publicados, el de `out/integraciones` con el de
+entradas de `src/content/integraciones.ts` y el de `out/servicios` con el de
+`src/content/servicios.ts`. Si no cuadra, cancela la subida.
+
+## Imágenes OG: estáticas, generadas con la plantilla del kit
+
+`next/og` sigue descartado (regla 1: export estático). Lo que hay:
+
+- **`npm run og`** (`scripts/og.mjs`) rellena `05_plantillas/og-plantilla.html` del kit con el
+  título y la descripción de cada artículo y la captura con **Chrome headless** a 1200×630 —
+  es literalmente el método que documenta la propia plantilla. Incrusta fuentes y logotipo
+  como data-URI, así que no depende de rutas relativas. Sin Chrome, avisa y no hace nada.
+- Las PNG **se versionan** en `public/og/` (~70 KB cada una). El build las copia; el
+  despliegue no necesita Chrome.
+- **`lib/og.ts` decide cuál se usa**, en este orden: la declarada en el frontmatter → la que
+  exista en `public/og/<slug>.png` → la genérica `/og.png`. Vale para artículos,
+  integraciones y servicios; para los dos últimos no hay generador y caen a la genérica salvo
+  que alguien deje el PNG con el nombre correcto.
+- **El `openGraph` de una página sustituye al del layout entero**, no se mezcla: por eso cada
+  página con `openGraph` propio lleva `images` explícito (`ogImage(...)`). Sin esa línea, el
+  hub se comparte sin imagen. Ya pasó.
+- Los colores de la imagen son los del kit, no los tokens de la web: se ve fuera de los dos
+  temas, en LinkedIn o WhatsApp, y ahí manda el manual de marca.
 
 ## Las subpáginas crecen; la portada no
 
@@ -379,6 +403,21 @@ carrusel de logos; lo desarrollado vive aparte, para quien ya está comparando.
   genérico (es el caso de "Facturación electrónica", que es una categoría, no una marca).
 - JSON-LD: `WebPage` + `Service` (proveedor por `@id`) + `FAQPage` + migas. **No** `Product`:
   no hay precio de lista.
+
+### `/servicios/` — una página por tarjeta de la portada
+
+- **Mismo esqueleto que integraciones**: `content/servicios.ts` (contenido), `lib/servicios.ts`
+  (validación al cargar), hub + `[slug]` con `generateStaticParams` y `dynamicParams = false`.
+- **El título, el icono y la frase de resultado NO viven en `servicios.ts`**: salen de
+  `services.ts` (lo que pinta la portada) enganchados por `slug`. Así la tarjeta de la home y
+  su página no pueden separarse. Un slug sin tarjeta, o una tarjeta sin página, tumba el
+  build. Si añades un servicio a la portada, añade su página; si quitas uno, quita las dos.
+- Las tarjetas de la portada enlazan a su página con el truco de `ArticleCard` (el enlace
+  cubre la tarjeta con `::after`). Es la entrada principal; sin ella serían huérfanas.
+- Las integraciones y guías relacionadas se validan contra las reales; un slug inexistente
+  tumba el build.
+- JSON-LD y grafo del hub salen del mismo molde que integraciones (`directoryHubGraph` /
+  `directoryPageGraph` en `seo.ts`). Un tercer directorio se hace con esos dos.
 
 ### La barra tiene cinco entradas y el pie las tiene todas
 

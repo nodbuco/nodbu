@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
+import { resolveOg } from '@/lib/og';
 import {
   ARTICLE_CATEGORIES,
   type Article,
@@ -25,9 +26,6 @@ import {
  */
 
 const ARTICLES_DIR = path.join(process.cwd(), 'src', 'content', 'recursos');
-
-/** OG generica del sitio, la que ya usa la landing. */
-const DEFAULT_OG = '/og.png';
 
 /** Velocidad de lectura en español. Ver la nota de `readingMinutes`. */
 const WORDS_PER_MINUTE = 200;
@@ -277,6 +275,7 @@ function readingMinutes(body: string): number {
 
 function readArticleFile(file: string): Article {
   const errors = new FrontmatterErrors(file);
+  const slug = file.replace(/\.mdx$/, '');
   const raw = fs.readFileSync(path.join(ARTICLES_DIR, file), 'utf8');
   // `matter` es la cabecera cruda, sin los ---. Las fechas se validan desde ahi
   // y no desde `data`; el porque esta en rawFrontmatterValue.
@@ -302,15 +301,18 @@ function readArticleFile(file: string): Article {
   const draft = optionalBoolean(data.draft, 'draft', errors);
   const faq = optionalFaq(data.faq, errors);
 
-  let og = DEFAULT_OG;
+  // OG: la declarada en el frontmatter; si no, public/og/<slug>.png si
+  // existe (las genera `npm run og`); si no, la generica. Ver lib/og.ts.
+  let declaredOg: string | undefined;
   if (data.og !== undefined && data.og !== null) {
     const declared = requireString(data.og, 'og', errors);
     if (declared && !declared.startsWith('/')) {
       errors.add('og', `vale "${declared}" y tiene que empezar por /, por ejemplo /og/mi-articulo.jpg`);
     } else if (declared) {
-      og = declared;
+      declaredOg = declared;
     }
   }
+  const og = resolveOg(slug, declaredOg);
 
   if (updatedAt && publishedAt && updatedAt < publishedAt) {
     errors.add('updatedAt', `(${updatedAt}) es anterior a publishedAt (${publishedAt})`);
@@ -333,7 +335,7 @@ function readArticleFile(file: string): Article {
   errors.throwIfAny();
 
   return {
-    slug: file.replace(/\.mdx$/, ''),
+    slug,
     title,
     description,
     tldr,

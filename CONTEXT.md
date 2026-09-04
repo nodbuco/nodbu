@@ -130,6 +130,8 @@ todas con barra final (el sitio se compila con `trailingSlash: true`).
 | `/casos/` | Las seis reseñas contadas como caso: problema, flujo, resultado. Tarjetas con entrada 3D ligada al scroll | `src/app/casos/page.tsx` |
 | `/integraciones/` | Directorio de pares de herramientas (SEO programático) | `src/app/integraciones/page.tsx` |
 | `/integraciones/<slug>/` | Una integración. Una ruta por entrada de `content/integraciones.ts` | `src/app/integraciones/[slug]/page.tsx` |
+| `/servicios/` | Hub de servicios: los seis procesos y los tres a medida de la portada | `src/app/servicios/page.tsx` |
+| `/servicios/<slug>/` | Un servicio: problema, cómo se monta, entregables, para quién, FAQ | `src/app/servicios/[slug]/page.tsx` |
 | `/sobre-nodbu/` | Página de **entidad**: quién está detrás, NIT, domicilio, cobertura | `src/app/sobre-nodbu/page.tsx` |
 | `/privacidad/` | Política de privacidad | `src/app/privacidad/page.tsx` |
 | `/aviso-legal/` | Aviso legal (condiciones de uso **del sitio web**) | `src/app/aviso-legal/page.tsx` |
@@ -556,3 +558,21 @@ entidad nombrada una vez, 3–5 FAQ, sin cifras sin fuente):
   de reseñas que una empresa publica de sí misma y es terreno de acción manual.
 - Meter los casos o el directorio en la portada. Regla explícita: las subpáginas crecen, la
   portada no.
+
+### 2026-09-04 — OG por artículo, páginas de servicio y sitemap
+
+- **Imágenes OG por artículo.** `npm run og` (`scripts/og.mjs`, sin dependencias) rellena la
+  plantilla del kit (`05_plantillas/og-plantilla.html`) y la captura con Chrome headless, tal
+  como documenta la propia plantilla. Nueve PNG en `public/og/`, ~70 KB cada una,
+  versionadas. `lib/og.ts` resuelve en cascada: frontmatter → `public/og/<slug>.png` →
+  genérica. Vale también para integraciones y servicios. Se arregló de paso que las páginas
+  con `openGraph` propio (hubs, casos, sobre) no llevaban `og:image`: el `openGraph` de página
+  sustituye al del layout, no se mezcla.
+- **`/servicios/` y `/servicios/<slug>/`**, nueve páginas con el patrón de integraciones.
+  `servicios.ts` se engancha a `services.ts` por `slug` (título, icono y resultado salen de la
+  portada; el build falla si no cuadran). Las tarjetas de servicios de la home enlazan a su
+  página; el pie añade "Todos los servicios". Grafos JSON-LD generalizados en `seo.ts`
+  (`directoryHubGraph` / `directoryPageGraph`), que integraciones también usa ahora.
+- **Sitemap**: servicios (hub 0.9, páginas 0.8) e integraciones entran desde sus helpers, no
+  a mano. 33 URLs. `llms.txt` con sección "Servicios". El workflow comprueba `out/servicios` y
+  el recuento.

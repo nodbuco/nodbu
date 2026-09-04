@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "npx serve out",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "og": "node scripts/og.mjs"
   },
   "dependencies": {
     "framer-motion": "^11.3.19",

@@ -11,6 +11,7 @@ import { SectionGlow } from '@/components/ui/SectionGlow';
 import { casesPage } from '@/content/casos';
 import { breadcrumbRoot } from '@/content/recursos';
 import { site } from '@/content/site';
+import { GENERIC_OG, ogImage } from '@/lib/og';
 import { absoluteUrl, casesGraph } from '@/lib/seo';
 
 /**
@@ -34,6 +35,7 @@ export const metadata: Metadata = {
     url: absoluteUrl(site.routes.cases),
     title: casesPage.title,
     description: casesPage.lead,
+    images: ogImage(GENERIC_OG, casesPage.title),
   },
 };
 

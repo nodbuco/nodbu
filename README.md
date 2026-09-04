@@ -245,6 +245,7 @@ src/
 │   ├── recursos/           hub + [slug]/ (un artículo por .mdx)
 │   ├── casos/              las reseñas contadas como caso
 │   ├── integraciones/      hub + [slug]/ (un par de herramientas por entrada)
+│   ├── servicios/          hub + [slug]/ (un servicio de la portada por entrada)
 │   ├── sobre-nodbu/        página de entidad
 │   ├── privacidad/, aviso-legal/, terminos/
 │   ├── rss.xml/, llms.txt/ route handlers estáticos
@@ -261,20 +262,27 @@ src/
 ├── content/                TODO el texto editable
 │   ├── recursos/           los .mdx y su GUIA.md
 │   ├── casos.ts            casos (derivan de testimonials.ts)
-│   └── integraciones.ts    directorio de integraciones
+│   ├── integraciones.ts    directorio de integraciones
+│   └── servicios.ts        páginas de servicio (se enganchan a services.ts)
 └── lib/
     ├── articles.ts         carga y valida los .mdx
     ├── integraciones.ts    consulta y valida el directorio
+    ├── servicios.ts        consulta y valida las páginas de servicio
+    ├── og.ts               qué imagen OG usa cada página (propia o genérica)
     ├── seo.ts              URLs con barra final y JSON-LD
     ├── submit-lead.ts      envío a Web3Forms
     ├── analytics.ts        eventos del dataLayer
     └── cn.ts
 
+scripts/
+└── og.mjs                  `npm run og`: imágenes OG de los artículos con Chrome headless
+
 public/
 ├── .htaccess               HTTPS, www, gzip, caché, 404
 ├── brand/                  archivos del kit
 ├── fonts/                  los .woff2
-├── og.png                  1200×630
+├── og/                     una imagen OG por artículo (generadas, versionadas)
+├── og.png                  1200×630, la genérica
 └── favicon.ico, icon-*.png, apple-touch-icon.png
 ```
 

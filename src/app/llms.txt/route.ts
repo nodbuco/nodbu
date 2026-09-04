@@ -1,11 +1,13 @@
 import { casesPage } from '@/content/casos';
 import { integrationsPage } from '@/content/integraciones';
 import { resourcesPage } from '@/content/recursos';
+import { servicesPage } from '@/content/servicios';
 import { site } from '@/content/site';
 import { aboutPage, llmsSummary } from '@/content/sobre';
 import { getAllArticles } from '@/lib/articles';
 import { getAllIntegrations } from '@/lib/integraciones';
-import { absoluteUrl, articleUrl, integrationUrl } from '@/lib/seo';
+import { getAllServices } from '@/lib/servicios';
+import { absoluteUrl, articleUrl, integrationUrl, serviceUrl } from '@/lib/seo';
 
 /**
  * /llms.txt — resumen del sitio para modelos de lenguaje.
@@ -44,6 +46,10 @@ export function GET() {
     .map((item) => `- [${item.title}](${integrationUrl(item.slug)}): ${item.description}`)
     .join('\n');
 
+  const serviceLinks = getAllServices()
+    .map((item) => `- [${item.title}](${serviceUrl(item.slug)}): ${item.description}`)
+    .join('\n');
+
   const body = `# ${site.name}
 
 > ${llmsSummary.tagline}
@@ -63,6 +69,11 @@ ${pillars}
 - [${resourcesPage.title}](${absoluteUrl('/recursos')}): guías prácticas de automatización para dueños y gerentes de PyME.
 - [${casesPage.title}](${absoluteUrl(site.routes.cases)}): seis reseñas reales contadas como caso: el problema, el flujo implantado y lo que cambió. Sin cifras inventadas.
 - [${integrationsPage.title}](${absoluteUrl(site.routes.integrations)}): una página por cada par de herramientas que NODBU conecta, con el flujo paso a paso y sus requisitos.
+- [${servicesPage.title}](${absoluteUrl(site.routes.services)}): una página por servicio: qué problema resuelve, cómo se monta, qué se entrega y para quién tiene sentido.
+
+## Servicios
+
+${serviceLinks}
 
 ## Integraciones
 

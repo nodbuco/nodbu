@@ -17,6 +17,12 @@ import {
 
 export type Service = {
   icon: LucideIcon;
+  /**
+   * Es la URL de su pagina: /servicios/<slug>/. El contenido largo de esa
+   * pagina vive en servicios.ts y se engancha por este slug; si aqui cambia,
+   * alli tiene que cambiar tambien (el build avisa).
+   */
+  slug: string;
   title: string;
   /** Una sola frase. Resultado observable, no descripcion de la tecnologia. */
   result: string;
@@ -25,36 +31,42 @@ export type Service = {
 export const services: Service[] = [
   {
     icon: UserPlus,
+    slug: 'seguimiento-de-leads',
     title: 'Captación y seguimiento de leads',
     result:
       'Cada contacto que llega por la web, WhatsApp o una campaña entra solo en tu CRM, con su origen y su recordatorio de seguimiento puesto.',
   },
   {
     icon: FileText,
+    slug: 'cotizaciones-y-facturacion',
     title: 'Cotizaciones y facturación',
     result:
       'Dejas de copiar precios a mano: la cotización sale con tu formato, se envía firmada y se convierte en factura sin volver a escribir los datos.',
   },
   {
     icon: ClipboardCheck,
+    slug: 'onboarding-de-clientes',
     title: 'Onboarding de clientes',
     result:
       'Se acabó el "¿alguien mandó ya el contrato?": el alta dispara correos, carpetas, accesos y tareas en el orden correcto.',
   },
   {
     icon: BarChart3,
+    slug: 'reportes-automaticos',
     title: 'Reportes automáticos',
     result:
       'El lunes a las 8 tienes en el correo las ventas, los pendientes y lo que se atascó, sin que nadie arme la hoja de cálculo.',
   },
   {
     icon: MessageSquare,
+    slug: 'atencion-por-whatsapp',
     title: 'Atención por WhatsApp',
     result:
       'Las preguntas repetidas se responden solas y las que importan llegan al comercial correcto con el historial del cliente delante.',
   },
   {
     icon: RefreshCw,
+    slug: 'sincronizacion-entre-sistemas',
     title: 'Sincronización entre sistemas',
     result:
       'Cambias un dato en un sitio y aparece en el resto. Se terminan las tres versiones distintas del mismo cliente.',
@@ -84,16 +96,19 @@ export const customService = {
    */
   builds: [
     {
+      slug: 'chatbots-de-ventas',
       name: 'Chatbots de ventas',
       result:
         'Responden las preguntas de siempre a cualquier hora, preguntan lo que hay que preguntar y te pasan la conversación cuando hay intención real de comprar.',
     },
     {
+      slug: 'gestion-de-pedidos',
       name: 'Gestión de pedidos',
       result:
         'Un solo sitio donde ves qué se pidió, qué salió y qué falta, con el estado al día sin que nadie lo escriba a mano.',
     },
     {
+      slug: 'paginas-web',
       name: 'Páginas web',
       result:
         'Una web que carga rápido, se lee bien en el móvil y manda cada formulario a tu CRM, no a un correo que nadie abre.',

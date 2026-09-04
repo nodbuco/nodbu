@@ -1,9 +1,12 @@
 'use client';
 
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 import type { MouseEvent } from 'react';
 import { Reveal } from '@/components/ui/Reveal';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { customService, services } from '@/content/services';
+import { servicePath } from '@/lib/seo';
 
 /**
  * Rejilla de seis servicios, 3x2 en escritorio y 1 columna en movil.
@@ -24,6 +27,12 @@ import { customService, services } from '@/content/services';
  * Debajo del grid va el SEPTIMO servicio ("Software a la medida") a ancho
  * completo y con tratamiento distinto, porque no es un paquete mas de la lista.
  * Ver DESIGN.md §8.2.
+ *
+ * Cada tarjeta enlaza a su pagina en /servicios/<slug>/ con el mismo truco de
+ * ArticleCard (el enlace cubre la tarjeta con ::after). Es la entrada
+ * principal a esas paginas desde la portada; sin esto serian huerfanas salvo
+ * por el sitemap. La fila "Ver como se monta" va en paper-faint: no gasta
+ * naranja.
  */
 
 const CustomIcon = customService.icon;
@@ -64,10 +73,26 @@ export function Services() {
                       </span>
                     </div>
 
-                    <h3 className="mt-6 text-display-m">{service.title}</h3>
+                    <h3 className="mt-6 text-display-m">
+                      <Link
+                        href={servicePath(service.slug)}
+                        className="after:absolute after:inset-0 after:content-['']"
+                      >
+                        {service.title}
+                      </Link>
+                    </h3>
 
                     <p className="mt-5 border-t border-hairline pt-5 text-body-s text-paper-muted text-pretty">
                       {service.result}
+                    </p>
+
+                    <p className="mt-5 flex items-center gap-2 text-body-s font-medium text-paper-faint transition-colors group-hover:text-paper">
+                      Ver cómo se monta
+                      <ArrowRight
+                        size={16}
+                        aria-hidden="true"
+                        className="transition-transform duration-300 ease-soft group-hover:translate-x-1"
+                      />
                     </p>
                   </div>
                 </article>
@@ -109,7 +134,15 @@ export function Services() {
               <ul className="flex flex-col gap-5 border-t border-hairline pt-6 lg:col-span-6 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
                 {customService.builds.map((build) => (
                   <li key={build.name}>
-                    <p className="text-body-s font-medium text-paper">{build.name}</p>
+                    <p className="text-body-s font-medium text-paper">
+                      <Link
+                        href={servicePath(build.slug)}
+                        className="inline-flex items-center gap-1.5 underline-offset-4 transition-colors hover:underline"
+                      >
+                        {build.name}
+                        <ArrowRight size={14} aria-hidden="true" className="text-paper-faint" />
+                      </Link>
+                    </p>
                     <p className="mt-1 text-body-s text-paper-muted text-pretty">{build.result}</p>
                   </li>
                 ))}

@@ -45,11 +45,28 @@ faq:
 | `tags` | No | Lista corta en minúscula y con guiones |
 | `featured` | No | `true` lo pone como artículo grande del hub. Si hay varios, gana el más reciente |
 | `draft` | No | `true` lo deja fuera del sitio entero (hub, sitemap, RSS y `llms.txt`) |
-| `og` | No | Ruta de la imagen para compartir, empezando por `/`. Sin ella se usa la genérica |
+| `og` | No | Ruta de la imagen para compartir, empezando por `/`. **Sin ella, si existe `public/og/<slug>.png` se usa esa; si no, la genérica del sitio.** Ver abajo |
 | `faq` | No | De 3 a 5 preguntas. Alimentan el acordeón **y** el marcado que lee Google |
 
 **Cuando revises un artículo publicado, actualiza `updatedAt`.** La fecha se ve en la página y
 va en el marcado; si no la tocas, estás diciendo que el contenido no ha cambiado.
+
+### La imagen para compartir (OG)
+
+No hace falta hacerla a mano. Con el artículo escrito, ejecuta:
+
+```bash
+npm run og
+```
+
+Genera `public/og/<slug>.png` (1200×630, ~70 KB) a partir de la plantilla del kit de marca,
+con el título y la descripción del artículo, para cada artículo que todavía no tenga la suya.
+Hace falta tener Google Chrome instalado; si no está, el script lo dice y no pasa nada: el
+artículo se publica con la imagen genérica del sitio. Súbela junto con el `.mdx`.
+
+Si cambias el título, regenera solo esa: borra su PNG y vuelve a ejecutar el comando. Y si un
+artículo necesita una imagen especial (una captura, una ilustración), déjala en `public/og/`
+con otro nombre y apúntala en `og:`. La declarada manda sobre la generada.
 
 ---
 

@@ -7,6 +7,7 @@ import { Reveal } from '@/components/ui/Reveal';
 import { SectionGlow } from '@/components/ui/SectionGlow';
 import { breadcrumbRoot, resourcesPage } from '@/content/recursos';
 import { getAllArticles, getFeaturedArticle } from '@/lib/articles';
+import { GENERIC_OG, ogImage } from '@/lib/og';
 import { absoluteUrl, collectionGraph } from '@/lib/seo';
 
 /**
@@ -28,6 +29,8 @@ export const metadata: Metadata = {
     url: absoluteUrl('/recursos'),
     title: resourcesPage.title,
     description: resourcesPage.lead,
+    // El openGraph de pagina sustituye al del layout: sin esto, sin imagen.
+    images: ogImage(GENERIC_OG, resourcesPage.title),
   },
 };
 

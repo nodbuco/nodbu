@@ -1,6 +1,7 @@
 import { countryNames } from '@/content/countries';
 import type { Integration } from '@/content/integraciones';
 import { categoryLabels } from '@/content/recursos';
+import type { ServicePage } from '@/content/servicios';
 import { site } from '@/content/site';
 import type { ArticleMeta, Article } from '@/types/article';
 
@@ -69,6 +70,16 @@ export function integrationPath(slug: string): string {
 /** URL canonica de una integracion. */
 export function integrationUrl(slug: string): string {
   return absoluteUrl(integrationPath(slug));
+}
+
+/** Ruta relativa de una pagina de servicio. */
+export function servicePath(slug: string): string {
+  return `${site.routes.services}${slug}/`;
+}
+
+/** URL canonica de una pagina de servicio. */
+export function serviceUrl(slug: string): string {
+  return absoluteUrl(servicePath(slug));
 }
 
 export const ORGANIZATION_ID = `${site.url}/#organization`;
@@ -353,20 +364,29 @@ export function casesGraph({
   };
 }
 
-/** Grafo del hub de integraciones: coleccion + lista + migas. */
-export function integrationsHubGraph({
+/* ----------------------------------------------- directorios (generico) -- */
+
+/**
+ * Los dos directorios del sitio (integraciones y servicios) tienen la misma
+ * forma: un hub que lista paginas, y cada pagina describe un servicio con
+ * preguntas. Estos dos constructores son el molde; las funciones de abajo
+ * solo ponen los nombres.
+ */
+
+/** Hub de un directorio: coleccion + lista + migas. */
+function directoryHubGraph({
+  url,
   title,
   description,
-  integrations,
+  items,
   breadcrumbs,
 }: {
+  url: string;
   title: string;
   description: string;
-  integrations: Integration[];
+  items: { url: string; name: string }[];
   breadcrumbs: BreadcrumbEntry[];
 }) {
-  const url = absoluteUrl(site.routes.integrations);
-
   return {
     '@context': 'https://schema.org',
     '@graph': [
@@ -385,12 +405,12 @@ export function integrationsHubGraph({
       {
         '@type': 'ItemList',
         '@id': `${url}#itemlist`,
-        numberOfItems: integrations.length,
-        itemListElement: integrations.map((item, i) => ({
+        numberOfItems: items.length,
+        itemListElement: items.map((item, i) => ({
           '@type': 'ListItem',
           position: i + 1,
-          url: integrationUrl(item.slug),
-          name: item.title,
+          url: item.url,
+          name: item.name,
         })),
       },
       breadcrumbNode(url, breadcrumbs),
@@ -399,23 +419,35 @@ export function integrationsHubGraph({
 }
 
 /**
- * Grafo de una integracion: la pagina, el servicio que describe y sus
- * preguntas.
+ * Pagina de un directorio: WebPage + Service + migas y, si hay preguntas,
+ * FAQPage.
  *
- * Se marca como `Service` y no como `Product` porque es eso: un trabajo de
- * conexion que presta la organizacion, sin precio de lista. `provider` apunta
- * al nodo global por @id, como todo lo demas.
+ * Se marca como `Service` y no como `Product` porque es eso: un trabajo que
+ * presta la organizacion, sin precio de lista. `provider` apunta al nodo
+ * global por @id, como todo lo demas.
  */
-export function integrationGraph(integration: Integration, breadcrumbs: BreadcrumbEntry[]) {
-  const url = integrationUrl(integration.slug);
-
+function directoryPageGraph({
+  url,
+  headline,
+  description,
+  serviceName,
+  faq,
+  breadcrumbs,
+}: {
+  url: string;
+  headline: string;
+  description: string;
+  serviceName: string;
+  faq: { q: string; a: string }[];
+  breadcrumbs: BreadcrumbEntry[];
+}) {
   const graph: Record<string, unknown>[] = [
     {
       '@type': 'WebPage',
       '@id': `${url}#webpage`,
       url,
-      name: integration.headline,
-      description: integration.description,
+      name: headline,
+      description,
       inLanguage: 'es',
       isPartOf: ref(WEBSITE_ID),
       breadcrumb: ref(`${url}#breadcrumb`),
@@ -424,9 +456,9 @@ export function integrationGraph(integration: Integration, breadcrumbs: Breadcru
     {
       '@type': 'Service',
       '@id': `${url}#service`,
-      name: `Integración ${integration.title}`,
-      description: integration.description,
-      serviceType: `Integración ${integration.title}`,
+      name: serviceName,
+      description,
+      serviceType: serviceName,
       provider: ref(ORGANIZATION_ID),
       areaServed: countryNames.map((name) => ({ '@type': 'Country', name })),
       availableLanguage: [{ '@type': 'Language', name: 'Español' }],
@@ -435,11 +467,11 @@ export function integrationGraph(integration: Integration, breadcrumbs: Breadcru
     breadcrumbNode(url, breadcrumbs),
   ];
 
-  if (integration.faq.length > 0) {
+  if (faq.length > 0) {
     graph.push({
       '@type': 'FAQPage',
       '@id': `${url}#faq`,
-      mainEntity: integration.faq.map((item) => ({
+      mainEntity: faq.map((item) => ({
         '@type': 'Question',
         name: item.q,
         acceptedAnswer: { '@type': 'Answer', text: item.a },
@@ -448,4 +480,70 @@ export function integrationGraph(integration: Integration, breadcrumbs: Breadcru
   }
 
   return { '@context': 'https://schema.org', '@graph': graph };
+}
+
+/** Grafo del hub de integraciones. */
+export function integrationsHubGraph({
+  title,
+  description,
+  integrations,
+  breadcrumbs,
+}: {
+  title: string;
+  description: string;
+  integrations: Integration[];
+  breadcrumbs: BreadcrumbEntry[];
+}) {
+  return directoryHubGraph({
+    url: absoluteUrl(site.routes.integrations),
+    title,
+    description,
+    items: integrations.map((item) => ({ url: integrationUrl(item.slug), name: item.title })),
+    breadcrumbs,
+  });
+}
+
+/** Grafo de una integracion. */
+export function integrationGraph(integration: Integration, breadcrumbs: BreadcrumbEntry[]) {
+  return directoryPageGraph({
+    url: integrationUrl(integration.slug),
+    headline: integration.headline,
+    description: integration.description,
+    serviceName: `Integración ${integration.title}`,
+    faq: integration.faq,
+    breadcrumbs,
+  });
+}
+
+/** Grafo del hub de servicios. */
+export function servicesHubGraph({
+  title,
+  description,
+  services,
+  breadcrumbs,
+}: {
+  title: string;
+  description: string;
+  services: ServicePage[];
+  breadcrumbs: BreadcrumbEntry[];
+}) {
+  return directoryHubGraph({
+    url: absoluteUrl(site.routes.services),
+    title,
+    description,
+    items: services.map((item) => ({ url: serviceUrl(item.slug), name: item.title })),
+    breadcrumbs,
+  });
+}
+
+/** Grafo de una pagina de servicio. */
+export function serviceGraph(service: ServicePage, breadcrumbs: BreadcrumbEntry[]) {
+  return directoryPageGraph({
+    url: serviceUrl(service.slug),
+    headline: service.headline,
+    description: service.description,
+    serviceName: service.title,
+    faq: service.faq,
+    breadcrumbs,
+  });
 }

@@ -73,6 +73,8 @@ export const site = {
     cases: '/casos/',
     /** Directorio de integraciones. Cada par de herramientas cuelga de aqui. */
     integrations: '/integraciones/',
+    /** Una pagina por servicio de la portada. El hub lista los nueve. */
+    services: '/servicios/',
     about: '/sobre-nodbu/',
     privacy: '/privacidad/',
     /** Ancla del formulario de contacto, en la landing. */
@@ -113,6 +115,7 @@ export const site = {
    */
   footerNav: [
     { label: 'Servicios', href: '/#servicios' },
+    { label: 'Todos los servicios', href: '/servicios/' },
     { label: 'Cómo funciona', href: '/#como-funciona' },
     { label: 'Planes', href: '/#planes' },
     { label: 'Preguntas', href: '/#faq' },

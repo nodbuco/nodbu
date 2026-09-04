@@ -13,6 +13,7 @@ import { countryNames } from '@/content/countries';
 import { breadcrumbRoot } from '@/content/recursos';
 import { site } from '@/content/site';
 import { aboutPage } from '@/content/sobre';
+import { GENERIC_OG, ogImage } from '@/lib/og';
 import { aboutGraph, absoluteUrl } from '@/lib/seo';
 
 /**
@@ -40,6 +41,7 @@ export const metadata: Metadata = {
     url: absoluteUrl('/sobre-nodbu'),
     title: aboutPage.title,
     description,
+    images: ogImage(GENERIC_OG, aboutPage.title),
   },
 };
 

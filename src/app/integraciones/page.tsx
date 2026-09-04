@@ -11,6 +11,7 @@ import { integrationsPage } from '@/content/integraciones';
 import { breadcrumbRoot } from '@/content/recursos';
 import { site } from '@/content/site';
 import { getAllIntegrations } from '@/lib/integraciones';
+import { GENERIC_OG, ogImage } from '@/lib/og';
 import { absoluteUrl, integrationsHubGraph } from '@/lib/seo';
 
 /**
@@ -29,6 +30,9 @@ export const metadata: Metadata = {
     url: absoluteUrl(site.routes.integrations),
     title: integrationsPage.title,
     description: integrationsPage.lead,
+    // El openGraph de una pagina SUSTITUYE al del layout entero, no se mezcla
+    // con el: sin esta linea el hub se compartiria sin imagen.
+    images: ogImage(GENERIC_OG, integrationsPage.title),
   },
 };
 
