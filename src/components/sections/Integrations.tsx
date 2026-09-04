@@ -88,16 +88,13 @@ export function Integrations() {
 
       <div className="shell">
         <Reveal>
+          {/* La nota de marcas de terceros NO va aqui: el titular la retiro por
+              redundante (el titular de la seccion ya dice "herramientas que ya
+              usas", que es lo mismo). La clausula completa sigue en
+              /aviso-legal/, que es donde tiene efecto. */}
           <p className="mt-10 max-w-2xl text-body-s text-paper-muted">
             ¿No ves la tuya? Conectamos casi cualquier programa que permita enlazar con otros o
             exportar datos. Si el tuyo es a medida, lo revisamos en el diagnóstico.
-          </p>
-          {/* Visible y no solo en el aviso legal: con los logotipos a color, un
-              revisor (humano o automatico) tiene que poder leer aqui mismo que
-              son marcas ajenas mostradas por compatibilidad. */}
-          <p className="mt-4 max-w-2xl font-mono text-mono uppercase text-paper-faint">
-            Marcas de sus respectivos titulares, mostradas solo para indicar compatibilidad.
-            NODBU no está afiliada a ninguna de ellas.
           </p>
         </Reveal>
       </div>

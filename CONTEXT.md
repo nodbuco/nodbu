@@ -585,7 +585,8 @@ de los archivos oficiales en Wikimedia Commons: monday, Pipedrive, ActiveCampaig
 `<BrandMark>` con `<img>`. Variantes `.light.svg` para Zendesk, Mailchimp y Typeform. Altura fija
 por tamaño, marcas anchas con caja algo mayor. Sin `opacity`, `fill-current` ni `text-*` sobre
 el dibujo. Lo usan el carrusel de la portada y `IntegrationPair` (hub y páginas de
-integraciones y servicios). Bajo el carrusel, una línea visible de "marcas de sus titulares".
+integraciones y servicios). Se añadió bajo el carrusel una línea de "marcas de sus titulares" y
+el titular la retiró el mismo día por redundante; la cláusula sigue en `/aviso-legal/`.
 
 **Search Console marcó el dominio como "Páginas engañosas" + "phishing en inicios de
 sesión"** (URLs de muestra N/D). Diagnóstico de esta sesión, con datos:

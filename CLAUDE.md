@@ -451,9 +451,10 @@ completa para la columna "Secciones" del pie.
   - De dónde sale cada archivo está en la cabecera del registro (svgl, Simple Icons, y tres
     recortados de Wikimedia Commons). Para añadir una marca: SVG oficial a `public/logos/`,
     entrada en `brandMarks`, y el slug en el contenido.
-  - Bajo el carrusel hay una línea visible que dice que son marcas de terceros mostradas por
-    compatibilidad. No la quites: con los logotipos a color, un revisor tiene que poder leerlo
-    ahí mismo, no solo en el aviso legal.
+  - **La nota de "marcas de sus titulares" NO va bajo el carrusel.** Se puso ahí al pasar a
+    color y el titular la retiró por redundante: el h2 de la sección ya dice "herramientas que
+    ya usas". La cláusula completa vive en `/aviso-legal/`, que es donde tiene efecto. Si
+    alguna vez un revisor de marca la pide a la vista, ese es el sitio al que apuntar.
 - **`public_html/blog` se deja libre** por si algún día se instala WordPress ahí. El workflow
   de despliegue lo excluye.
 - **El hero es el isotipo, no un lienzo de flujo.** El lienzo (`FlowCanvas`) se retiró; la
