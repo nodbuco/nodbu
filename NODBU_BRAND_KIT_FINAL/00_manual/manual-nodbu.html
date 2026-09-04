@@ -1,0 +1,779 @@
+<title>Sistema NODBU</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+/* ── Tokens: paleta completa en :root (tema claro) ─────────────────────── */
+:root{
+  --ground:#FBFAF9; --panel:#FFFFFF; --sunk:#F4F2F1;
+  --ink:#090909; --ink-2:#585554; --ink-3:#8F8B8A;
+  --rule:#E8E4E3; --rule-2:#D4D1CF;
+  --accent:#FF5C00; --accent-txt:#B94102; --accent-soft:#FFF3EE;
+  --ok:#0F7C48; --bad:#C4123C; --warn:#8A6A00;
+  --shadow:0 1px 2px rgba(9,9,9,.05), 0 12px 32px rgba(9,9,9,.06);
+  --maxw:66ch;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#101010; --panel:#191716; --sunk:#0A0A0A;
+    --ink:#FBFAF9; --ink-2:#D4D1CF; --ink-3:#8F8B8A;
+    --rule:#2C2928; --rule-2:#403C3B;
+    --accent:#FF5C00; --accent-txt:#FE8456; --accent-soft:#241611;
+    --ok:#34C77B; --bad:#FF6B8A; --warn:#EAB308;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 12px 32px rgba(0,0,0,.45);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#101010; --panel:#191716; --sunk:#0A0A0A;
+  --ink:#FBFAF9; --ink-2:#D4D1CF; --ink-3:#8F8B8A;
+  --rule:#2C2928; --rule-2:#403C3B;
+  --accent:#FF5C00; --accent-txt:#FE8456; --accent-soft:#241611;
+  --ok:#34C77B; --bad:#FF6B8A; --warn:#EAB308;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 12px 32px rgba(0,0,0,.45);
+}
+
+/* ── Base ──────────────────────────────────────────────────────────────── */
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;
+  font-size:16px;line-height:1.62;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:Outfit,ui-sans-serif,system-ui,sans-serif;
+  text-wrap:balance;margin:0;letter-spacing:-.021em;line-height:1.14}
+p,li{color:var(--ink-2)}
+p{margin:0}
+a{color:var(--accent-txt)}
+code,.mono{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;
+  font-size:.855em;font-variant-numeric:tabular-nums}
+code{background:var(--sunk);border:1px solid var(--rule);border-radius:5px;
+  padding:.11em .38em;color:var(--ink)}
+:where(a,button,summary,[tabindex]):focus-visible{outline:2px solid var(--accent);
+  outline-offset:3px;border-radius:3px}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ── Rejilla general ───────────────────────────────────────────────────── */
+/* El estado base va SIEMPRE antes de la media query: si .rail{display:none}
+   se declara después, gana por orden de cascada y main cae en la columna del rail. */
+.rail{display:none;position:sticky;top:0;align-self:start;height:100vh;
+  padding-top:52px;overflow-y:auto}
+.shell{display:grid;grid-template-columns:1fr;max-width:1240px;margin:0 auto;padding:0 24px}
+@media (min-width:1120px){
+  .shell{grid-template-columns:190px minmax(0,1fr);gap:56px;padding:0 40px}
+  .rail{display:block}
+  .rail{grid-column:1}
+  main{grid-column:2}
+}
+.rail ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1px}
+.rail a{display:flex;gap:9px;text-decoration:none;color:var(--ink-3);font-size:13px;
+  padding:5px 8px;border-radius:6px;line-height:1.35}
+.rail a:hover{color:var(--ink);background:var(--sunk)}
+.rail a b{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:11.5px;
+  opacity:.72;padding-top:1px}
+.rail .lbl{font-family:Outfit,sans-serif;font-size:11px;font-weight:600;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-3);padding:0 8px 12px}
+
+main{min-width:0;padding-bottom:120px}
+section{padding-top:88px;scroll-margin-top:28px}
+.col{max-width:var(--maxw)}
+.stack{display:flex;flex-direction:column;gap:20px}
+.stack-s{display:flex;flex-direction:column;gap:11px}
+
+/* ── Encabezados de sección ────────────────────────────────────────────── */
+.head{display:flex;flex-direction:column;gap:14px;margin-bottom:34px;max-width:var(--maxw)}
+.num{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:var(--accent-txt);
+  letter-spacing:.05em}
+.head h2{font-size:clamp(27px,3.5vw,35px);font-weight:600}
+.head p{font-size:17.5px;color:var(--ink-2)}
+h3{font-size:19px;font-weight:600;margin-top:6px}
+h4{font-size:14.5px;font-weight:600;letter-spacing:.02em}
+
+/* ── Portada ───────────────────────────────────────────────────────────── */
+.cover{padding:76px 0 8px;border-bottom:1px solid var(--rule);display:flex;
+  flex-direction:column;gap:36px}
+.cover .mark{width:min(340px,62vw);color:var(--ink)}
+.cover .mark svg{display:block;width:100%;height:auto}
+.cover h1{font-size:clamp(38px,6.2vw,60px);font-weight:600;letter-spacing:-.032em}
+.cover .sub{font-size:19px;color:var(--ink-2);max-width:56ch}
+.meta{display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--rule);margin-top:14px}
+.meta div{flex:1 1 150px;padding:16px 20px 20px 0}
+.meta dt{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:5px}
+.meta dd{margin:0;font-size:14.5px;font-weight:500;color:var(--ink)}
+
+/* ── Muestrarios (fondos fijos: son especímenes) ───────────────────────── */
+.spec{border-radius:14px;padding:52px 40px;display:flex;align-items:center;
+  justify-content:center;gap:48px;flex-wrap:wrap;border:1px solid transparent}
+.spec.on-light{background:#FFFFFF;color:#090909;border-color:var(--rule-2)}
+.spec.on-dark{background:#090909;color:#FFFFFF}
+.spec.on-accent{background:#FF5C00;color:#FFFFFF}
+.spec svg{display:block;height:auto}
+.spec .w-lg{width:min(320px,72%)}
+.spec .w-md{width:min(220px,52%)}
+.spec .w-sm{width:96px}
+.cap{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-3);
+  margin-top:10px;letter-spacing:.01em}
+
+/* ── Tarjetas y rejillas ───────────────────────────────────────────────── */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(258px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(196px,1fr))}
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:12px;padding:22px}
+.card h4{margin-bottom:7px}
+.card p{font-size:14.5px;line-height:1.55}
+.usebox{display:flex;flex-direction:column;gap:0}
+.usebox .art{background:var(--sunk);border:1px solid var(--rule);border-bottom:0;
+  border-radius:12px 12px 0 0;padding:30px 22px;display:flex;align-items:center;
+  justify-content:center;min-height:118px;color:var(--ink)}
+.usebox .art.dk{background:#090909;color:#fff;border-color:#090909}
+.usebox .art svg{display:block;width:100%;height:auto;max-height:60px}
+.usebox .art .sq{width:56px}
+.usebox .txt{border:1px solid var(--rule);border-radius:0 0 12px 12px;padding:15px 18px 18px;
+  background:var(--panel)}
+.usebox .txt h4{margin-bottom:4px}
+.usebox .txt p{font-size:13.5px;line-height:1.5;color:var(--ink-2)}
+.usebox .file{display:block;margin-top:9px;font-family:'JetBrains Mono',monospace;
+  font-size:11.5px;color:var(--ink-3);word-break:break-all}
+
+/* ── Figuras técnicas ──────────────────────────────────────────────────── */
+figure{margin:0;display:flex;flex-direction:column;gap:12px}
+.fig{background:var(--panel);border:1px solid var(--rule);border-radius:12px;
+  padding:34px 30px;color:var(--ink);overflow-x:auto}
+.fig svg{display:block;width:100%;height:auto;min-width:280px}
+.fig.wide svg{min-width:520px}
+figcaption{font-size:13.5px;color:var(--ink-3);line-height:1.5}
+
+/* ── Tablas ────────────────────────────────────────────────────────────── */
+.tw{overflow-x:auto;border:1px solid var(--rule);border-radius:12px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
+th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{font-family:Outfit,sans-serif;font-size:11.5px;font-weight:600;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-3);background:var(--sunk);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td.f{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink);white-space:nowrap}
+td strong{color:var(--ink);font-weight:600}
+
+/* ── Color ─────────────────────────────────────────────────────────────── */
+.swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px}
+.sw{border:1px solid var(--rule);border-radius:11px;overflow:hidden;background:var(--panel)}
+.sw .chip{height:88px}
+.sw .info{padding:12px 14px 14px}
+.sw .nm{font-family:Outfit,sans-serif;font-size:13.5px;font-weight:600;color:var(--ink)}
+.sw .hx{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-3);margin-top:3px}
+.sw .role{font-size:12px;color:var(--ink-2);margin-top:7px;line-height:1.45}
+.ramp{display:flex;border-radius:10px;overflow:hidden;border:1px solid var(--rule)}
+.ramp span{flex:1;height:56px;display:flex;align-items:flex-end;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;padding-bottom:5px;letter-spacing:-.02em}
+.badge{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;
+  font-size:11px;font-weight:500;padding:2.5px 7px;border-radius:5px;white-space:nowrap}
+.b-ok{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok)}
+.b-bad{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}
+
+/* ── Usos incorrectos ──────────────────────────────────────────────────── */
+.dont{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:14px}
+.dont figure{gap:0}
+.dont .box{position:relative;background:var(--panel);border:1px solid var(--rule);
+  border-radius:11px 11px 0 0;border-bottom:0;height:104px;display:flex;align-items:center;
+  justify-content:center;padding:20px;overflow:hidden;color:var(--ink)}
+.dont .box svg{width:118px;height:auto;display:block}
+.dont .box::after{content:"";position:absolute;top:9px;right:9px;width:19px;height:19px;
+  border-radius:50%;background:var(--bad);
+  -webkit-mask:linear-gradient(45deg,transparent 44%,#000 44%,#000 56%,transparent 56%),
+    linear-gradient(-45deg,transparent 44%,#000 44%,#000 56%,transparent 56%);
+  -webkit-mask-composite:source-over;mask-composite:add;
+  mask:linear-gradient(45deg,transparent 44%,#000 44%,#000 56%,transparent 56%),
+    linear-gradient(-45deg,transparent 44%,#000 44%,#000 56%,transparent 56%)}
+.dont figcaption{border:1px solid var(--rule);border-radius:0 0 11px 11px;padding:11px 13px 13px;
+  background:var(--panel);font-size:12.5px;color:var(--ink-2);line-height:1.45}
+/* Los modificadores deben igualar la especificidad de `.dont .box` (0,2,0),
+   si no, el fondo y el color del contenedor los anulan. */
+.dont .box.d-stretch svg{transform:scaleX(1.42)}
+.dont .box.d-rot svg{transform:rotate(-9deg)}
+.dont .box.d-color{color:#2563EB}
+.dont .box.d-shadow svg{filter:drop-shadow(3px 5px 4px rgba(0,0,0,.55))}
+.dont .box.d-photo{background:repeating-linear-gradient(48deg,#5B6472,#5B6472 9px,#98A1AE 9px,#98A1AE 19px);
+  color:#fff;border-color:#5B6472}
+.dont .box.d-tight{padding:3px}
+.dont .box.d-tight svg{width:100%}
+
+/* ── Avisos ────────────────────────────────────────────────────────────── */
+.note{border-left:2.5px solid var(--accent);background:var(--accent-soft);
+  padding:15px 20px;border-radius:0 9px 9px 0;font-size:14.5px;color:var(--ink-2)}
+.note strong{color:var(--ink)}
+.rule-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0}
+.rule-list li{display:flex;gap:14px;padding:15px 0;border-bottom:1px solid var(--rule);
+  font-size:14.5px;line-height:1.55}
+.rule-list li:last-child{border-bottom:0}
+.rule-list .k{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;
+  color:var(--accent-txt);flex:0 0 26px;padding-top:3px}
+.rule-list strong{color:var(--ink);font-weight:600}
+
+/* ── Tipografía: muestrario ────────────────────────────────────────────── */
+.type-row{border-top:1px solid var(--rule);padding:22px 0;display:grid;gap:12px;
+  grid-template-columns:1fr}
+@media (min-width:720px){.type-row{grid-template-columns:126px 1fr;gap:26px}}
+.type-row .meta2 .n{font-family:Outfit,sans-serif;font-weight:600;font-size:14.5px;color:var(--ink)}
+.type-row .meta2 .u{font-size:12.5px;color:var(--ink-3);line-height:1.45;margin-top:3px}
+.smp-display{font-family:Outfit,sans-serif;font-weight:600;font-size:clamp(26px,4.2vw,38px);
+  letter-spacing:-.028em;line-height:1.08;color:var(--ink)}
+.smp-body{font-size:16px;line-height:1.62;color:var(--ink-2);max-width:58ch}
+.smp-mono{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--ink-2);
+  font-variant-numeric:tabular-nums}
+.scale-row{display:flex;align-items:baseline;gap:14px;padding:7px 0;border-bottom:1px solid var(--rule);
+  flex-wrap:wrap}
+.scale-row:last-child{border-bottom:0}
+.scale-row .t{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-3);
+  flex:0 0 96px}
+.scale-row .s{font-family:Outfit,sans-serif;font-weight:600;color:var(--ink);
+  letter-spacing:-.02em;line-height:1.1}
+
+/* ── Código ────────────────────────────────────────────────────────────── */
+pre{background:var(--sunk);border:1px solid var(--rule);border-radius:11px;padding:18px 20px;
+  overflow-x:auto;margin:0;font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  line-height:1.68;color:var(--ink)}
+pre .c{color:var(--ink-3)}
+pre .p{color:var(--accent-txt)}
+
+/* ── Pendientes ────────────────────────────────────────────────────────── */
+.q{border:1px solid var(--rule);border-left:2.5px solid var(--accent);border-radius:0 12px 12px 0;
+  background:var(--panel);padding:20px 22px}
+.q h4{margin-bottom:6px;font-size:16px}
+.q p{font-size:14.5px}
+.q .opt{margin-top:11px;display:flex;flex-direction:column;gap:6px}
+.q .opt span{font-size:13.5px;color:var(--ink-2);display:flex;gap:9px}
+.q .opt b{color:var(--accent-txt);font-family:'JetBrains Mono',monospace;font-size:11.5px;
+  flex:0 0 auto;padding-top:2px}
+
+footer{border-top:1px solid var(--rule);margin-top:96px;padding:34px 0 0;
+  display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-3)}
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Índice">
+  <div class="lbl">Sistema NODBU</div>
+  <ol>
+    <li><a href="#s1"><b>1</b><span>El nodo</span></a></li>
+    <li><a href="#s2"><b>2</b><span>Arquitectura</span></a></li>
+    <li><a href="#s3"><b>3</b><span>Construcción</span></a></li>
+    <li><a href="#s4"><b>4</b><span>Aire y tamaños</span></a></li>
+    <li><a href="#s5"><b>5</b><span>Usos incorrectos</span></a></li>
+    <li><a href="#s6"><b>6</b><span>Color</span></a></li>
+    <li><a href="#s7"><b>7</b><span>Tipografía</span></a></li>
+    <li><a href="#s8"><b>8</b><span>Casos de uso</span></a></li>
+    <li><a href="#s9"><b>9</b><span>Implementación</span></a></li>
+    <li><a href="#s10"><b>10</b><span>Pendiente de decidir</span></a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="cover">
+  <div class="mark"><svg viewBox="0 0 668.72 166.72" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NODBU"><g transform="translate(-120.000,-73.525)" fill-rule="nonzero">
+  <path d="M 120 226 L 153.398 226 L 153.398 168.377 C 153.398 162.647 153.309 151.217 152.834 137.769 C 159.989 150.772 166.58 162.083 170.558 168.466 L 206.569 226 L 241.155 226 L 241.155 87.775 L 207.756 87.775 L 207.756 147.684 C 207.756 153.919 207.964 165.141 208.231 176.095 C 202.858 166.15 197.009 155.759 193.744 150.564 L 154.527 87.775 L 120 87.775 L 120 226 Z" fill="currentColor"/>
+  <path d="M 392.956 136.448 A 67.972 67.972 0 1 1 348.570 92.061" fill="none" stroke="currentColor" stroke-width="30.780" stroke-linecap="round"/>
+  <circle cx="376.193" cy="108.824" r="15.010" fill="#FF5C00"/>
+  <path d="M 466.78 226 C 509.262 226 535.803 199.103 535.803 156.887 C 535.803 114.672 508.906 87.775 466.78 87.775 L 415.48 87.775 L 415.48 226 L 466.78 226 Z M 448.878 198.153 L 448.878 115.592 L 464.731 115.592 C 490.173 115.592 502.227 129.605 502.227 156.887 C 502.227 184.052 490.441 198.153 465.117 198.153 L 448.878 198.153 Z M 549.537 226 L 611.228 226 C 641.954 226 659.292 209.85 659.292 186.931 C 659.292 167.367 646.022 154.75 628.773 153.622 L 628.773 153.444 C 644.359 150.03 654.453 138.778 654.453 122.836 C 654.453 102.144 637.769 87.775 607.072 87.775 L 549.537 87.775 L 549.537 226 Z M 582.104 200.38 L 582.104 168.198 L 605.944 168.198 C 617.908 168.198 625.24 174.522 625.24 184.527 C 625.24 194.442 617.819 200.38 605.765 200.38 L 582.104 200.38 Z M 582.104 143.884 L 582.104 113.366 L 603.895 113.366 C 614.583 113.366 621.173 119.303 621.173 128.595 C 621.173 137.947 614.583 143.884 603.895 143.884 L 582.104 143.884 Z M 730.531 228.227 C 765.711 228.227 788.718 207.92 788.718 177.372 L 788.718 87.775 L 756.151 87.775 L 756.151 174.7 C 756.151 189.366 745.939 199.845 730.531 199.845 C 715.242 199.845 704.851 189.247 704.851 174.7 L 704.851 87.775 L 672.284 87.775 L 672.284 177.372 C 672.284 207.92 695.203 228.227 730.531 228.227 Z" fill="currentColor"/>
+</g></svg></div>
+  <div class="stack-s">
+    <h1>Sistema de identidad</h1>
+    <p class="sub">Manual de uso del logo, el color y la tipografía de NODBU. Todo lo que
+      aparece aquí sale de los ficheros del kit: si algo no está en el kit, no es la marca.</p>
+  </div>
+  <dl class="meta">
+    <div><dt>Versión</dt><dd>2.0</dd></div>
+    <div><dt>Base</dt><dd>Logo original, junio&nbsp;2026</dd></div>
+    <div><dt>Kit</dt><dd class="mono">NODBU_BRAND_KIT_v2/</dd></div>
+    <div><dt>Piezas</dt><dd>129 ficheros</dd></div>
+  </dl>
+</header>
+
+<!-- ══════════════════════════════════════════ 1 ═══ -->
+<section id="s1">
+  <div class="head">
+    <span class="num">§ 1</span>
+    <h2>El nodo</h2>
+    <p>La O de NODBU no es una letra: es un circuito abierto con una señal entrando.
+      Ese hueco es la marca. Todo lo demás se puede negociar; el hueco no.</p>
+  </div>
+  <div class="col stack">
+    <div class="spec on-dark"><div class="w-md"><svg viewBox="0 0 668.72 166.72" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NODBU"><g transform="translate(-120.000,-73.525)" fill-rule="nonzero">
+  <path d="M 120 226 L 153.398 226 L 153.398 168.377 C 153.398 162.647 153.309 151.217 152.834 137.769 C 159.989 150.772 166.58 162.083 170.558 168.466 L 206.569 226 L 241.155 226 L 241.155 87.775 L 207.756 87.775 L 207.756 147.684 C 207.756 153.919 207.964 165.141 208.231 176.095 C 202.858 166.15 197.009 155.759 193.744 150.564 L 154.527 87.775 L 120 87.775 L 120 226 Z" fill="currentColor"/>
+  <path d="M 392.956 136.448 A 67.972 67.972 0 1 1 348.570 92.061" fill="none" stroke="currentColor" stroke-width="30.780" stroke-linecap="round"/>
+  <circle cx="376.193" cy="108.824" r="15.010" fill="#FF5C00"/>
+  <path d="M 466.78 226 C 509.262 226 535.803 199.103 535.803 156.887 C 535.803 114.672 508.906 87.775 466.78 87.775 L 415.48 87.775 L 415.48 226 L 466.78 226 Z M 448.878 198.153 L 448.878 115.592 L 464.731 115.592 C 490.173 115.592 502.227 129.605 502.227 156.887 C 502.227 184.052 490.441 198.153 465.117 198.153 L 448.878 198.153 Z M 549.537 226 L 611.228 226 C 641.954 226 659.292 209.85 659.292 186.931 C 659.292 167.367 646.022 154.75 628.773 153.622 L 628.773 153.444 C 644.359 150.03 654.453 138.778 654.453 122.836 C 654.453 102.144 637.769 87.775 607.072 87.775 L 549.537 87.775 L 549.537 226 Z M 582.104 200.38 L 582.104 168.198 L 605.944 168.198 C 617.908 168.198 625.24 174.522 625.24 184.527 C 625.24 194.442 617.819 200.38 605.765 200.38 L 582.104 200.38 Z M 582.104 143.884 L 582.104 113.366 L 603.895 113.366 C 614.583 113.366 621.173 119.303 621.173 128.595 C 621.173 137.947 614.583 143.884 603.895 143.884 L 582.104 143.884 Z M 730.531 228.227 C 765.711 228.227 788.718 207.92 788.718 177.372 L 788.718 87.775 L 756.151 87.775 L 756.151 174.7 C 756.151 189.366 745.939 199.845 730.531 199.845 C 715.242 199.845 704.851 189.247 704.851 174.7 L 704.851 87.775 L 672.284 87.775 L 672.284 177.372 C 672.284 207.92 695.203 228.227 730.531 228.227 Z" fill="currentColor"/>
+</g></svg></div></div>
+    <p>El anillo interrumpido dice <strong style="color:var(--ink)">sistema abierto</strong> —
+      algo a lo que se conecta otra cosa. El punto naranja es esa otra cosa: el dato que entra,
+      el mensaje que llega, el trigger que dispara el flujo. Por eso el punto va siempre
+      <strong style="color:var(--ink)">fuera del anillo, en el hueco, a −45°</strong>. Movido a
+      cualquier otro sitio, el símbolo pasa de ser un nodo a ser una letra con una mancha.</p>
+    <div class="note"><strong>La regla de oro:</strong> el hueco y el punto son una sola idea.
+      Si al reducir el logo el punto se funde con el anillo, el logo ya no comunica nada —
+      y ese es exactamente el criterio que fija los tamaños mínimos del §4.</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ 2 ═══ -->
+<section id="s2">
+  <div class="head">
+    <span class="num">§ 2</span>
+    <h2>Arquitectura del sistema</h2>
+    <p>Cuatro piezas. Cada una tiene un trabajo y ninguna sustituye a otra.</p>
+  </div>
+  <div class="grid g2" style="margin-bottom:26px">
+    <div class="usebox"><div class="art"><svg viewBox="0 0 668.72 166.72" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NODBU"><g transform="translate(-120.000,-73.525)" fill-rule="nonzero">
+  <path d="M 120 226 L 153.398 226 L 153.398 168.377 C 153.398 162.647 153.309 151.217 152.834 137.769 C 159.989 150.772 166.58 162.083 170.558 168.466 L 206.569 226 L 241.155 226 L 241.155 87.775 L 207.756 87.775 L 207.756 147.684 C 207.756 153.919 207.964 165.141 208.231 176.095 C 202.858 166.15 197.009 155.759 193.744 150.564 L 154.527 87.775 L 120 87.775 L 120 226 Z" fill="currentColor"/>
+  <path d="M 392.956 136.448 A 67.972 67.972 0 1 1 348.570 92.061" fill="none" stroke="currentColor" stroke-width="30.780" stroke-linecap="round"/>
+  <circle cx="376.193" cy="108.824" r="15.010" fill="#FF5C00"/>
+  <path d="M 466.78 226 C 509.262 226 535.803 199.103 535.803 156.887 C 535.803 114.672 508.906 87.775 466.78 87.775 L 415.48 87.775 L 415.48 226 L 466.78 226 Z M 448.878 198.153 L 448.878 115.592 L 464.731 115.592 C 490.173 115.592 502.227 129.605 502.227 156.887 C 502.227 184.052 490.441 198.153 465.117 198.153 L 448.878 198.153 Z M 549.537 226 L 611.228 226 C 641.954 226 659.292 209.85 659.292 186.931 C 659.292 167.367 646.022 154.75 628.773 153.622 L 628.773 153.444 C 644.359 150.03 654.453 138.778 654.453 122.836 C 654.453 102.144 637.769 87.775 607.072 87.775 L 549.537 87.775 L 549.537 226 Z M 582.104 200.38 L 582.104 168.198 L 605.944 168.198 C 617.908 168.198 625.24 174.522 625.24 184.527 C 625.24 194.442 617.819 200.38 605.765 200.38 L 582.104 200.38 Z M 582.104 143.884 L 582.104 113.366 L 603.895 113.366 C 614.583 113.366 621.173 119.303 621.173 128.595 C 621.173 137.947 614.583 143.884 603.895 143.884 L 582.104 143.884 Z M 730.531 228.227 C 765.711 228.227 788.718 207.92 788.718 177.372 L 788.718 87.775 L 756.151 87.775 L 756.151 174.7 C 756.151 189.366 745.939 199.845 730.531 199.845 C 715.242 199.845 704.851 189.247 704.851 174.7 L 704.851 87.775 L 672.284 87.775 L 672.284 177.372 C 672.284 207.92 695.203 228.227 730.531 228.227 Z" fill="currentColor"/>
+</g></svg></div><div class="txt">
+      <h4>Logotipo · principal</h4>
+      <p>La versión por defecto. Web, documentos, propuestas, firma. Si dudas, usa esta.</p>
+      <span class="file">nodbu-logotipo.svg</span></div></div>
+    <div class="usebox"><div class="art dk"><span class="sq" style="display:block"><svg viewBox="0 0 245.28 245.28" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Símbolo NODBU"><g transform="translate(122.64,122.64)"><path d="M 98.481 -17.365 A 100.000 100.000 0 1 1 17.365 -98.481" fill="none" stroke="currentColor" stroke-width="45.283" stroke-linecap="round"/>
+  <circle cx="70.711" cy="-70.711" r="22.083" fill="#FF5C00"/></g></svg></span></div><div class="txt">
+      <h4>Símbolo · isotipo</h4>
+      <p>Sólo donde el nombre ya se sabe o no cabe: favicon, avatar, app, sello.</p>
+      <span class="file">nodbu-simbolo.svg</span></div></div>
+    <div class="usebox"><div class="art"><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 902.157 186.604" role="img" aria-label="NODBU — logotipo con símbolo">
+  <title>NODBU — logotipo con símbolo</title>
+  <g transform="translate(0,-63.586)">
+  <path d="M 168.223 143.677 A 76.077 76.077 0 1 1 106.512 81.966" fill="none" stroke="currentColor" stroke-width="34.450" stroke-linecap="round"/>
+  <circle cx="147.096" cy="103.093" r="16.800" fill="#FF5C00"/>
+  <g transform="translate(130.187,0.000)" fill-rule="nonzero">
+  <path d="M 120 226 L 153.398 226 L 153.398 168.377 C 153.398 162.647 153.309 151.217 152.834 137.769 C 159.989 150.772 166.58 162.083 170.558 168.466 L 206.569 226 L 241.155 226 L 241.155 87.775 L 207.756 87.775 L 207.756 147.684 C 207.756 153.919 207.964 165.141 208.231 176.095 C 202.858 166.15 197.009 155.759 193.744 150.564 L 154.527 87.775 L 120 87.775 L 120 226 Z" fill="currentColor"/>
+  <circle cx="319.943" cy="156.887" r="55.105" fill="none" stroke="currentColor" stroke-width="30.780"/>
+  <path d="M 466.78 226 C 509.262 226 535.803 199.103 535.803 156.887 C 535.803 114.672 508.906 87.775 466.78 87.775 L 415.48 87.775 L 415.48 226 L 466.78 226 Z M 448.878 198.153 L 448.878 115.592 L 464.731 115.592 C 490.173 115.592 502.227 129.605 502.227 156.887 C 502.227 184.052 490.441 198.153 465.117 198.153 L 448.878 198.153 Z M 549.537 226 L 611.228 226 C 641.954 226 659.292 209.85 659.292 186.931 C 659.292 167.367 646.022 154.75 628.773 153.622 L 628.773 153.444 C 644.359 150.03 654.453 138.778 654.453 122.836 C 654.453 102.144 637.769 87.775 607.072 87.775 L 549.537 87.775 L 549.537 226 Z M 582.104 200.38 L 582.104 168.198 L 605.944 168.198 C 617.908 168.198 625.24 174.522 625.24 184.527 C 625.24 194.442 617.819 200.38 605.765 200.38 L 582.104 200.38 Z M 582.104 143.884 L 582.104 113.366 L 603.895 113.366 C 614.583 113.366 621.173 119.303 621.173 128.595 C 621.173 137.947 614.583 143.884 603.895 143.884 L 582.104 143.884 Z M 730.531 228.227 C 765.711 228.227 788.718 207.92 788.718 177.372 L 788.718 87.775 L 756.151 87.775 L 756.151 174.7 C 756.151 189.366 745.939 199.845 730.531 199.845 C 715.242 199.845 704.851 189.247 704.851 174.7 L 704.851 87.775 L 672.284 87.775 L 672.284 177.372 C 672.284 207.92 695.203 228.227 730.531 228.227 Z" fill="currentColor" transform="translate(-16.749,0)"/>
+</g>
+</g>
+</svg>
+</div><div class="txt">
+      <h4>Lockup horizontal · secundario</h4>
+      <p>Cuando el símbolo debe aparecer junto al nombre: co-branding, ferias, cabeceras anchas.</p>
+      <span class="file">nodbu-lockup-horizontal.svg</span></div></div>
+    <div class="usebox"><div class="art"><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 651.969 470.810" role="img" aria-label="NODBU — logotipo vertical">
+  <title>NODBU — logotipo vertical</title>
+  <g>
+  <path d="M 430.319 111.535 A 105.944 105.944 0 1 1 344.382 25.597" fill="none" stroke="currentColor" stroke-width="47.975" stroke-linecap="round"/>
+  <circle cx="400.898" cy="55.018" r="23.395" fill="#FF5C00"/>
+  <g transform="translate(-120.000,242.583)" fill-rule="nonzero">
+  <path d="M 120 226 L 153.398 226 L 153.398 168.377 C 153.398 162.647 153.309 151.217 152.834 137.769 C 159.989 150.772 166.58 162.083 170.558 168.466 L 206.569 226 L 241.155 226 L 241.155 87.775 L 207.756 87.775 L 207.756 147.684 C 207.756 153.919 207.964 165.141 208.231 176.095 C 202.858 166.15 197.009 155.759 193.744 150.564 L 154.527 87.775 L 120 87.775 L 120 226 Z" fill="currentColor"/>
+  <circle cx="319.943" cy="156.887" r="55.105" fill="none" stroke="currentColor" stroke-width="30.780"/>
+  <path d="M 466.78 226 C 509.262 226 535.803 199.103 535.803 156.887 C 535.803 114.672 508.906 87.775 466.78 87.775 L 415.48 87.775 L 415.48 226 L 466.78 226 Z M 448.878 198.153 L 448.878 115.592 L 464.731 115.592 C 490.173 115.592 502.227 129.605 502.227 156.887 C 502.227 184.052 490.441 198.153 465.117 198.153 L 448.878 198.153 Z M 549.537 226 L 611.228 226 C 641.954 226 659.292 209.85 659.292 186.931 C 659.292 167.367 646.022 154.75 628.773 153.622 L 628.773 153.444 C 644.359 150.03 654.453 138.778 654.453 122.836 C 654.453 102.144 637.769 87.775 607.072 87.775 L 549.537 87.775 L 549.537 226 Z M 582.104 200.38 L 582.104 168.198 L 605.944 168.198 C 617.908 168.198 625.24 174.522 625.24 184.527 C 625.24 194.442 617.819 200.38 605.765 200.38 L 582.104 200.38 Z M 582.104 143.884 L 582.104 113.366 L 603.895 113.366 C 614.583 113.366 621.173 119.303 621.173 128.595 C 621.173 137.947 614.583 143.884 603.895 143.884 L 582.104 143.884 Z M 730.531 228.227 C 765.711 228.227 788.718 207.92 788.718 177.372 L 788.718 87.775 L 756.151 87.775 L 756.151 174.7 C 756.151 189.366 745.939 199.845 730.531 199.845 C 715.242 199.845 704.851 189.247 704.851 174.7 L 704.851 87.775 L 672.284 87.775 L 672.284 177.372 C 672.284 207.92 695.203 228.227 730.531 228.227 Z" fill="currentColor" transform="translate(-16.749,0)"/>
+</g>
+</g>
+</svg>
+</div><div class="txt">
+      <h4>Lockup vertical · secundario</h4>
+      <p>Formatos cuadrados o estrechos: portadas de presentación, merchandising, packaging.</p>
+      <span class="file">nodbu-lockup-vertical.svg</span></div></div>
+  </div>
+  <div class="col stack">
+    <h3>Por qué los lockups llevan una O distinta</h3>
+    <p>En el logotipo, el nodo <em>es</em> la O. Si pones el símbolo suelto al lado de ese
+      logotipo, el nodo aparece dos veces seguidas y el ojo lee un tartamudeo. Por eso los dos
+      lockups usan una <strong style="color:var(--ink)">O neutra</strong>: el nodo aparece
+      exactamente una vez, en el símbolo.</p>
+    <div class="note"><strong>No improvises esta combinación.</strong> Nunca coloques
+      <code>nodbu-simbolo.svg</code> al lado de <code>nodbu-logotipo.svg</code>. Para eso existen
+      los ficheros de lockup, que ya llevan la O corregida y las distancias resueltas.</div>
+    <h3 style="margin-top:14px">Variantes de color de cada pieza</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Sufijo</th><th>Qué es</th><th>Cuándo</th></tr></thead>
+      <tbody>
+        <tr><td class="f">(sin sufijo)</td><td>Negro + punto naranja</td><td>Fondos claros. Versión principal.</td></tr>
+        <tr><td class="f">-blanco</td><td>Blanco + punto naranja</td><td>Fondos oscuros y fotografía oscura.</td></tr>
+        <tr><td class="f">-mono-negro</td><td>Todo negro, sin naranja</td><td>Grabado, sello, serigrafía a una tinta, fax, documentos en B/N.</td></tr>
+        <tr><td class="f">-mono-blanco</td><td>Todo blanco, sin naranja</td><td>Estampación en oscuro a una tinta, troquel, textil.</td></tr>
+      </tbody></table></div>
+    <div class="spec on-light" style="margin-top:8px"><div class="w-md"><svg viewBox="0 0 668.72 166.72" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NODBU"><g transform="translate(-120.000,-73.525)" fill-rule="nonzero">
+  <path d="M 120 226 L 153.398 226 L 153.398 168.377 C 153.398 162.647 153.309 151.217 152.834 137.769 C 159.989 150.772 166.58 162.083 170.558 168.466 L 206.569 226 L 241.155 226 L 241.155 87.775 L 207.756 87.775 L 207.756 147.684 C 207.756 153.919 207.964 165.141 208.231 176.095 C 202.858 166.15 197.009 155.759 193.744 150.564 L 154.527 87.775 L 120 87.775 L 120 226 Z" fill="currentColor"/>
+  <path d="M 392.956 136.448 A 67.972 67.972 0 1 1 348.570 92.061" fill="none" stroke="currentColor" stroke-width="30.780" stroke-linecap="round"/>
+  <circle cx="376.193" cy="108.824" r="15.010" fill="currentColor"/>
+  <path d="M 466.78 226 C 509.262 226 535.803 199.103 535.803 156.887 C 535.803 114.672 508.906 87.775 466.78 87.775 L 415.48 87.775 L 415.48 226 L 466.78 226 Z M 448.878 198.153 L 448.878 115.592 L 464.731 115.592 C 490.173 115.592 502.227 129.605 502.227 156.887 C 502.227 184.052 490.441 198.153 465.117 198.153 L 448.878 198.153 Z M 549.537 226 L 611.228 226 C 641.954 226 659.292 209.85 659.292 186.931 C 659.292 167.367 646.022 154.75 628.773 153.622 L 628.773 153.444 C 644.359 150.03 654.453 138.778 654.453 122.836 C 654.453 102.144 637.769 87.775 607.072 87.775 L 549.537 87.775 L 549.537 226 Z M 582.104 200.38 L 582.104 168.198 L 605.944 168.198 C 617.908 168.198 625.24 174.522 625.24 184.527 C 625.24 194.442 617.819 200.38 605.765 200.38 L 582.104 200.38 Z M 582.104 143.884 L 582.104 113.366 L 603.895 113.366 C 614.583 113.366 621.173 119.303 621.173 128.595 C 621.173 137.947 614.583 143.884 603.895 143.884 L 582.104 143.884 Z M 730.531 228.227 C 765.711 228.227 788.718 207.92 788.718 177.372 L 788.718 87.775 L 756.151 87.775 L 756.151 174.7 C 756.151 189.366 745.939 199.845 730.531 199.845 C 715.242 199.845 704.851 189.247 704.851 174.7 L 704.851 87.775 L 672.284 87.775 L 672.284 177.372 C 672.284 207.92 695.203 228.227 730.531 228.227 Z" fill="currentColor"/>
+</g></svg></div></div>
+    <p class="cap">nodbu-logotipo-mono-negro.svg — el hueco sigue funcionando sin el naranja.
+      Esta es la prueba de que el logo está bien construido.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ 3 ═══ -->
+<section id="s3">
+  <div class="head">
+    <span class="num">§ 3</span>
+    <h2>Construcción</h2>
+    <p>El símbolo se define con tres proporciones y un ángulo. Con esto se puede redibujar
+      desde cero a cualquier escala.</p>
+  </div>
+  <figure style="margin-bottom:30px"><div class="fig"><svg viewBox="0 0 780 700" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Geometría del símbolo"><circle cx="330.0" cy="330.0" r="240.0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="6 7" opacity=".28"/><line x1="330.0" y1="32" x2="330.0" y2="628" stroke="currentColor" stroke-width="1.2" opacity=".2"/><line x1="32" y1="330.0" x2="628" y2="330.0" stroke="currentColor" stroke-width="1.2" opacity=".2"/><path d="M 566.354 288.324 A 240.000 240.000 0 1 1 371.676 93.646" fill="none" stroke="currentColor" stroke-width="108.680" stroke-linecap="round"/>
+  <circle cx="499.706" cy="160.294" r="52.998" fill="#FF5C00"/><line x1="330.0" y1="330.0" x2="567.6" y2="92.4" stroke="#FF5C00" stroke-width="2" stroke-dasharray="7 6" opacity=".8"/><text x="573.6" y="80.4" text-anchor="start" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="18" font-weight="700" fill="#FF5C00" opacity="1">−45°</text><line x1="330.0" y1="330.0" x2="90" y2="330.0" stroke="#FF5C00" stroke-width="2.5"/><text x="210.0" y="314.0" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="19" font-weight="700" fill="#FF5C00" opacity="1">R</text><line x1="35.7" y1="388" x2="144.3" y2="388" stroke="#FF5C00" stroke-width="2.5"/><text x="90.0" y="418.0" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="16" font-weight="700" fill="#FF5C00" opacity="1">0,4528 R</text><path d="M 617.6 279.3 A 292.0 292.0 0 0 0 380.7 42.4" fill="none" stroke="#FF5C00" stroke-width="2.5"/><text x="569.0" y="121.0" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="18" font-weight="700" fill="#FF5C00" opacity="1">70°</text><line x1="499.7" y1="160.3" x2="585.7" y2="90.3" stroke="currentColor" stroke-width="1.5" opacity=".45"/><text x="591.7" y="86.3" text-anchor="start" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="15" font-weight="500" fill="currentColor" opacity=".62">punto = 0,2208 R</text><text x="330.0" y="336.0" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="14" font-weight="500" fill="currentColor" opacity=".38">centro</text></svg></div>
+    <figcaption>Geometría del símbolo. Todo se deriva de <span class="mono">R</span>, el radio de
+      la línea media del anillo.</figcaption></figure>
+  <div class="col stack">
+    <div class="tw"><table>
+      <thead><tr><th>Parámetro</th><th>Valor</th><th>Por qué</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Grosor del anillo</strong></td><td class="f">0,4528 · R</td>
+            <td>Iguala ópticamente el asta de las letras (un 7,8&nbsp;% más fino, la compensación normal en curvas).</td></tr>
+        <tr><td><strong>Radio del punto</strong></td><td class="f">0,2208 · R</td>
+            <td>Suficiente presencia sin invadir los remates del anillo.</td></tr>
+        <tr><td><strong>Eje del punto</strong></td><td class="f">−45°</td>
+            <td>Diagonal superior derecha. Es dirección de entrada, no de salida.</td></tr>
+        <tr><td><strong>Apertura · símbolo</strong></td><td class="f">70°</td>
+            <td>Deja 9,4° de aire a cada lado del punto. Aguanta hasta 24&nbsp;px.</td></tr>
+        <tr><td><strong>Apertura · dentro de la palabra</strong></td><td class="f">55°</td>
+            <td>Más cerrada porque la O debe mantener el ritmo del resto de letras.</td></tr>
+        <tr><td><strong>Remates</strong></td><td class="f">redondos</td>
+            <td>Sin excepción. Un remate recto rompe la lectura de circuito.</td></tr>
+      </tbody></table></div>
+    <h3 style="margin-top:16px">Lo que se corrigió respecto a la versión anterior</h3>
+    <p>En el kit de junio, el símbolo suelto y la O del logotipo estaban dibujados con
+      proporciones distintas. No era perceptible por separado, pero al juntarlos el símbolo
+      pesaba menos que la letra que supuestamente era.</p>
+  </div>
+  <figure style="margin:22px 0 0"><div class="fig wide"><svg viewBox="0 0 900 350" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Comparación de proporciones v1 y v2"><path d="M 242.281 123.539 A 96.000 96.000 0 1 1 176.461 57.719" fill="none" stroke="currentColor" stroke-width="39.120" stroke-linecap="round"/>
+  <circle cx="217.882" cy="82.118" r="23.549" fill="#FF5C00"/><text x="150.0" y="292.0" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="700" fill="#E11D48" opacity="1">v1 — símbolo suelto</text><text x="150.0" y="316.0" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="12.5" font-weight="500" fill="currentColor" opacity=".55">grosor 0.4075 R</text><text x="150.0" y="334.0" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="12.5" font-weight="500" fill="currentColor" opacity=".55">punto 0.2453 R · 58°</text><path d="M 541.557 121.132 A 96.000 96.000 0 1 1 478.868 58.443" fill="none" stroke="currentColor" stroke-width="43.469" stroke-linecap="round"/>
+  <circle cx="517.882" cy="82.118" r="21.197" fill="#FF5C00"/><text x="450.0" y="292.0" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="700" fill="#E11D48" opacity="1">v1 — O del logotipo</text><text x="450.0" y="316.0" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="12.5" font-weight="500" fill="currentColor" opacity=".55">grosor 0.4528 R</text><text x="450.0" y="334.0" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="12.5" font-weight="500" fill="currentColor" opacity=".55">punto 0.2208 R · 55°</text><path d="M 844.542 133.330 A 96.000 96.000 0 1 1 766.670 55.458" fill="none" stroke="currentColor" stroke-width="43.469" stroke-linecap="round"/>
+  <circle cx="817.882" cy="82.118" r="21.197" fill="#FF5C00"/><text x="750.0" y="292.0" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="700" fill="#0F9D58" opacity="1">v2 — sistema único</text><text x="750.0" y="316.0" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="12.5" font-weight="500" fill="currentColor" opacity=".55">grosor 0.4528 R</text><text x="750.0" y="334.0" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="12.5" font-weight="500" fill="currentColor" opacity=".55">punto 0.2208 R · 70°</text></svg></div>
+    <figcaption>Los dos primeros son la misma forma con dos construcciones distintas: el grosor
+      difería un 11&nbsp;% y el punto un 10&nbsp;%. El tercero unifica el sistema y abre la
+      apertura a 70° para que el punto respire al reducir.</figcaption></figure>
+</section>
+
+<!-- ══════════════════════════════════════════ 4 ═══ -->
+<section id="s4">
+  <div class="head">
+    <span class="num">§ 4</span>
+    <h2>Aire y tamaños mínimos</h2>
+    <p>Dos reglas medidas, no estimadas. La segunda salió de rasterizar el logo a distintos
+      anchos y mirar dónde deja de leerse el punto.</p>
+  </div>
+  <figure style="margin-bottom:34px"><div class="fig"><svg viewBox="0 0 909 407" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Área de respeto: 1,5 X en los cuatro lados"><g transform="translate(120.17,120.17)"><g transform="translate(-120.000,-73.525)" fill-rule="nonzero">
+  <path d="M 120 226 L 153.398 226 L 153.398 168.377 C 153.398 162.647 153.309 151.217 152.834 137.769 C 159.989 150.772 166.58 162.083 170.558 168.466 L 206.569 226 L 241.155 226 L 241.155 87.775 L 207.756 87.775 L 207.756 147.684 C 207.756 153.919 207.964 165.141 208.231 176.095 C 202.858 166.15 197.009 155.759 193.744 150.564 L 154.527 87.775 L 120 87.775 L 120 226 Z" fill="currentColor"/>
+  <path d="M 392.956 136.448 A 67.972 67.972 0 1 1 348.570 92.061" fill="none" stroke="currentColor" stroke-width="30.780" stroke-linecap="round"/>
+  <circle cx="376.193" cy="108.824" r="15.010" fill="#FF5C00"/>
+  <path d="M 466.78 226 C 509.262 226 535.803 199.103 535.803 156.887 C 535.803 114.672 508.906 87.775 466.78 87.775 L 415.48 87.775 L 415.48 226 L 466.78 226 Z M 448.878 198.153 L 448.878 115.592 L 464.731 115.592 C 490.173 115.592 502.227 129.605 502.227 156.887 C 502.227 184.052 490.441 198.153 465.117 198.153 L 448.878 198.153 Z M 549.537 226 L 611.228 226 C 641.954 226 659.292 209.85 659.292 186.931 C 659.292 167.367 646.022 154.75 628.773 153.622 L 628.773 153.444 C 644.359 150.03 654.453 138.778 654.453 122.836 C 654.453 102.144 637.769 87.775 607.072 87.775 L 549.537 87.775 L 549.537 226 Z M 582.104 200.38 L 582.104 168.198 L 605.944 168.198 C 617.908 168.198 625.24 174.522 625.24 184.527 C 625.24 194.442 617.819 200.38 605.765 200.38 L 582.104 200.38 Z M 582.104 143.884 L 582.104 113.366 L 603.895 113.366 C 614.583 113.366 621.173 119.303 621.173 128.595 C 621.173 137.947 614.583 143.884 603.895 143.884 L 582.104 143.884 Z M 730.531 228.227 C 765.711 228.227 788.718 207.92 788.718 177.372 L 788.718 87.775 L 756.151 87.775 L 756.151 174.7 C 756.151 189.366 745.939 199.845 730.531 199.845 C 715.242 199.845 704.851 189.247 704.851 174.7 L 704.851 87.775 L 672.284 87.775 L 672.284 177.372 C 672.284 207.92 695.203 228.227 730.531 228.227 Z" fill="currentColor"/>
+</g><rect x="-46.2" y="-46.2" width="761.1" height="259.1" fill="none" stroke="#FF5C00" stroke-width="3" stroke-dasharray="14 11" opacity=".85"/><rect x="-46.2" y="-46.2" width="46.2" height="46.2" fill="#FF5C00" opacity=".13"/><rect x="668.7" y="-46.2" width="46.2" height="46.2" fill="#FF5C00" opacity=".13"/><rect x="-46.2" y="166.7" width="46.2" height="46.2" fill="#FF5C00" opacity=".13"/><rect x="668.7" y="166.7" width="46.2" height="46.2" fill="#FF5C00" opacity=".13"/><line x1="-46.2" y1="-72.2" x2="0" y2="-72.2" stroke="#FF5C00" stroke-width="2.5"/><line x1="-46.2" y1="-80.2" x2="-46.2" y2="-64.2" stroke="#FF5C00" stroke-width="2.5"/><line x1="0.0" y1="-80.2" x2="0.0" y2="-64.2" stroke="#FF5C00" stroke-width="2.5"/><text x="-23.1" y="-86.2" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="19" font-weight="700" fill="#FF5C00" opacity="1">1,5 X</text></g><rect x="120.17" y="354.06399999999996" width="30.8" height="26" fill="#FF5C00"/><text x="164.9" y="373.1" text-anchor="start" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="17" font-weight="500" fill="currentColor" opacity=".72">X = grosor del anillo del nodo</text></svg></div>
+    <figcaption><strong style="color:var(--ink)">Área de respeto.</strong> Deja como mínimo
+      1,5&nbsp;X libres por los cuatro lados, donde X es el grosor del anillo del nodo. Nada entra
+      ahí: ni texto, ni otro logo, ni el borde de la caja. La unidad es relativa, así que la regla
+      vale igual en una firma de correo que en una lona.</figcaption></figure>
+  <figure><div class="fig wide"><svg viewBox="0 0 632 186" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tamaños mínimos del logotipo"><g transform="translate(56,80.0) scale(0.14356)"><g transform="translate(-120.000,-73.525)" fill-rule="nonzero">
+  <path d="M 120 226 L 153.398 226 L 153.398 168.377 C 153.398 162.647 153.309 151.217 152.834 137.769 C 159.989 150.772 166.58 162.083 170.558 168.466 L 206.569 226 L 241.155 226 L 241.155 87.775 L 207.756 87.775 L 207.756 147.684 C 207.756 153.919 207.964 165.141 208.231 176.095 C 202.858 166.15 197.009 155.759 193.744 150.564 L 154.527 87.775 L 120 87.775 L 120 226 Z" fill="currentColor"/>
+  <path d="M 392.956 136.448 A 67.972 67.972 0 1 1 348.570 92.061" fill="none" stroke="currentColor" stroke-width="30.780" stroke-linecap="round"/>
+  <circle cx="376.193" cy="108.824" r="15.010" fill="#FF5C00"/>
+  <path d="M 466.78 226 C 509.262 226 535.803 199.103 535.803 156.887 C 535.803 114.672 508.906 87.775 466.78 87.775 L 415.48 87.775 L 415.48 226 L 466.78 226 Z M 448.878 198.153 L 448.878 115.592 L 464.731 115.592 C 490.173 115.592 502.227 129.605 502.227 156.887 C 502.227 184.052 490.441 198.153 465.117 198.153 L 448.878 198.153 Z M 549.537 226 L 611.228 226 C 641.954 226 659.292 209.85 659.292 186.931 C 659.292 167.367 646.022 154.75 628.773 153.622 L 628.773 153.444 C 644.359 150.03 654.453 138.778 654.453 122.836 C 654.453 102.144 637.769 87.775 607.072 87.775 L 549.537 87.775 L 549.537 226 Z M 582.104 200.38 L 582.104 168.198 L 605.944 168.198 C 617.908 168.198 625.24 174.522 625.24 184.527 C 625.24 194.442 617.819 200.38 605.765 200.38 L 582.104 200.38 Z M 582.104 143.884 L 582.104 113.366 L 603.895 113.366 C 614.583 113.366 621.173 119.303 621.173 128.595 C 621.173 137.947 614.583 143.884 603.895 143.884 L 582.104 143.884 Z M 730.531 228.227 C 765.711 228.227 788.718 207.92 788.718 177.372 L 788.718 87.775 L 756.151 87.775 L 756.151 174.7 C 756.151 189.366 745.939 199.845 730.531 199.845 C 715.242 199.845 704.851 189.247 704.851 174.7 L 704.851 87.775 L 672.284 87.775 L 672.284 177.372 C 672.284 207.92 695.203 228.227 730.531 228.227 Z" fill="currentColor"/>
+</g></g><line x1="56" y1="150" x2="152" y2="150" stroke="#E11D48" stroke-width="2.5"/><line x1="56" y1="145" x2="56" y2="155" stroke="#E11D48" stroke-width="2.5"/><line x1="152" y1="145" x2="152" y2="155" stroke="#E11D48" stroke-width="2.5"/><text x="104.0" y="172.0" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="14" font-weight="700" fill="#E11D48" opacity="1">96 px</text><text x="104.0" y="20.0" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="500" fill="currentColor" opacity=".55">el punto se funde</text><g transform="translate(212,76.0) scale(0.19141)"><g transform="translate(-120.000,-73.525)" fill-rule="nonzero">
+  <path d="M 120 226 L 153.398 226 L 153.398 168.377 C 153.398 162.647 153.309 151.217 152.834 137.769 C 159.989 150.772 166.58 162.083 170.558 168.466 L 206.569 226 L 241.155 226 L 241.155 87.775 L 207.756 87.775 L 207.756 147.684 C 207.756 153.919 207.964 165.141 208.231 176.095 C 202.858 166.15 197.009 155.759 193.744 150.564 L 154.527 87.775 L 120 87.775 L 120 226 Z" fill="currentColor"/>
+  <path d="M 392.956 136.448 A 67.972 67.972 0 1 1 348.570 92.061" fill="none" stroke="currentColor" stroke-width="30.780" stroke-linecap="round"/>
+  <circle cx="376.193" cy="108.824" r="15.010" fill="#FF5C00"/>
+  <path d="M 466.78 226 C 509.262 226 535.803 199.103 535.803 156.887 C 535.803 114.672 508.906 87.775 466.78 87.775 L 415.48 87.775 L 415.48 226 L 466.78 226 Z M 448.878 198.153 L 448.878 115.592 L 464.731 115.592 C 490.173 115.592 502.227 129.605 502.227 156.887 C 502.227 184.052 490.441 198.153 465.117 198.153 L 448.878 198.153 Z M 549.537 226 L 611.228 226 C 641.954 226 659.292 209.85 659.292 186.931 C 659.292 167.367 646.022 154.75 628.773 153.622 L 628.773 153.444 C 644.359 150.03 654.453 138.778 654.453 122.836 C 654.453 102.144 637.769 87.775 607.072 87.775 L 549.537 87.775 L 549.537 226 Z M 582.104 200.38 L 582.104 168.198 L 605.944 168.198 C 617.908 168.198 625.24 174.522 625.24 184.527 C 625.24 194.442 617.819 200.38 605.765 200.38 L 582.104 200.38 Z M 582.104 143.884 L 582.104 113.366 L 603.895 113.366 C 614.583 113.366 621.173 119.303 621.173 128.595 C 621.173 137.947 614.583 143.884 603.895 143.884 L 582.104 143.884 Z M 730.531 228.227 C 765.711 228.227 788.718 207.92 788.718 177.372 L 788.718 87.775 L 756.151 87.775 L 756.151 174.7 C 756.151 189.366 745.939 199.845 730.531 199.845 C 715.242 199.845 704.851 189.247 704.851 174.7 L 704.851 87.775 L 672.284 87.775 L 672.284 177.372 C 672.284 207.92 695.203 228.227 730.531 228.227 Z" fill="currentColor"/>
+</g></g><line x1="212" y1="150" x2="340" y2="150" stroke="#B94102" stroke-width="2.5"/><line x1="212" y1="145" x2="212" y2="155" stroke="#B94102" stroke-width="2.5"/><line x1="340" y1="145" x2="340" y2="155" stroke="#B94102" stroke-width="2.5"/><text x="276.0" y="172.0" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="14" font-weight="700" fill="#B94102" opacity="1">128 px</text><text x="276.0" y="20.0" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="500" fill="currentColor" opacity=".55">mínimo absoluto</text><g transform="translate(400,70.1) scale(0.26319)"><g transform="translate(-120.000,-73.525)" fill-rule="nonzero">
+  <path d="M 120 226 L 153.398 226 L 153.398 168.377 C 153.398 162.647 153.309 151.217 152.834 137.769 C 159.989 150.772 166.58 162.083 170.558 168.466 L 206.569 226 L 241.155 226 L 241.155 87.775 L 207.756 87.775 L 207.756 147.684 C 207.756 153.919 207.964 165.141 208.231 176.095 C 202.858 166.15 197.009 155.759 193.744 150.564 L 154.527 87.775 L 120 87.775 L 120 226 Z" fill="currentColor"/>
+  <path d="M 392.956 136.448 A 67.972 67.972 0 1 1 348.570 92.061" fill="none" stroke="currentColor" stroke-width="30.780" stroke-linecap="round"/>
+  <circle cx="376.193" cy="108.824" r="15.010" fill="#FF5C00"/>
+  <path d="M 466.78 226 C 509.262 226 535.803 199.103 535.803 156.887 C 535.803 114.672 508.906 87.775 466.78 87.775 L 415.48 87.775 L 415.48 226 L 466.78 226 Z M 448.878 198.153 L 448.878 115.592 L 464.731 115.592 C 490.173 115.592 502.227 129.605 502.227 156.887 C 502.227 184.052 490.441 198.153 465.117 198.153 L 448.878 198.153 Z M 549.537 226 L 611.228 226 C 641.954 226 659.292 209.85 659.292 186.931 C 659.292 167.367 646.022 154.75 628.773 153.622 L 628.773 153.444 C 644.359 150.03 654.453 138.778 654.453 122.836 C 654.453 102.144 637.769 87.775 607.072 87.775 L 549.537 87.775 L 549.537 226 Z M 582.104 200.38 L 582.104 168.198 L 605.944 168.198 C 617.908 168.198 625.24 174.522 625.24 184.527 C 625.24 194.442 617.819 200.38 605.765 200.38 L 582.104 200.38 Z M 582.104 143.884 L 582.104 113.366 L 603.895 113.366 C 614.583 113.366 621.173 119.303 621.173 128.595 C 621.173 137.947 614.583 143.884 603.895 143.884 L 582.104 143.884 Z M 730.531 228.227 C 765.711 228.227 788.718 207.92 788.718 177.372 L 788.718 87.775 L 756.151 87.775 L 756.151 174.7 C 756.151 189.366 745.939 199.845 730.531 199.845 C 715.242 199.845 704.851 189.247 704.851 174.7 L 704.851 87.775 L 672.284 87.775 L 672.284 177.372 C 672.284 207.92 695.203 228.227 730.531 228.227 Z" fill="currentColor"/>
+</g></g><line x1="400" y1="150" x2="576" y2="150" stroke="#0F9D58" stroke-width="2.5"/><line x1="400" y1="145" x2="400" y2="155" stroke="#0F9D58" stroke-width="2.5"/><line x1="576" y1="145" x2="576" y2="155" stroke="#0F9D58" stroke-width="2.5"/><text x="488.0" y="172.0" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="14" font-weight="700" fill="#0F9D58" opacity="1">176 px</text><text x="488.0" y="20.0" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="500" fill="currentColor" opacity=".55">recomendado</text></svg></div>
+    <figcaption><strong style="color:var(--ink)">Tamaño mínimo del logotipo: 128&nbsp;px de
+      ancho</strong> (recomendado 160&nbsp;px o más). A 96&nbsp;px el punto naranja ya toca el
+      anillo y la N se pega a la O. En impresión: 25&nbsp;mm de ancho.</figcaption></figure>
+  <div class="col stack" style="margin-top:30px">
+    <h3>Símbolo</h3>
+    <div class="grid g3">
+      <div class="usebox"><div class="art dk"><span class="sq"><svg viewBox="0 0 245.28 245.28" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Símbolo NODBU"><g transform="translate(122.64,122.64)"><path d="M 98.481 -17.365 A 100.000 100.000 0 1 1 17.365 -98.481" fill="none" stroke="currentColor" stroke-width="45.283" stroke-linecap="round"/>
+  <circle cx="70.711" cy="-70.711" r="22.083" fill="#FF5C00"/></g></svg></span></div>
+        <div class="txt"><h4>Estándar · ≥ 24 px</h4><p>Apertura de 70°. Para todo uso normal.</p>
+        <span class="file">nodbu-simbolo.svg</span></div></div>
+      <div class="usebox"><div class="art dk"><span class="sq"><svg viewBox="0 0 249.81 249.81" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Símbolo NODBU"><g transform="translate(124.91,124.91)"><path d="M 99.985 -1.745 A 100.000 100.000 0 1 1 1.745 -99.985" fill="none" stroke="currentColor" stroke-width="49.811" stroke-linecap="round"/>
+  <circle cx="70.711" cy="-70.711" r="32.000" fill="#FF5C00"/></g></svg></span></div>
+        <div class="txt"><h4>Micro · 16–24 px</h4><p>Apertura de 88°, punto un 45&nbsp;% mayor y
+          trazo un 10&nbsp;% más grueso: compensa lo que se pierde al rasterizar.</p>
+        <span class="file">nodbu-simbolo-micro.svg</span></div></div>
+    </div>
+    <div class="note"><strong>Por debajo de 128&nbsp;px de ancho no uses el logotipo.</strong>
+      Usa el símbolo. Un logotipo ilegible daña más la marca que la ausencia de logotipo.</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ 5 ═══ -->
+<section id="s5">
+  <div class="head">
+    <span class="num">§ 5</span>
+    <h2>Usos incorrectos</h2>
+    <p>Todo lo de abajo destruye algo concreto: la proporción, el contraste o la idea del nodo.</p>
+  </div>
+  <div class="dont">
+    <figure><div class="box d-stretch"><svg viewBox="0 0 668.72 166.72" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NODBU"><g transform="translate(-120.000,-73.525)" fill-rule="nonzero">
+  <path d="M 120 226 L 153.398 226 L 153.398 168.377 C 153.398 162.647 153.309 151.217 152.834 137.769 C 159.989 150.772 166.58 162.083 170.558 168.466 L 206.569 226 L 241.155 226 L 241.155 87.775 L 207.756 87.775 L 207.756 147.684 C 207.756 153.919 207.964 165.141 208.231 176.095 C 202.858 166.15 197.009 155.759 193.744 150.564 L 154.527 87.775 L 120 87.775 L 120 226 Z" fill="currentColor"/>
+  <path d="M 392.956 136.448 A 67.972 67.972 0 1 1 348.570 92.061" fill="none" stroke="currentColor" stroke-width="30.780" stroke-linecap="round"/>
+  <circle cx="376.193" cy="108.824" r="15.010" fill="#FF5C00"/>
+  <path d="M 466.78 226 C 509.262 226 535.803 199.103 535.803 156.887 C 535.803 114.672 508.906 87.775 466.78 87.775 L 415.48 87.775 L 415.48 226 L 466.78 226 Z M 448.878 198.153 L 448.878 115.592 L 464.731 115.592 C 490.173 115.592 502.227 129.605 502.227 156.887 C 502.227 184.052 490.441 198.153 465.117 198.153 L 448.878 198.153 Z M 549.537 226 L 611.228 226 C 641.954 226 659.292 209.85 659.292 186.931 C 659.292 167.367 646.022 154.75 628.773 153.622 L 628.773 153.444 C 644.359 150.03 654.453 138.778 654.453 122.836 C 654.453 102.144 637.769 87.775 607.072 87.775 L 549.537 87.775 L 549.537 226 Z M 582.104 200.38 L 582.104 168.198 L 605.944 168.198 C 617.908 168.198 625.24 174.522 625.24 184.527 C 625.24 194.442 617.819 200.38 605.765 200.38 L 582.104 200.38 Z M 582.104 143.884 L 582.104 113.366 L 603.895 113.366 C 614.583 113.366 621.173 119.303 621.173 128.595 C 621.173 137.947 614.583 143.884 603.895 143.884 L 582.104 143.884 Z M 730.531 228.227 C 765.711 228.227 788.718 207.92 788.718 177.372 L 788.718 87.775 L 756.151 87.775 L 756.151 174.7 C 756.151 189.366 745.939 199.845 730.531 199.845 C 715.242 199.845 704.851 189.247 704.851 174.7 L 704.851 87.775 L 672.284 87.775 L 672.284 177.372 C 672.284 207.92 695.203 228.227 730.531 228.227 Z" fill="currentColor"/>
+</g></svg></div>
+      <figcaption>No deformar. Escala siempre proporcional.</figcaption></figure>
+    <figure><div class="box d-rot"><svg viewBox="0 0 668.72 166.72" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NODBU"><g transform="translate(-120.000,-73.525)" fill-rule="nonzero">
+  <path d="M 120 226 L 153.398 226 L 153.398 168.377 C 153.398 162.647 153.309 151.217 152.834 137.769 C 159.989 150.772 166.58 162.083 170.558 168.466 L 206.569 226 L 241.155 226 L 241.155 87.775 L 207.756 87.775 L 207.756 147.684 C 207.756 153.919 207.964 165.141 208.231 176.095 C 202.858 166.15 197.009 155.759 193.744 150.564 L 154.527 87.775 L 120 87.775 L 120 226 Z" fill="currentColor"/>
+  <path d="M 392.956 136.448 A 67.972 67.972 0 1 1 348.570 92.061" fill="none" stroke="currentColor" stroke-width="30.780" stroke-linecap="round"/>
+  <circle cx="376.193" cy="108.824" r="15.010" fill="#FF5C00"/>
+  <path d="M 466.78 226 C 509.262 226 535.803 199.103 535.803 156.887 C 535.803 114.672 508.906 87.775 466.78 87.775 L 415.48 87.775 L 415.48 226 L 466.78 226 Z M 448.878 198.153 L 448.878 115.592 L 464.731 115.592 C 490.173 115.592 502.227 129.605 502.227 156.887 C 502.227 184.052 490.441 198.153 465.117 198.153 L 448.878 198.153 Z M 549.537 226 L 611.228 226 C 641.954 226 659.292 209.85 659.292 186.931 C 659.292 167.367 646.022 154.75 628.773 153.622 L 628.773 153.444 C 644.359 150.03 654.453 138.778 654.453 122.836 C 654.453 102.144 637.769 87.775 607.072 87.775 L 549.537 87.775 L 549.537 226 Z M 582.104 200.38 L 582.104 168.198 L 605.944 168.198 C 617.908 168.198 625.24 174.522 625.24 184.527 C 625.24 194.442 617.819 200.38 605.765 200.38 L 582.104 200.38 Z M 582.104 143.884 L 582.104 113.366 L 603.895 113.366 C 614.583 113.366 621.173 119.303 621.173 128.595 C 621.173 137.947 614.583 143.884 603.895 143.884 L 582.104 143.884 Z M 730.531 228.227 C 765.711 228.227 788.718 207.92 788.718 177.372 L 788.718 87.775 L 756.151 87.775 L 756.151 174.7 C 756.151 189.366 745.939 199.845 730.531 199.845 C 715.242 199.845 704.851 189.247 704.851 174.7 L 704.851 87.775 L 672.284 87.775 L 672.284 177.372 C 672.284 207.92 695.203 228.227 730.531 228.227 Z" fill="currentColor"/>
+</g></svg></div>
+      <figcaption>No rotar. El eje del punto a −45° deja de leerse.</figcaption></figure>
+    <figure><div class="box d-color"><svg viewBox="0 0 668.72 166.72" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NODBU"><g transform="translate(-120.000,-73.525)" fill-rule="nonzero">
+  <path d="M 120 226 L 153.398 226 L 153.398 168.377 C 153.398 162.647 153.309 151.217 152.834 137.769 C 159.989 150.772 166.58 162.083 170.558 168.466 L 206.569 226 L 241.155 226 L 241.155 87.775 L 207.756 87.775 L 207.756 147.684 C 207.756 153.919 207.964 165.141 208.231 176.095 C 202.858 166.15 197.009 155.759 193.744 150.564 L 154.527 87.775 L 120 87.775 L 120 226 Z" fill="currentColor"/>
+  <path d="M 392.956 136.448 A 67.972 67.972 0 1 1 348.570 92.061" fill="none" stroke="currentColor" stroke-width="30.780" stroke-linecap="round"/>
+  <circle cx="376.193" cy="108.824" r="15.010" fill="currentColor"/>
+  <path d="M 466.78 226 C 509.262 226 535.803 199.103 535.803 156.887 C 535.803 114.672 508.906 87.775 466.78 87.775 L 415.48 87.775 L 415.48 226 L 466.78 226 Z M 448.878 198.153 L 448.878 115.592 L 464.731 115.592 C 490.173 115.592 502.227 129.605 502.227 156.887 C 502.227 184.052 490.441 198.153 465.117 198.153 L 448.878 198.153 Z M 549.537 226 L 611.228 226 C 641.954 226 659.292 209.85 659.292 186.931 C 659.292 167.367 646.022 154.75 628.773 153.622 L 628.773 153.444 C 644.359 150.03 654.453 138.778 654.453 122.836 C 654.453 102.144 637.769 87.775 607.072 87.775 L 549.537 87.775 L 549.537 226 Z M 582.104 200.38 L 582.104 168.198 L 605.944 168.198 C 617.908 168.198 625.24 174.522 625.24 184.527 C 625.24 194.442 617.819 200.38 605.765 200.38 L 582.104 200.38 Z M 582.104 143.884 L 582.104 113.366 L 603.895 113.366 C 614.583 113.366 621.173 119.303 621.173 128.595 C 621.173 137.947 614.583 143.884 603.895 143.884 L 582.104 143.884 Z M 730.531 228.227 C 765.711 228.227 788.718 207.92 788.718 177.372 L 788.718 87.775 L 756.151 87.775 L 756.151 174.7 C 756.151 189.366 745.939 199.845 730.531 199.845 C 715.242 199.845 704.851 189.247 704.851 174.7 L 704.851 87.775 L 672.284 87.775 L 672.284 177.372 C 672.284 207.92 695.203 228.227 730.531 228.227 Z" fill="currentColor"/>
+</g></svg></div>
+      <figcaption>No recolorear. Sólo las cuatro variantes del §2.</figcaption></figure>
+    <figure><div class="box d-shadow"><svg viewBox="0 0 668.72 166.72" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NODBU"><g transform="translate(-120.000,-73.525)" fill-rule="nonzero">
+  <path d="M 120 226 L 153.398 226 L 153.398 168.377 C 153.398 162.647 153.309 151.217 152.834 137.769 C 159.989 150.772 166.58 162.083 170.558 168.466 L 206.569 226 L 241.155 226 L 241.155 87.775 L 207.756 87.775 L 207.756 147.684 C 207.756 153.919 207.964 165.141 208.231 176.095 C 202.858 166.15 197.009 155.759 193.744 150.564 L 154.527 87.775 L 120 87.775 L 120 226 Z" fill="currentColor"/>
+  <path d="M 392.956 136.448 A 67.972 67.972 0 1 1 348.570 92.061" fill="none" stroke="currentColor" stroke-width="30.780" stroke-linecap="round"/>
+  <circle cx="376.193" cy="108.824" r="15.010" fill="#FF5C00"/>
+  <path d="M 466.78 226 C 509.262 226 535.803 199.103 535.803 156.887 C 535.803 114.672 508.906 87.775 466.78 87.775 L 415.48 87.775 L 415.48 226 L 466.78 226 Z M 448.878 198.153 L 448.878 115.592 L 464.731 115.592 C 490.173 115.592 502.227 129.605 502.227 156.887 C 502.227 184.052 490.441 198.153 465.117 198.153 L 448.878 198.153 Z M 549.537 226 L 611.228 226 C 641.954 226 659.292 209.85 659.292 186.931 C 659.292 167.367 646.022 154.75 628.773 153.622 L 628.773 153.444 C 644.359 150.03 654.453 138.778 654.453 122.836 C 654.453 102.144 637.769 87.775 607.072 87.775 L 549.537 87.775 L 549.537 226 Z M 582.104 200.38 L 582.104 168.198 L 605.944 168.198 C 617.908 168.198 625.24 174.522 625.24 184.527 C 625.24 194.442 617.819 200.38 605.765 200.38 L 582.104 200.38 Z M 582.104 143.884 L 582.104 113.366 L 603.895 113.366 C 614.583 113.366 621.173 119.303 621.173 128.595 C 621.173 137.947 614.583 143.884 603.895 143.884 L 582.104 143.884 Z M 730.531 228.227 C 765.711 228.227 788.718 207.92 788.718 177.372 L 788.718 87.775 L 756.151 87.775 L 756.151 174.7 C 756.151 189.366 745.939 199.845 730.531 199.845 C 715.242 199.845 704.851 189.247 704.851 174.7 L 704.851 87.775 L 672.284 87.775 L 672.284 177.372 C 672.284 207.92 695.203 228.227 730.531 228.227 Z" fill="currentColor"/>
+</g></svg></div>
+      <figcaption>Sin sombras, degradados, biseles ni contornos.</figcaption></figure>
+    <figure><div class="box d-photo"><svg viewBox="0 0 668.72 166.72" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NODBU"><g transform="translate(-120.000,-73.525)" fill-rule="nonzero">
+  <path d="M 120 226 L 153.398 226 L 153.398 168.377 C 153.398 162.647 153.309 151.217 152.834 137.769 C 159.989 150.772 166.58 162.083 170.558 168.466 L 206.569 226 L 241.155 226 L 241.155 87.775 L 207.756 87.775 L 207.756 147.684 C 207.756 153.919 207.964 165.141 208.231 176.095 C 202.858 166.15 197.009 155.759 193.744 150.564 L 154.527 87.775 L 120 87.775 L 120 226 Z" fill="currentColor"/>
+  <path d="M 392.956 136.448 A 67.972 67.972 0 1 1 348.570 92.061" fill="none" stroke="currentColor" stroke-width="30.780" stroke-linecap="round"/>
+  <circle cx="376.193" cy="108.824" r="15.010" fill="#FF5C00"/>
+  <path d="M 466.78 226 C 509.262 226 535.803 199.103 535.803 156.887 C 535.803 114.672 508.906 87.775 466.78 87.775 L 415.48 87.775 L 415.48 226 L 466.78 226 Z M 448.878 198.153 L 448.878 115.592 L 464.731 115.592 C 490.173 115.592 502.227 129.605 502.227 156.887 C 502.227 184.052 490.441 198.153 465.117 198.153 L 448.878 198.153 Z M 549.537 226 L 611.228 226 C 641.954 226 659.292 209.85 659.292 186.931 C 659.292 167.367 646.022 154.75 628.773 153.622 L 628.773 153.444 C 644.359 150.03 654.453 138.778 654.453 122.836 C 654.453 102.144 637.769 87.775 607.072 87.775 L 549.537 87.775 L 549.537 226 Z M 582.104 200.38 L 582.104 168.198 L 605.944 168.198 C 617.908 168.198 625.24 174.522 625.24 184.527 C 625.24 194.442 617.819 200.38 605.765 200.38 L 582.104 200.38 Z M 582.104 143.884 L 582.104 113.366 L 603.895 113.366 C 614.583 113.366 621.173 119.303 621.173 128.595 C 621.173 137.947 614.583 143.884 603.895 143.884 L 582.104 143.884 Z M 730.531 228.227 C 765.711 228.227 788.718 207.92 788.718 177.372 L 788.718 87.775 L 756.151 87.775 L 756.151 174.7 C 756.151 189.366 745.939 199.845 730.531 199.845 C 715.242 199.845 704.851 189.247 704.851 174.7 L 704.851 87.775 L 672.284 87.775 L 672.284 177.372 C 672.284 207.92 695.203 228.227 730.531 228.227 Z" fill="currentColor"/>
+</g></svg></div>
+      <figcaption>No sobre fondos con ruido. Usa una caja sólida.</figcaption></figure>
+    <figure><div class="box d-tight"><svg viewBox="0 0 668.72 166.72" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NODBU"><g transform="translate(-120.000,-73.525)" fill-rule="nonzero">
+  <path d="M 120 226 L 153.398 226 L 153.398 168.377 C 153.398 162.647 153.309 151.217 152.834 137.769 C 159.989 150.772 166.58 162.083 170.558 168.466 L 206.569 226 L 241.155 226 L 241.155 87.775 L 207.756 87.775 L 207.756 147.684 C 207.756 153.919 207.964 165.141 208.231 176.095 C 202.858 166.15 197.009 155.759 193.744 150.564 L 154.527 87.775 L 120 87.775 L 120 226 Z" fill="currentColor"/>
+  <path d="M 392.956 136.448 A 67.972 67.972 0 1 1 348.570 92.061" fill="none" stroke="currentColor" stroke-width="30.780" stroke-linecap="round"/>
+  <circle cx="376.193" cy="108.824" r="15.010" fill="#FF5C00"/>
+  <path d="M 466.78 226 C 509.262 226 535.803 199.103 535.803 156.887 C 535.803 114.672 508.906 87.775 466.78 87.775 L 415.48 87.775 L 415.48 226 L 466.78 226 Z M 448.878 198.153 L 448.878 115.592 L 464.731 115.592 C 490.173 115.592 502.227 129.605 502.227 156.887 C 502.227 184.052 490.441 198.153 465.117 198.153 L 448.878 198.153 Z M 549.537 226 L 611.228 226 C 641.954 226 659.292 209.85 659.292 186.931 C 659.292 167.367 646.022 154.75 628.773 153.622 L 628.773 153.444 C 644.359 150.03 654.453 138.778 654.453 122.836 C 654.453 102.144 637.769 87.775 607.072 87.775 L 549.537 87.775 L 549.537 226 Z M 582.104 200.38 L 582.104 168.198 L 605.944 168.198 C 617.908 168.198 625.24 174.522 625.24 184.527 C 625.24 194.442 617.819 200.38 605.765 200.38 L 582.104 200.38 Z M 582.104 143.884 L 582.104 113.366 L 603.895 113.366 C 614.583 113.366 621.173 119.303 621.173 128.595 C 621.173 137.947 614.583 143.884 603.895 143.884 L 582.104 143.884 Z M 730.531 228.227 C 765.711 228.227 788.718 207.92 788.718 177.372 L 788.718 87.775 L 756.151 87.775 L 756.151 174.7 C 756.151 189.366 745.939 199.845 730.531 199.845 C 715.242 199.845 704.851 189.247 704.851 174.7 L 704.851 87.775 L 672.284 87.775 L 672.284 177.372 C 672.284 207.92 695.203 228.227 730.531 228.227 Z" fill="currentColor"/>
+</g></svg></div>
+      <figcaption>No invadir el área de respeto.</figcaption></figure>
+    <figure><div class="box"><svg viewBox="0 0 245.3 245.3" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Uso incorrecto del símbolo"><g transform="translate(122.6,122.6)"><circle cx="0" cy="0" r="100.0" fill="none" stroke="currentColor" stroke-width="45.28"/><circle cx="66.91" cy="74.31" r="22.08" fill="#FF5C00"/></g></svg></div>
+      <figcaption>No mover el punto ni cerrar el hueco.</figcaption></figure>
+    <figure><div class="box"><span style="font-family:Outfit,sans-serif;font-weight:700;font-size:30px;letter-spacing:-.02em;color:var(--ink)">NODBU</span></div>
+      <figcaption>No re-teclear el nombre. El logotipo es un trazado, no una fuente.</figcaption></figure>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ 6 ═══ -->
+<section id="s6">
+  <div class="head">
+    <span class="num">§ 6</span>
+    <h2>Color</h2>
+    <p>Tres colores de marca y dos escalas de apoyo. El naranja manda, pero manda poco:
+      es un acento, no un fondo.</p>
+  </div>
+  <div class="swatches" style="margin-bottom:30px">
+    <div class="sw"><div class="chip" style="background:#FF5C00"></div><div class="info">
+      <div class="nm">Naranja NODBU</div><div class="hx">#FF5C00</div>
+      <div class="role">El acento. Botones, el punto del nodo, un dato que importa. Nunca como fondo de una página entera.</div></div></div>
+    <div class="sw"><div class="chip" style="background:#090909"></div><div class="info">
+      <div class="nm">Negro técnico</div><div class="hx">#090909</div>
+      <div class="role">Texto, logotipo y fondos oscuros. No es negro puro: a #000 le falta cuerpo en pantalla.</div></div></div>
+    <div class="sw"><div class="chip" style="background:#FFFFFF;box-shadow:inset 0 0 0 1px var(--rule-2)"></div><div class="info">
+      <div class="nm">Blanco</div><div class="hx">#FFFFFF</div>
+      <div class="role">El fondo dominante. La marca respira en blanco.</div></div></div>
+  </div>
+  <div class="col stack">
+    <h3>Contraste: la regla que más se incumple</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Combinación</th><th>Ratio</th><th>Texto normal</th><th>Uso</th></tr></thead>
+      <tbody>
+        <tr><td class="f">#090909 sobre blanco</td><td class="f">19,91:1</td>
+            <td><span class="badge b-ok">AAA</span></td><td>Texto por defecto.</td></tr>
+        <tr><td class="f">#B94102 sobre blanco</td><td class="f">5,50:1</td>
+            <td><span class="badge b-ok">AA</span></td><td><strong>Enlaces y texto naranja.</strong></td></tr>
+        <tr><td class="f">#FF5C00 sobre blanco</td><td class="f">3,10:1</td>
+            <td><span class="badge b-bad">falla</span></td><td>Sólo superficies y gráficos grandes.</td></tr>
+        <tr><td class="f">#FF5C00 sobre #090909</td><td class="f">6,43:1</td>
+            <td><span class="badge b-ok">AA</span></td><td>Texto naranja en fondo oscuro: correcto.</td></tr>
+        <tr><td class="f">blanco sobre #FF5C00</td><td class="f">3,10:1</td>
+            <td><span class="badge b-bad">falla</span></td><td>Botones sí (texto grande y en negrita); párrafos no.</td></tr>
+      </tbody></table></div>
+    <div class="note"><strong>En una frase:</strong> el naranja de marca <code>#FF5C00</code>
+      no vale para texto sobre blanco. Para texto y enlaces usa <code>#B94102</code>
+      (<span class="mono">--naranja-700</span>). Es el mismo color, más oscuro, y sí cumple.</div>
+    <h3 style="margin-top:16px">Escala naranja</h3>
+    <p>Once pasos generados en OKLCH desde el color de marca, que ocupa el nivel 500.
+      Los niveles 700–950 son los que sirven para texto.</p>
+  </div>
+  <div class="ramp" style="margin:14px 0 8px"><span style="background:#FFF3EE;color:#090909">50</span><span style="background:#FFE5DB;color:#090909">100</span><span style="background:#FFC9B6;color:#090909">200</span><span style="background:#FFA98A;color:#090909">300</span><span style="background:#FE8456;color:#FFFFFF">400</span><span style="background:#FF5C00;color:#FFFFFF">500</span><span style="background:#DF5003;color:#FFFFFF">600</span><span style="background:#B94102;color:#FFFFFF">700</span><span style="background:#963402;color:#FFFFFF">800</span><span style="background:#782700;color:#FFFFFF">900</span><span style="background:#521901;color:#FFFFFF">950</span></div>
+  <p class="cap">50 → 950. El 500 es <span class="mono">#FF5C00</span> exacto.</p>
+  <div class="col stack" style="margin-top:30px">
+    <h3>Neutros</h3>
+    <p>Grises con una pizca del matiz del naranja. Al lado del acento no se ven sucios como
+      un gris puro.</p>
+  </div>
+  <div class="ramp" style="margin:14px 0 8px"><span style="background:#FFFFFF;color:#090909">0</span><span style="background:#FBFAF9;color:#090909">50</span><span style="background:#F4F2F1;color:#090909">100</span><span style="background:#E8E4E3;color:#090909">200</span><span style="background:#D4D1CF;color:#090909">300</span><span style="background:#AEAAA8;color:#FFFFFF">400</span><span style="background:#8F8B8A;color:#FFFFFF">500</span><span style="background:#736F6E;color:#FFFFFF">600</span><span style="background:#585554;color:#FFFFFF">700</span><span style="background:#3F3C3C;color:#FFFFFF">800</span><span style="background:#272525;color:#FFFFFF">900</span><span style="background:#151313;color:#FFFFFF">950</span><span style="background:#090909;color:#FFFFFF">1000</span></div>
+  <p class="cap">0 → 1000. El 1000 es el negro técnico de marca.</p>
+  <div class="col stack" style="margin-top:30px">
+    <h3>Semánticos</h3>
+    <p>Para producto: estados de un CRM, validaciones de formulario, alertas de un flujo.</p>
+  </div>
+  <div class="swatches" style="margin-top:14px">
+    <div class="sw"><div class="chip" style="background:#0F9D58;height:60px"></div><div class="info">
+      <div class="nm">Éxito</div><div class="hx">#0F9D58</div></div></div>
+    <div class="sw"><div class="chip" style="background:#EAB308;height:60px"></div><div class="info">
+      <div class="nm">Aviso</div><div class="hx">#EAB308</div></div></div>
+    <div class="sw"><div class="chip" style="background:#E11D48;height:60px"></div><div class="info">
+      <div class="nm">Error</div><div class="hx">#E11D48</div></div></div>
+    <div class="sw"><div class="chip" style="background:#2563EB;height:60px"></div><div class="info">
+      <div class="nm">Info</div><div class="hx">#2563EB</div></div></div>
+  </div>
+  <div class="col stack" style="margin-top:20px">
+    <div class="note"><strong>El error es rosa, no rojo.</strong> Un rojo cálido tipo
+      <code>#DC2626</code> queda a 13° del naranja de marca en el círculo de tono: en un badge
+      pequeño se confunden. <code>#E11D48</code> se separa 23° y sigue leyéndose como error.
+      Aun así, no dependas nunca sólo del color: acompaña siempre con icono o texto.</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ 7 ═══ -->
+<section id="s7">
+  <div class="head">
+    <span class="num">§ 7</span>
+    <h2>Tipografía</h2>
+    <p>Tres familias, licencia libre, incluidas en el kit y servidas desde tu propio dominio.
+      Sin llamadas a Google.</p>
+  </div>
+  <div class="col">
+    <div class="type-row" style="border-top:0">
+      <div class="meta2"><div class="n">Outfit</div>
+        <div class="u">Titulares y claim. 500 / 600 / 700</div></div>
+      <div><div class="smp-display">Automatizamos lo que hoy haces a mano</div></div>
+    </div>
+    <div class="type-row">
+      <div class="meta2"><div class="n">Inter</div>
+        <div class="u">Texto, interfaz, formularios. 400 / 500 / 600</div></div>
+      <div><p class="smp-body">Conectamos las herramientas que ya usas para que dejen de
+        pedirte trabajo. Un chatbot que cualifica, una web que recoge, un CRM que se actualiza
+        solo. Sin plantillas y sin piezas sueltas.</p></div>
+    </div>
+    <div class="type-row">
+      <div class="meta2"><div class="n">JetBrains Mono</div>
+        <div class="u">Datos, código, identificadores</div></div>
+      <div><div class="smp-mono">POST /webhook/lead → crm.contacts.upsert()<br>
+        1 482 leads · 96,4 % entregado · 0,8 s</div></div>
+    </div>
+  </div>
+  <div class="col stack" style="margin-top:32px">
+    <h3>Por qué estas tres</h3>
+    <p><strong style="color:var(--ink)">Outfit</strong> es geométrica y de O casi circular:
+      es la familia que más se parece al dibujo del logotipo, así que un titular al lado del
+      logo no pelea con él. <strong style="color:var(--ink)">Inter</strong> está dibujada para
+      pantalla y para tablas densas — que es exactamente lo que es un CRM.
+      <strong style="color:var(--ink)">JetBrains Mono</strong> aparece sólo donde hay datos
+      o código: es lo que hace que un panel parezca una herramienta y no un folleto.</p>
+    <div class="note">El logotipo <strong>no</strong> está hecho con Outfit. Es un trazado
+      vectorial cerrado. Nunca lo recompongas escribiendo «NODBU» con la fuente: no coincide.</div>
+    <h3 style="margin-top:16px">Escala tipográfica</h3>
+  </div>
+  <div class="col" style="margin-top:10px"><div class="scale-row"><span class="t">--texto-7xl · 76px</span><span class="s" style="font-size:44px">Automatización</span></div><div class="scale-row"><span class="t">--texto-5xl · 48px</span><span class="s" style="font-size:44px">Automatización</span></div><div class="scale-row"><span class="t">--texto-4xl · 38px</span><span class="s" style="font-size:38px">Automatización</span></div><div class="scale-row"><span class="t">--texto-3xl · 30px</span><span class="s" style="font-size:30px">Automatización</span></div><div class="scale-row"><span class="t">--texto-2xl · 24px</span><span class="s" style="font-size:24px">Automatización</span></div><div class="scale-row"><span class="t">--texto-xl · 20px</span><span class="s" style="font-size:20px">Automatización</span></div><div class="scale-row"><span class="t">--texto-lg · 18px</span><span class="s" style="font-size:18px">Automatización</span></div><div class="scale-row"><span class="t">--texto-base · 16px</span><span class="s" style="font-size:16px">Automatización</span></div><div class="scale-row"><span class="t">--texto-sm · 14px</span><span class="s" style="font-size:14px">Automatización</span></div><div class="scale-row"><span class="t">--texto-xs · 12px</span><span class="s" style="font-size:12px">Automatización</span></div></div>
+</section>
+
+<!-- ══════════════════════════════════════════ 8 ═══ -->
+<section id="s8">
+  <div class="head">
+    <span class="num">§ 8</span>
+    <h2>Casos de uso</h2>
+    <p>Qué fichero abrir en cada situación, para no tener que decidirlo cada vez.</p>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th>Dónde</th><th>Qué fichero</th><th>Detalle</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Cabecera de web</strong></td><td class="f">nodbu-logotipo.svg<br>nodbu-logotipo-blanco.svg</td><td>Altura 28–40&nbsp;px. La versión blanca para el modo oscuro.</td></tr>
+      <tr><td><strong>Favicon</strong></td><td class="f">favicon.svg + favicon.ico</td><td>El SVG se adapta solo al tema del navegador; el <span class="mono">.ico</span> lleva 16, 32 y 48&nbsp;px.</td></tr>
+      <tr><td><strong>App / PWA</strong></td><td class="f">icon-192.png · icon-512.png<br>icon-maskable-512.png</td><td>Ya declarados en <span class="mono">site.webmanifest</span>.</td></tr>
+      <tr><td><strong>Pantalla de inicio iOS</strong></td><td class="f">apple-touch-icon-180.png</td><td>A sangre, sin esquinas redondeadas: iOS aplica su propia máscara.</td></tr>
+      <tr><td><strong>Avatar de redes</strong></td><td class="f">avatar-1024.png</td><td>Símbolo centrado a sangre: aguanta cualquier recorte circular.</td></tr>
+      <tr><td><strong>Compartir un enlace</strong></td><td class="f">og-image-1200x630.png</td><td>Metadatos listos en <span class="mono">_snippet-head.html</span>.</td></tr>
+      <tr><td><strong>LinkedIn</strong></td><td class="f">linkedin-empresa-1128x191.png<br>linkedin-banner-1584x396.png</td><td>El primero para página de empresa, el segundo para perfil personal.</td></tr>
+      <tr><td><strong>X · YouTube</strong></td><td class="f">x-header-1500x500.png<br>youtube-banner-2560x1440.png</td><td>YouTube recorta: la zona segura son los 1546×423 centrales.</td></tr>
+      <tr><td><strong>WhatsApp Business</strong></td><td class="f">whatsapp-perfil-640.png</td><td></td></tr>
+      <tr><td><strong>Firma de correo</strong></td><td class="f">firma-email.html</td><td>Necesita el PNG en una URL pública: Gmail y Outlook no admiten SVG.</td></tr>
+      <tr><td><strong>Propuestas y facturas</strong></td><td class="f">nodbu-logotipo.svg</td><td>25&nbsp;mm de ancho en la cabecera.</td></tr>
+      <tr><td><strong>Portada de presentación</strong></td><td class="f">nodbu-lockup-vertical.svg</td><td></td></tr>
+      <tr><td><strong>Sellos, grabado, una tinta</strong></td><td class="f">nodbu-logotipo-mono-negro.svg</td><td>Sin naranja. El hueco sigue leyéndose.</td></tr>
+      <tr><td><strong>Bordado o serigrafía &lt; 30&nbsp;mm</strong></td><td class="f">nodbu-simbolo-mono-negro.svg</td><td>El logotipo completo no aguanta a ese tamaño.</td></tr>
+      <tr><td><strong>Junto a otra marca</strong></td><td class="f">nodbu-lockup-horizontal.svg</td><td>El nodo aparece una sola vez.</td></tr>
+      <tr><td><strong>Web, app, CRM</strong></td><td class="f">nodbu-tokens.css</td><td>Colores, tipos, espaciado y sombras. Fuente única de verdad.</td></tr>
+    </tbody></table></div>
+</section>
+
+<!-- ══════════════════════════════════════════ 9 ═══ -->
+<section id="s9">
+  <div class="head">
+    <span class="num">§ 9</span>
+    <h2>Implementación</h2>
+    <p>Para que la marca sea la misma en la web, en la landing y dentro del CRM del cliente.</p>
+  </div>
+  <div class="col stack">
+    <h3>Tokens</h3>
+    <p>Importa <code>nodbu-tokens.css</code> antes que ninguna otra hoja y usa siempre las
+      variables de rol, no los valores crudos. Así el modo oscuro sale gratis.</p>
+    <pre><span class="c">/* Bien: el rol decide, y ya contempla claro y oscuro */</span>
+.boton{
+  background: <span class="p">var(--color-accion)</span>;
+  color:      <span class="p">var(--color-texto-sobre-naranja)</span>;
+  border-radius: <span class="p">var(--radio-md)</span>;
+}
+.enlace{ color: <span class="p">var(--color-texto-acento)</span>; }  <span class="c">/* #B94102, cumple AA */</span>
+
+<span class="c">/* Mal: se rompe en oscuro y no cumple contraste */</span>
+.enlace{ color: #FF5C00; }</pre>
+    <h3 style="margin-top:20px">Formatos disponibles</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Fichero</th><th>Para</th></tr></thead>
+      <tbody>
+        <tr><td class="f">nodbu-tokens.css</td><td>Cualquier proyecto web. Variables CSS y modo oscuro incluido.</td></tr>
+        <tr><td class="f">nodbu-tailwind.css</td><td>Tailwind v4. Bloque <span class="mono">@theme</span> listo.</td></tr>
+        <tr><td class="f">nodbu-tokens.json</td><td>Figma, generadores de tokens, React Native.</td></tr>
+        <tr><td class="f">nodbu-tokens.scss</td><td>Proyectos con Sass.</td></tr>
+      </tbody></table></div>
+    <h3 style="margin-top:20px">Puesta en marcha de un sitio</h3>
+    <ol class="rule-list">
+      <li><span class="k">1</span><span>Sube el contenido de <code>02_iconos/</code> a la raíz del dominio.</span></li>
+      <li><span class="k">2</span><span>Copia <code>_snippet-head.html</code> dentro de tu <code>&lt;head&gt;</code> y cambia <span class="mono">TU-DOMINIO.com</span>.</span></li>
+      <li><span class="k">3</span><span>Sube <code>06_tipografias/</code> a <code>/fonts/</code>. Servirlas desde tu dominio las hace más rápidas y evita el aviso de RGPD por la conexión a Google.</span></li>
+      <li><span class="k">4</span><span>Importa <code>nodbu-tokens.css</code>.</span></li>
+      <li><span class="k">5</span><span>Comprueba la previsualización del enlace en WhatsApp y LinkedIn antes de dar por buena la web.</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ 10 ═══ -->
+<section id="s10">
+  <div class="head">
+    <span class="num">§ 10</span>
+    <h2>Pendiente de decidir</h2>
+    <p>Cuatro cosas que he dejado con un valor provisional porque son tuyas, no mías.
+      Dime cuáles cambias y regenero los ficheros afectados.</p>
+  </div>
+  <div class="col stack">
+    <div class="q"><h4>El claim</h4>
+      <p>He usado <strong style="color:var(--ink)">«Automatización a medida»</strong> en el
+        logotipo con claim y en todas las piezas sociales. Describe, pero no promete.
+        Alternativas si prefieres algo más comercial:</p>
+      <div class="opt">
+        <span><b>A</b>Automatización a medida <em>— descriptivo, seguro, el que está puesto</em></span>
+        <span><b>B</b>Tu operación, funcionando sola <em>— habla del resultado</em></span>
+        <span><b>C</b>Menos tareas. Más negocio. <em>— comercial y corto</em></span>
+      </div></div>
+    <div class="q"><h4>El dominio</h4>
+      <p>Los metadatos y la plantilla social llevan <code>TU-DOMINIO.com</code> como marcador.
+        Dime el dominio real y lo dejo escrito en el snippet y en la imagen de compartir.</p></div>
+    <div class="q"><h4>Datos de contacto</h4>
+      <p>La firma de correo tiene los campos <code>{{NOMBRE}}</code>, <code>{{CARGO}}</code>,
+        <code>{{EMAIL}}</code>, <code>{{TELEFONO}}</code> y <code>{{WEB}}</code> sin rellenar.
+        Pásamelos y la dejo lista para pegar en Gmail.</p></div>
+    <div class="q"><h4>La prosa del logotipo</h4>
+      <p>Entre la N y la O hay 2,6&nbsp;% de la caja alta, y entre la O y la D, 2,9&nbsp;%. Lo
+        normal en una geométrica sería 6–8&nbsp;%. <strong style="color:var(--ink)">No lo he
+        tocado</strong>: es tu logo y a tamaño grande esa tensión funciona. Pero es la razón por
+        la que el mínimo está en 128&nbsp;px y no en 96. Si quieres, preparo una versión de
+        tamaño pequeño con la prosa abierta, que bajaría el mínimo a unos 90&nbsp;px sin
+        cambiar el logo principal.</p></div>
+  </div>
+</section>
+
+<footer>
+  <span>NODBU · Sistema de identidad v2.0</span>
+  <span>NODBU_BRAND_KIT_v2/</span>
+</footer>
+</main>
+</div>

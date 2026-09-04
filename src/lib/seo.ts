@@ -92,7 +92,7 @@ export function globalGraph(description: string) {
         url: absoluteUrl('/'),
         logo: {
           '@type': 'ImageObject',
-          url: `${site.url}/brand/logo-full-white.svg`,
+          url: `${site.url}/brand/nodbu-logotipo-blanco.svg`,
         },
         image: `${site.url}/og.png`,
         email: site.email,

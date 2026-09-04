@@ -67,19 +67,19 @@ const config: Config = {
           ink: '232 229 227', // #e8e5e3
           'ink-raised': '255 255 255',
           paper: '13 13 13',
-          nodbu: '201 67 0', // #C94300 — el de marca da 2.94:1 aqui y suspende
+          nodbu: '181 65 0', // #B54100 — 4.50:1 sobre el fondo crema: el naranja mas claro que pasa AA
           'paper-muted': 'rgba(13,13,13,.68)',
           'paper-faint': 'rgba(13,13,13,.58)',
           hairline: 'rgba(13,13,13,.12)',
           dot: 'rgba(13,13,13,.07)', // Reducido nuevamente
-          'nodbu-glow': 'rgba(201,67,0,.30)',
+          'nodbu-glow': 'rgba(181,65,0,.30)',
           'glass-bg': 'linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.80))', // Punto medio de opacidad en claro
           'glass-border': 'rgba(13,13,13,.10)',
           'glass-shadow': 'inset 0 1px 0 0 rgba(255,255,255,.90), 0 18px 40px -26px rgba(13,13,13,.30)',
           'glow-strong':
-            'radial-gradient(ellipse closest-side at center, rgba(201,67,0,.16) 0%, rgba(201,67,0,.06) 55%, rgba(201,67,0,0) 100%)',
+            'radial-gradient(ellipse closest-side at center, rgba(181,65,0,.16) 0%, rgba(181,65,0,.06) 55%, rgba(181,65,0,0) 100%)',
           'glow-soft':
-            'radial-gradient(ellipse closest-side at center, rgba(201,67,0,.10) 0%, rgba(201,67,0,.04) 55%, rgba(201,67,0,0) 100%)',
+            'radial-gradient(ellipse closest-side at center, rgba(181,65,0,.10) 0%, rgba(181,65,0,.04) 55%, rgba(181,65,0,0) 100%)',
 
           /* El aluminio se aclara en el tema claro (es el mismo objeto bajo
              otra luz); el negro del bisel, la lente y el LED NO cambian:
@@ -214,7 +214,7 @@ const config: Config = {
         'device-lens': 'inset 0 1px 3px var(--c-device-shadow)',
         'device-base': '0 20px 25px -5px var(--c-device-shadow)',
         // Halo del nodo al pasar el raton. Sale del token de acento, asi que
-        // en tema claro usa #C94300 y no el naranja de marca, que ahi suspende.
+        // en tema claro usa #B54100 y no el naranja de marca, que ahi suspende.
         'node-hover': '0 8px 30px rgb(var(--c-nodbu) / .12)',
       },
       backgroundImage: {

@@ -1,0 +1,211 @@
+{
+  "$descripcion": "Design tokens NODBU. Fuente única de verdad para web, app y CRM.",
+  "$version": "2.0.0",
+  "color": {
+    "marca": {
+      "naranja": "#FF5C00",
+      "negro": "#090909",
+      "blanco": "#FFFFFF"
+    },
+    "naranja": {
+      "50": "#FFF3EE",
+      "100": "#FFE5DB",
+      "200": "#FFC9B6",
+      "300": "#FFA98A",
+      "400": "#FE8456",
+      "500": "#FF5C00",
+      "600": "#DF5003",
+      "700": "#B94102",
+      "800": "#963402",
+      "900": "#782700",
+      "950": "#521901"
+    },
+    "neutral": {
+      "0": "#FFFFFF",
+      "50": "#FBFAF9",
+      "100": "#F4F2F1",
+      "200": "#E8E4E3",
+      "300": "#D4D1CF",
+      "400": "#AEAAA8",
+      "500": "#8F8B8A",
+      "600": "#736F6E",
+      "700": "#585554",
+      "800": "#3F3C3C",
+      "900": "#272525",
+      "950": "#151313",
+      "1000": "#090909"
+    },
+    "superficie-oscura": {
+      "surface-0": "#090909",
+      "surface-1": "#191716",
+      "surface-2": "#252221",
+      "surface-3": "#312E2D",
+      "border": "#403C3B"
+    },
+    "semantico": {
+      "success": {
+        "500": "#0F9D58",
+        "600": "#067E45",
+        "50": "#EAF8EE",
+        "700": "#026435"
+      },
+      "warning": {
+        "500": "#EAB308",
+        "600": "#C79806",
+        "50": "#FAF3E4",
+        "700": "#AA8100"
+      },
+      "danger": {
+        "50": "#FFF1F3",
+        "500": "#E11D48",
+        "600": "#C4123C",
+        "700": "#A00A30"
+      },
+      "info": {
+        "500": "#2563EB",
+        "600": "#0C46C8",
+        "50": "#EEF4FF",
+        "700": "#0031A2"
+      }
+    },
+    "rol": {
+      "texto-principal": "#090909",
+      "texto-secundario": "#585554",
+      "texto-sutil": "#736F6E",
+      "texto-invertido": "#FFFFFF",
+      "texto-acento": "#B94102",
+      "texto-sobre-naranja": "#FFFFFF",
+      "fondo": "#FFFFFF",
+      "fondo-sutil": "#FBFAF9",
+      "fondo-hundido": "#F4F2F1",
+      "borde": "#E8E4E3",
+      "borde-fuerte": "#D4D1CF",
+      "borde-foco": "#FF5C00",
+      "accion": "#FF5C00",
+      "accion-hover": "#DF5003",
+      "accion-activo": "#B94102"
+    }
+  },
+  "tipografia": {
+    "familia": {
+      "display": "Outfit, ui-sans-serif, system-ui, sans-serif",
+      "texto": "Inter, ui-sans-serif, system-ui, -apple-system, sans-serif",
+      "mono": "'JetBrains Mono', ui-monospace, SFMono-Regular, monospace"
+    },
+    "peso": {
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700,
+      "extrabold": 800
+    },
+    "tamano": {
+      "xs": {
+        "size": "12px",
+        "line-height": "1.45"
+      },
+      "sm": {
+        "size": "14px",
+        "line-height": "1.5"
+      },
+      "base": {
+        "size": "16px",
+        "line-height": "1.6"
+      },
+      "lg": {
+        "size": "18px",
+        "line-height": "1.55"
+      },
+      "xl": {
+        "size": "20px",
+        "line-height": "1.45"
+      },
+      "2xl": {
+        "size": "24px",
+        "line-height": "1.35"
+      },
+      "3xl": {
+        "size": "30px",
+        "line-height": "1.25"
+      },
+      "4xl": {
+        "size": "38px",
+        "line-height": "1.18"
+      },
+      "5xl": {
+        "size": "48px",
+        "line-height": "1.1"
+      },
+      "6xl": {
+        "size": "60px",
+        "line-height": "1.05"
+      },
+      "7xl": {
+        "size": "76px",
+        "line-height": "1.0"
+      }
+    },
+    "tracking": {
+      "apretado": "-0.02em",
+      "normal": "0",
+      "amplio": "0.04em",
+      "claim": "0.18em"
+    }
+  },
+  "espaciado": {
+    "0": "0",
+    "1": "2px",
+    "2": "4px",
+    "3": "8px",
+    "4": "12px",
+    "5": "16px",
+    "6": "20px",
+    "7": "24px",
+    "8": "32px",
+    "9": "40px",
+    "10": "48px",
+    "11": "64px",
+    "12": "80px",
+    "13": "96px",
+    "14": "128px"
+  },
+  "radio": {
+    "none": "0",
+    "xs": "4px",
+    "sm": "6px",
+    "md": "10px",
+    "lg": "14px",
+    "xl": "20px",
+    "2xl": "28px",
+    "full": "9999px"
+  },
+  "sombra": {
+    "xs": "0 1px 2px rgba(9,9,9,.06)",
+    "sm": "0 1px 3px rgba(9,9,9,.08), 0 1px 2px rgba(9,9,9,.04)",
+    "md": "0 4px 12px rgba(9,9,9,.08), 0 2px 4px rgba(9,9,9,.04)",
+    "lg": "0 12px 32px rgba(9,9,9,.10), 0 4px 8px rgba(9,9,9,.04)",
+    "xl": "0 24px 64px rgba(9,9,9,.14)",
+    "focus": "0 0 0 3px rgba(255,92,0,.32)"
+  },
+  "movimiento": {
+    "duracion": {
+      "instant": "80ms",
+      "fast": "140ms",
+      "base": "220ms",
+      "slow": "360ms",
+      "deliberate": "560ms"
+    },
+    "curva": {
+      "standard": "cubic-bezier(.2,0,0,1)",
+      "entrada": "cubic-bezier(0,0,0,1)",
+      "salida": "cubic-bezier(.3,0,1,1)",
+      "rebote": "cubic-bezier(.34,1.56,.64,1)"
+    }
+  },
+  "logo": {
+    "area-de-respeto": "1.5 x el grosor del anillo del nodo",
+    "tam-min-digital-logotipo": "96px de ancho",
+    "tam-min-digital-simbolo": "16px",
+    "tam-min-impreso-logotipo": "25mm de ancho"
+  }
+}

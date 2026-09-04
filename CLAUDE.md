@@ -243,9 +243,17 @@ Ya no queda contenido de ejemplo en el proyecto:
   (`src/lib/theme.ts`) **antes de que React hidrate**; si lo quitas, la página parpadea.
 - Añadir un color nuevo son dos entradas en `themeTokens` (dark y light) y una variable en
   `globals.css`. Nunca una sola.
-- **El naranja no es el mismo en los dos modos.** En claro vale `#C94300`, no `#FF5C00`: el
-  de marca da 2.94:1 sobre el fondo claro y suspende AA hasta para texto grande. La única
+- **El naranja no es el mismo en los dos modos.** En claro vale `#B54100`, no `#FF5C00`: el
+  de marca da 2.47:1 sobre el fondo crema y suspende AA hasta para texto grande. La única
   excepción es el punto del logotipo, que va dentro del SVG del kit. Ver `DESIGN.md §9.2`.
+
+  **`#B54100` es el naranja más claro que pasa AA aquí, y está medido contra el fondo real
+  del tema claro (`ink` = `#E8E5E3`), que NO es blanco puro.** Ese matiz importa: el kit de
+  marca recomienda `#B94102` porque da 5.50:1 **sobre blanco**, pero sobre el crema de esta
+  web se queda en 4.38:1 y no llega. El valor anterior (`#C94300`) daba 3.91:1 y tampoco
+  llegaba: los enlaces del cuerpo de los artículos y los mensajes de error del formulario
+  (15px, `text-nodbu`) estaban por debajo de AA. Si tocas este token, mide contra `ink`, no
+  contra `#FFF`.
 - El vidrio tiene **especificación propia en claro** (fondo casi opaco, brillo superior al
   90%, sombra corta). No es invertir valores. Ver `DESIGN.md §9.3`.
 - `<Logo>` pinta las dos variantes del logotipo y enseña la que toca con `.theme-dark-only` /
@@ -253,7 +261,13 @@ Ya no queda contenido de ejemplo en el proyecto:
 
 ## Contraste: verificado, no estimado
 
-Los 217 textos de la página cumplen AA en los dos modos, con un peor caso de 4.66:1.
+Los 217 textos de la página cumplen AA en los dos modos, con un peor caso de 4.50:1.
+
+**Ese peor caso es el naranja del tema claro y estuvo mal medido durante un tiempo.** La
+auditoría original lo dio por bueno porque lo comparó contra blanco puro; el fondo real del
+tema claro es el crema `#E8E5E3`, y ahí el valor de entonces (`#C94300`) daba 3.91:1, no los
+4.9 de laboratorio. Se corrigió subiendo el token a `#B54100` (4.50:1 medido en el navegador
+sobre la página compilada). Moraleja: **mide contra el token `ink`, no contra `#FFF`.**
 
 `paper-faint` estaba **por debajo de AA en los dos modos** hasta que se midió (3.49:1 en
 oscuro). Lleva los eyebrows y los pies "Estimación ilustrativa", que son información y van a
@@ -326,7 +340,7 @@ El workflow de despliegue comprueba esta lista y además que el número de carpe
 
 ## Cosas que ya se decidieron (no las deshagas sin motivo)
 
-- **Navbar y footer usan `logo-full-white.svg`, no el lockup.** El lockup repite el nodo dos
+- **Navbar y footer usan `nodbu-logotipo-blanco.svg`, no el lockup.** El lockup repite el nodo dos
   veces y a 26px se lee como ruido.
 - **"Cómo funciona" es un eje vertical con línea de progreso de scroll,** no cuatro tarjetas en
   fila. Cuatro tarjetas horizontales se leen como opciones equivalentes y aquí el orden importa.

@@ -160,19 +160,26 @@ Igual que la clave del formulario: si cambias el `GTM-ID`, hay que recompilar y 
 
 ## Marca
 
-`/public/brand/` contiene los archivos reales del kit (`NODBU_KIT_LOGO/`), renombrados:
+`/public/brand/` contiene solo lo que la web usa de verdad, con el nombre que traen en el kit
+v2.0 (`NODBU_BRAND_KIT_FINAL/`). Se copian tal cual, sin renombrar ni retocar:
 
 | Archivo | Uso |
 |---|---|
-| `logo-full-white.svg` | Navbar y footer |
-| `logo-full.svg` | Reserva, para fondo claro |
-| `isotipo.svg` / `isotipo-dark-bg.svg` | El nodo suelto |
-| `lockup.svg` | Reserva, no se usa en la página |
-| `app-icon.svg` | Base de los iconos |
+| `nodbu-logotipo-blanco.svg` | Navbar y footer en tema oscuro; logo del JSON-LD |
+| `nodbu-logotipo.svg` | Navbar y footer en tema claro |
 
-Los iconos (`favicon.ico`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`) están
-generados a partir del isotipo del kit. El `favicon.ico` es multi-tamaño (16/32/48); el del
-kit traía solo 16×16.
+**Solo esos dos.** El kit trae muchas más variantes (lockups, símbolo suelto, monocromos,
+sociales), pero ninguna se usa en la web y no se copian: para eso está la carpeta del kit. La
+versión anterior arrastraba seis archivos que no referenciaba nadie y se despachaban en cada
+despliegue; se borraron.
+
+Los iconos (`favicon.ico`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`) salen de
+`NODBU_BRAND_KIT_FINAL/02_iconos/` sin modificar, con las mismas dimensiones que tenían los
+anteriores. El `og.png` **no** es el del kit: se mantiene el propio, que lleva titular y
+dominio, porque el del kit es solo marca y vende menos al compartir un enlace.
+
+`NODBU_KIT_LOGO/` (kit v1) **se conserva**: de ahí sale la geometría del isotipo animado del
+hero, y borrarlo dejaría ese componente sin trazabilidad.
 
 > Al logotipo horizontal solo se le recortó el `viewBox` para quitar el lienzo vacío que traía
 > a la derecha. Los trazos no se han tocado.

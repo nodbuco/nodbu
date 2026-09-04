@@ -1,0 +1,33 @@
+<!-- =====================================================================
+     NODBU · Firma de correo
+     1. Sube nodbu-logotipo-1200w.png a una URL pública y ponla en LOGO_URL.
+        Gmail/Outlook NO admiten SVG ni imágenes incrustadas en base64.
+     2. Sustituye los campos {{...}}.
+     3. Copia el bloque renderizado y pégalo en Ajustes > Firma.
+     Maquetado con <table> a propósito: es lo único que Outlook respeta.
+     ===================================================================== -->
+<table cellpadding="0" cellspacing="0" border="0" role="presentation"
+       style="font-family:Inter,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#090909">
+  <tr>
+    <td style="padding:0 18px 0 0;border-right:2px solid #FF5C00;vertical-align:middle">
+      <img src="{{LOGO_URL}}" alt="NODBU" width="132" height="33"
+           style="display:block;width:132px;height:33px;border:0">
+    </td>
+    <td style="padding:0 0 0 18px;vertical-align:middle">
+      <div style="font-family:Outfit,Inter,Helvetica,Arial,sans-serif;font-weight:600;font-size:15px;color:#090909">
+        {{NOMBRE}}
+      </div>
+      <div style="font-size:13px;color:#736F6E;padding-top:2px">{{CARGO}} · NODBU</div>
+      <div style="padding-top:8px;font-size:13px">
+        <a href="mailto:{{EMAIL}}" style="color:#B94102;text-decoration:none">{{EMAIL}}</a>
+        <span style="color:#D4D1CF">&nbsp;·&nbsp;</span>
+        <a href="tel:{{TELEFONO_E164}}" style="color:#090909;text-decoration:none">{{TELEFONO}}</a>
+      </div>
+      <div style="padding-top:2px;font-size:13px">
+        <a href="https://{{WEB}}" style="color:#090909;text-decoration:none;font-weight:500">{{WEB}}</a>
+      </div>
+    </td>
+  </tr>
+</table>
+<!-- Nota de accesibilidad: el enlace usa #B94102 (naranja-700, 5.5:1 sobre blanco).
+     NO uses #FF5C00 en texto de enlace: sólo alcanza 3.1:1 y no cumple WCAG AA. -->

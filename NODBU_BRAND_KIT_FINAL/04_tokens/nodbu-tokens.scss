@@ -1,0 +1,8 @@
+// NODBU · Design tokens (SCSS)
+$nodbu-naranja: #FF5C00;
+$nodbu-negro: #090909;
+$nodbu-blanco: #FFFFFF;
+$naranja: ("50": #FFF3EE, "100": #FFE5DB, "200": #FFC9B6, "300": #FFA98A, "400": #FE8456, "500": #FF5C00, "600": #DF5003, "700": #B94102, "800": #963402, "900": #782700, "950": #521901);
+$neutral: ("0": #FFFFFF, "50": #FBFAF9, "100": #F4F2F1, "200": #E8E4E3, "300": #D4D1CF, "400": #AEAAA8, "500": #8F8B8A, "600": #736F6E, "700": #585554, "800": #3F3C3C, "900": #272525, "950": #151313, "1000": #090909);
+@function naranja($k) { @return map-get($naranja, "#{$k}"); }
+@function neutral($k) { @return map-get($neutral, "#{$k}"); }
