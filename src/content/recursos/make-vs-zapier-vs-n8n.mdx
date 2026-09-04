@@ -1,0 +1,150 @@
+---
+title: "Make vs Zapier vs n8n: cuál elegir para automatizar una PyME en 2026"
+description: "Comparativa de Make, Zapier y n8n para una PyME: cómo cobra cada una, cuánto cuesta aprenderla y para qué tipo de flujo conviene, con precios de sus webs oficiales."
+tldr: "Zapier es la más fácil y la más cara por paso ejecutado; Make cobra por operación y sale más barata en flujos largos; n8n cobra por ejecución completa y, autoalojada, no cobra. Para dos o tres automatizaciones sencillas, Zapier; para flujos de muchos pasos, Make; para volumen alto o datos sensibles, n8n con alguien que la mantenga."
+publishedAt: 2026-09-04
+updatedAt: 2026-09-04
+category: herramientas
+tags: [make, zapier, n8n, herramientas]
+featured: false
+draft: false
+faq:
+  - q: "¿Cuál es la más barata para una PyME?"
+    a: "Depende de cómo sean tus flujos, no del precio de la tarifa. Zapier cobra cada acción como una tarea; Make cobra cada módulo como una operación; n8n cobra cada ejecución completa, tenga tres pasos o treinta. Un flujo de diez pasos que corre cien veces al día cuesta mil tareas en Zapier, mil operaciones en Make y cien ejecuciones en n8n. Para flujos largos, n8n y Make salen mucho mejor."
+  - q: "¿Puedo empezar con una y cambiar después?"
+    a: "Sí, pero migrar cuesta trabajo: los flujos no se exportan de una herramienta a otra, hay que reconstruirlos. Por eso conviene decidir mirando cómo van a ser tus flujos dentro de un año, no solo el primero. Cambiar con tres automatizaciones es un fin de semana; con treinta, un proyecto."
+  - q: "¿Hace falta saber programar para usar n8n?"
+    a: "Para usar n8n en la nube, no: el editor visual es parecido al de Make. Para autoalojarla, que es donde está el ahorro grande, hace falta alguien que sepa administrar un servidor, hacer copias de seguridad y actualizarla. Si nadie en tu equipo lo hace, la versión en la nube o un proveedor que la gestione es la opción realista."
+  - q: "¿Y si mi herramienta no aparece en ninguna de las tres?"
+    a: "Las tres permiten conectar con cualquier sistema que tenga una API, aunque no aparezca en su catálogo, a través de un módulo genérico de peticiones web. Es más técnico que usar un conector prehecho, pero se hace. Lo que no se puede conectar de ninguna forma es un programa que no exporta datos ni tiene conexión: eso se revisa en el diagnóstico."
+---
+
+Si has buscado "cómo automatizar" alguna vez, te han salido estos tres nombres. Los tres hacen
+lo mismo en esencia: cuando pasa algo en una herramienta, hacen algo en otra. Un formulario se
+envía y el contacto aparece en el CRM. Llega un pedido y se avisa por WhatsApp. Se cierra un
+trato y sale la factura.
+
+La diferencia no está en lo que hacen, sino en **cómo cobran, cuánto cuesta aprenderlas y
+cuánto aguantan** cuando la empresa crece. Esta comparativa va de eso.
+
+## ¿Qué diferencia de verdad a Make, Zapier y n8n?
+
+La diferencia que más pesa es la unidad por la que cobran. Parece un detalle de tarifa y es lo
+que decide la factura a los seis meses.
+
+| | Zapier | Make | n8n |
+|---|---|---|---|
+| **Qué cobra** | Cada acción ejecutada ("tarea") | Cada módulo ejecutado ("operación" o crédito) | Cada ejecución completa del flujo, tenga los pasos que tenga |
+| **Editor** | Lista vertical de pasos | Lienzo visual con ramas | Lienzo visual con ramas |
+| **Curva de aprendizaje** | La más corta | Media | Media en la nube; alta si la autoalojas |
+| **Dónde corre** | Solo en su nube | Solo en su nube | En su nube o en tu propio servidor |
+| **Quién la mantiene** | Ellos | Ellos | Ellos (nube) o tú (autoalojada) |
+| **Para quién** | Pocas automatizaciones sencillas | Flujos largos y con lógica | Volumen alto, datos sensibles o presupuesto ajustado |
+
+Fíjate en la primera fila. Un flujo que hace diez cosas cada vez que corre cuesta **diez tareas
+en Zapier, diez operaciones en Make y una ejecución en n8n**. Si corre cien veces al día, son
+mil, mil y cien. Esa asimetría es la que hay que tener delante antes de mirar ninguna tarifa.
+
+## ¿Cuánto cuesta cada una?
+
+Los precios cambian, así que aquí van los de sus páginas oficiales a fecha de esta revisión
+(septiembre de 2026), y el enlace para comprobarlos. Todos son por mes con pago anual; el pago
+mensual sale más caro en las tres.
+
+| | Plan gratuito | Primer plan de pago | Plan para equipos |
+|---|---|---|---|
+| **Zapier** | 100 tareas/mes, solo flujos de 2 pasos | Professional, desde ~19,99 USD/mes con 750 tareas | Team, desde ~69 USD/mes con 2.000 tareas |
+| **Make** | 1.000 operaciones/mes, mínimo 15 min entre ejecuciones | Core, ~9 USD/mes con 10.000 operaciones | Teams, ~29 USD/mes con 10.000 operaciones |
+| **n8n** | Autoalojada: gratis, sin límite | Starter en la nube, ~20 EUR/mes con 2.500 ejecuciones | Pro en la nube, ~50 EUR/mes con 10.000 ejecuciones |
+
+Fuentes: [precios de Zapier](https://zapier.com/pricing), [precios de Make](https://www.make.com/en/pricing)
+y [precios de n8n](https://n8n.io/pricing/). Comprueba el vigente antes de decidir: cambian
+varias veces al año.
+
+Dos lecturas de la tabla que no son evidentes:
+
+- **Las 750 tareas de Zapier y las 10.000 operaciones de Make no son comparables** con las 2.500
+  ejecuciones de n8n. Con flujos de cinco pasos, 2.500 ejecuciones equivalen a 12.500 tareas u
+  operaciones. La tarifa de n8n parece la más corta y suele ser la más amplia.
+- **El plan gratuito de Zapier no permite flujos de más de dos pasos.** Sirve para probar un
+  disparador y una acción. Casi ningún proceso real cabe ahí.
+
+## ¿Cuál es la más fácil de aprender?
+
+Zapier, y con diferencia. Su editor es una lista: paso uno, paso dos, paso tres. Una persona
+sin perfil técnico monta su primer flujo en una tarde, y esa es la razón de su éxito.
+
+Make y n8n usan un lienzo: los pasos son cajas conectadas con líneas, que pueden ramificarse,
+repetirse y volver atrás. Se tarda más en entenderlo, pero es lo que permite hacer cosas como
+*"si el pedido es de más de tres artículos, avisa a almacén; si no, procesa directo"* sin
+retorcerse.
+
+La regla práctica: **si tus flujos caben en una lista, Zapier; si necesitan un "si esto,
+entonces aquello", Make o n8n.** La mayoría de las PyMEs empiezan en el primer caso y acaban en
+el segundo antes de un año.
+
+## ¿Para qué tipo de proceso conviene cada una?
+
+Más que "cuál es mejor", la pregunta útil es "cuál para qué". Estos son los casos donde cada
+una encaja sin forzarla:
+
+1. **Zapier**, para dos o tres automatizaciones de pocos pasos que no corren muchas veces:
+   formulario de la web al CRM, aviso por correo cuando entra un lead, copia de un archivo a
+   una carpeta. Si no vas a pasar de ahí, es la opción sin fricción.
+2. **Make**, para flujos con lógica y muchos pasos: [cotizaciones que salen del CRM y llegan
+   por WhatsApp](/recursos/cotizaciones-automaticas-crm-whatsapp/), pedidos que pasan por
+   varias comprobaciones, reportes que juntan datos de tres sitios. Cobra por operación, pero
+   sus 10.000 dan para mucho si los flujos están bien hechos.
+3. **n8n**, para tres situaciones concretas: volumen alto (cientos de ejecuciones al día),
+   datos que no quieres que salgan de tu servidor (historias clínicas, datos financieros), o un
+   presupuesto donde 20 dólares al mes importan. Autoalojada no cobra nada; a cambio, alguien
+   tiene que mantenerla.
+
+Antes de elegir herramienta, conviene tener claro [qué procesos compensa automatizar y en qué
+orden](/recursos/que-procesos-automatizar-pyme/). La herramienta se decide después del
+proceso, no antes.
+
+## ¿Qué pasa cuando la empresa crece?
+
+Pasa que la factura crece con ella, y de forma distinta en cada una.
+
+En **Zapier** el crecimiento se nota rápido: cada acción nueva es una tarea, y las tareas se
+acaban. Muchas empresas descubren a los seis meses que pagan más por Zapier que por el CRM que
+conectan. No es que Zapier sea caro para lo que hace; es que su unidad de cobro es la más
+pequeña.
+
+En **Make** el crecimiento es más suave, porque 10.000 operaciones dan margen y los tramos
+superiores (20.000, 40.000) suben el precio de forma proporcional.
+
+En **n8n** en la nube, parecido a Make. Autoalojada, el coste no crece con las ejecuciones: crece
+con el servidor, que para el volumen de una PyME suele ser el mismo durante años.
+
+## ¿Qué no te cuenta ninguna de las tres?
+
+Que la herramienta es la parte pequeña del trabajo. Lo que cuesta no es conectar HubSpot con
+WhatsApp: es decidir qué pasa cuando el cliente escribe fuera de horario, quién recibe el aviso
+si el comercial está de vacaciones, y qué se hace con un pedido que llega incompleto.
+
+Eso no lo resuelve Make, ni Zapier, ni n8n. Lo resuelve alguien que se siente con el equipo,
+dibuje el proceso y lo escriba.
+En NODBU, agencia de automatización de procesos y desarrollo a medida para PyMEs, ese dibujo
+es el segundo de [los cuatro pasos con los que trabajamos](/#como-funciona), y se aprueba
+antes de tocar ninguna herramienta. Solo después se elige la plataforma, y muchas veces la
+elección es distinta de la que el cliente traía en la cabeza: llegan pensando en Zapier
+porque es la que conocen y salen con Make porque su flujo tiene doce pasos y tres
+condiciones.
+
+Dicho de otra forma: elegir bien entre las tres te ahorra dinero cada mes. Elegir bien qué
+automatizar te ahorra el proyecto entero. Y las dos decisiones se toman en ese orden, no al
+revés.
+
+## ¿Entonces cuál elegir?
+
+Si tienes que decidir hoy y no quieres leer más:
+
+- **Dos o tres flujos sencillos, sin nadie técnico:** Zapier.
+- **Flujos con lógica, varias herramientas, presupuesto normal:** Make.
+- **Mucho volumen, datos sensibles o presupuesto ajustado, y alguien que la mantenga:** n8n.
+
+Y si no sabes cómo van a ser tus flujos dentro de un año, empieza por escribirlos. Es gratis y
+es lo único que de verdad decide la herramienta.

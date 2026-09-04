@@ -242,16 +242,30 @@ src/
 │   ├── sitemap.ts          -> out/sitemap.xml
 │   ├── robots.ts           -> out/robots.txt
 │   ├── not-found.tsx       -> out/404.html
-│   ├── privacidad/
-│   └── aviso-legal/
+│   ├── recursos/           hub + [slug]/ (un artículo por .mdx)
+│   ├── casos/              las reseñas contadas como caso
+│   ├── integraciones/      hub + [slug]/ (un par de herramientas por entrada)
+│   ├── sobre-nodbu/        página de entidad
+│   ├── privacidad/, aviso-legal/, terminos/
+│   ├── rss.xml/, llms.txt/ route handlers estáticos
+│   └── sitemap.ts, robots.ts
 ├── components/
 │   ├── sections/           una por sección de la página
+│   ├── casos/              CaseStudies (tarjetas con entrada 3D)
+│   ├── integraciones/      IntegrationCard, IntegrationPair
+│   ├── recursos/           Mdx, ArticleCard, TableOfContents…
 │   ├── ui/                 Reveal, Button, Logo, Background…
-│   ├── logos/              las 12 marcas del carrusel
+│   ├── logos/              las 21 marcas del carrusel
 │   ├── Analytics.tsx       Google Tag Manager
 │   └── LegalShell.tsx      envoltorio de las páginas legales
 ├── content/                TODO el texto editable
+│   ├── recursos/           los .mdx y su GUIA.md
+│   ├── casos.ts            casos (derivan de testimonials.ts)
+│   └── integraciones.ts    directorio de integraciones
 └── lib/
+    ├── articles.ts         carga y valida los .mdx
+    ├── integraciones.ts    consulta y valida el directorio
+    ├── seo.ts              URLs con barra final y JSON-LD
     ├── submit-lead.ts      envío a Web3Forms
     ├── analytics.ts        eventos del dataLayer
     └── cn.ts

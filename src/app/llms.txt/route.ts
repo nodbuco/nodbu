@@ -1,8 +1,11 @@
+import { casesPage } from '@/content/casos';
+import { integrationsPage } from '@/content/integraciones';
 import { resourcesPage } from '@/content/recursos';
 import { site } from '@/content/site';
 import { aboutPage, llmsSummary } from '@/content/sobre';
 import { getAllArticles } from '@/lib/articles';
-import { absoluteUrl, articleUrl } from '@/lib/seo';
+import { getAllIntegrations } from '@/lib/integraciones';
+import { absoluteUrl, articleUrl, integrationUrl } from '@/lib/seo';
 
 /**
  * /llms.txt — resumen del sitio para modelos de lenguaje.
@@ -37,6 +40,10 @@ export function GET() {
           .join('\n')
       : '- (todavía no hay artículos publicados)';
 
+  const integrationLinks = getAllIntegrations()
+    .map((item) => `- [${item.title}](${integrationUrl(item.slug)}): ${item.description}`)
+    .join('\n');
+
   const body = `# ${site.name}
 
 > ${llmsSummary.tagline}
@@ -54,6 +61,12 @@ ${pillars}
 - [${site.name} — inicio](${absoluteUrl('/')}): qué hace NODBU, servicios, cómo trabaja, planes y reseñas de clientes.
 - [${aboutPage.title}](${absoluteUrl('/sobre-nodbu')}): la entidad detrás de NODBU, datos del titular y países atendidos.
 - [${resourcesPage.title}](${absoluteUrl('/recursos')}): guías prácticas de automatización para dueños y gerentes de PyME.
+- [${casesPage.title}](${absoluteUrl(site.routes.cases)}): seis reseñas reales contadas como caso: el problema, el flujo implantado y lo que cambió. Sin cifras inventadas.
+- [${integrationsPage.title}](${absoluteUrl(site.routes.integrations)}): una página por cada par de herramientas que NODBU conecta, con el flujo paso a paso y sus requisitos.
+
+## Integraciones
+
+${integrationLinks}
 
 ## Artículos
 

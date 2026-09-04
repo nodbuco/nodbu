@@ -47,7 +47,8 @@ jobs:
           set -e
           for f in out/index.html out/privacidad/index.html out/aviso-legal/index.html \
                    out/terminos/index.html out/sobre-nodbu/index.html \
-                   out/recursos/index.html out/gracias/index.html \
+                   out/recursos/index.html out/casos/index.html \
+                   out/integraciones/index.html out/gracias/index.html \
                    out/.htaccess out/sitemap.xml out/robots.txt out/rss.xml \
                    out/llms.txt out/og.png out/404.html; do
             if [ ! -f "$f" ]; then
@@ -68,6 +69,16 @@ jobs:
             exit 1
           fi
           echo "OK $generados articulos generados"
+
+          # Lo mismo con el directorio de integraciones: cada entrada de
+          # content/integraciones.ts tiene que haber generado su carpeta.
+          esperadas=$(grep -cE "^\s+slug: '" src/content/integraciones.ts | tr -d ' ')
+          generadas=$(find out/integraciones -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')
+          if [ "$esperadas" != "$generadas" ]; then
+            echo "Hay $esperadas integraciones en el contenido y $generadas en out/integraciones — se cancela"
+            exit 1
+          fi
+          echo "OK $generadas integraciones generadas"
 
       - name: Subir por FTP a la raiz de nodbu.com
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0

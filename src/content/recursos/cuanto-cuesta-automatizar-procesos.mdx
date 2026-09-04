@@ -1,0 +1,165 @@
+---
+title: "Cuánto cuesta automatizar procesos en una empresa y cuándo se recupera"
+description: "Qué compone el precio de automatizar un proceso, qué costes siguen después, cómo calcular cuándo se recupera y dos ejemplos ilustrativos con las cuentas hechas."
+tldr: "El coste de automatizar tiene tres partes: el proyecto (diagnóstico, diseño e implantación, que se paga una vez), las herramientas (cuotas mensuales de la plataforma y de lo que conecta) y el mantenimiento. Se recupera cuando el valor de las horas que deja de hacer el equipo supera esas cuotas. La forma de saberlo antes de pagar es medir cuántas horas se van hoy en el proceso, y esa medición es gratis."
+publishedAt: 2026-09-04
+updatedAt: 2026-09-04
+category: gestion
+tags: [costes, roi, presupuesto, gestion]
+featured: true
+draft: false
+faq:
+  - q: "¿Cuánto cuesta automatizar un proceso concreto?"
+    a: "Depende de cuántos sistemas hay que conectar, de si esos sistemas permiten conexión directa y de cuánta lógica tiene el proceso. Por eso no hay tarifa de lista: un flujo que pasa formularios al CRM y otro que reconcilia pagos con facturación no cuestan lo mismo aunque los dos sean 'una automatización'. Lo que sí se puede es tener el precio cerrado por escrito antes de empezar."
+  - q: "¿Hay costes ocultos después del proyecto?"
+    a: "Hay costes después, pero no tienen por qué ser ocultos si se nombran antes: las cuotas de las herramientas (la plataforma de automatización, el CRM, la API de WhatsApp) y el mantenimiento si alguien lo contrata. Un presupuesto serio los lista aparte del precio del proyecto, porque son de otra naturaleza: el proyecto se paga una vez; las cuotas, cada mes."
+  - q: "¿Cómo sé si me compensa antes de gastar nada?"
+    a: "Midiendo cuántas horas se van hoy en el proceso: quién lo hace, cuántas veces a la semana y cuánto tarda cada vez. Con eso y el coste por hora de esa persona se tiene el valor mensual del proceso. Si las cuotas mensuales de la automatización quedan claramente por debajo, compensa; si no, no. Esa medición es gratis y es lo primero que se hace en el diagnóstico."
+  - q: "¿Y si el proceso cambia dentro de un año?"
+    a: "Los procesos cambian, y un flujo bien hecho se ajusta sin rehacerlo: se cambia un paso, no el flujo entero. Lo que conviene es que lo entregado sea tuyo y esté documentado, para que ese ajuste lo pueda hacer quien lo montó o cualquier otro. Un flujo que solo entiende quien lo hizo es un coste futuro."
+---
+
+"¿Cuánto cuesta?" es la primera pregunta y casi nunca tiene una respuesta directa, porque
+quien la hace y quien la responde suelen estar hablando de cosas distintas. El dueño de la
+empresa piensa en un número. Quien automatiza piensa en tres.
+
+Este artículo separa los tres, explica cómo se calcula en cuánto tiempo se recupera y pone dos
+ejemplos con las cuentas hechas. **Los ejemplos son ilustrativos**: los números son supuestos
+razonables para que se vea el cálculo, no datos de ningún cliente ni promesas de resultado.
+
+## ¿Qué se paga exactamente cuando se automatiza un proceso?
+
+Se pagan tres cosas distintas, en momentos distintos:
+
+| Coste | Cuándo se paga | Qué incluye |
+|---|---|---|
+| **El proyecto** | Una vez | Diagnóstico, diseño del flujo, implantación, pruebas y guía para el equipo |
+| **Las herramientas** | Cada mes | La plataforma de automatización y las cuotas de lo que conecta (CRM, API de WhatsApp, facturación) |
+| **El mantenimiento** | Cada mes, si se contrata | Vigilar que siga funcionando, ajustar cuando cambia algo, resolver dudas |
+
+El error más común es comparar solo el primero. Un proyecto barato con herramientas caras sale
+más caro a los doce meses que uno al revés. Y un proyecto sin mantenimiento no es más barato:
+es un proyecto donde el mantenimiento lo hace alguien del equipo cuando algo falla, a las
+once de la noche.
+
+## ¿De qué depende el precio del proyecto?
+
+De tres factores, y conviene entenderlos porque son los que puedes cambiar antes de pedir
+presupuesto:
+
+1. **Cuántos sistemas hay que conectar.** Dos (formulario y CRM) es sencillo; cinco (web,
+   CRM, inventario, facturación y WhatsApp) es un proyecto.
+2. **Si esos sistemas permiten conexión directa.** Las herramientas modernas tienen una
+   puerta abierta para conectarse. Un programa antiguo o hecho a medida puede no tenerla, y
+   entonces hay que construirla, que es lo que más encarece.
+3. **Cuánta lógica tiene el proceso.** "Cuando llega un pedido, avísame" es una línea. "Cuando
+   llega un pedido, comprueba el stock, si hay reserva y avisa a almacén, si no hay avisa al
+   cliente con el plazo y crea la orden de compra al proveedor" son veinte.
+
+Por eso en NODBU, agencia de automatización de procesos y desarrollo a medida para PyMEs, no
+hay tarifa de lista: el precio sale del diagnóstico y se cierra por escrito antes de empezar.
+Lo que sí es fijo es la estructura de pago: un anticipo del 30% al aceptar y el 70% contra
+entrega. Está en las [condiciones del servicio](/terminos/).
+
+## ¿Qué cuestan las herramientas cada mes?
+
+Menos de lo que se piensa, con una excepción. La mayoría de las plataformas de automatización
+tienen planes de entrada por debajo de lo que cuesta una hora de trabajo de cualquier persona
+del equipo; en [Make vs Zapier vs n8n](/recursos/make-vs-zapier-vs-n8n/) están los precios
+oficiales comparados.
+
+La excepción es lo que se conecta. El CRM tiene su cuota. La API de WhatsApp Business cobra
+por conversación. El sistema de facturación cobra por su plan. **Ninguno de esos costes es de
+la automatización**: son de las herramientas que la empresa ya usa o va a usar. Pero hay que
+sumarlos para saber qué se paga cada mes en total.
+
+Un presupuesto honesto los lista aparte, con su cuota, aunque no los cobre quien automatiza.
+
+## ¿Cómo se calcula en cuánto tiempo se recupera?
+
+Con una resta y una división. Primero se mide lo que cuesta hoy el proceso hecho a mano:
+
+- **Quién lo hace** y cuánto cuesta su hora (sueldo más cargas, dividido entre horas
+  trabajadas).
+- **Cuántas veces** se hace a la semana.
+- **Cuánto tarda** cada vez, contando las interrupciones.
+
+Eso da un coste mensual del proceso. Después se resta lo que costarán las herramientas cada
+mes. Lo que queda es el ahorro mensual. **El precio del proyecto dividido entre ese ahorro
+mensual es el número de meses que tarda en recuperarse.**
+
+Hay dos cosas que este cálculo no captura y que conviene tener presentes: los errores que
+deja de haber (una cotización mal copiada, un pedido que se perdió) y lo que la persona hace
+con las horas que recupera. Las dos suelen valer más que las horas, pero no se pueden poner
+en una tabla sin inventárselas, así que aquí no se ponen.
+
+## Ejemplo 1: ¿cuánto se recupera al automatizar las cotizaciones?
+
+**Estimación ilustrativa.** Supón una empresa donde una persona prepara y envía ~12
+cotizaciones al día, a ~10 minutos cada una entre buscar los datos, montar el documento y
+mandarlo. Son ~2 horas diarias, ~40 al mes. Con un coste por hora de ~12 dólares (el que tú
+tengas es el que vale), el proceso cuesta ~480 dólares al mes en tiempo.
+
+Se automatiza para que la cotización salga del CRM ya montada y llegue por WhatsApp: el flujo
+está en [cotizaciones automáticas del CRM a WhatsApp](/recursos/cotizaciones-automaticas-crm-whatsapp/).
+Supón que las herramientas suman ~60 dólares al mes (plataforma de automatización y
+conversaciones de WhatsApp) y que la persona sigue revisando cada cotización un minuto antes
+de que salga: ~4 horas al mes, ~48 dólares.
+
+| | Antes | Después |
+|---|---|---|
+| Horas al mes | ~40 | ~4 |
+| Coste en tiempo | ~480 USD | ~48 USD |
+| Herramientas | 0 | ~60 USD |
+| **Total mensual** | **~480 USD** | **~108 USD** |
+
+Ahorro mensual: ~372 dólares. Si el proyecto costó, por ejemplo, ~1.500 dólares, se recupera
+en ~4 meses. Si costó ~3.000, en ~8. A partir de ahí, cada mes es ahorro.
+
+## Ejemplo 2: ¿y si lo que se automatiza es el reporte semanal?
+
+**Estimación ilustrativa.** Supón un gerente que cada lunes junta datos de tres sitios (la
+hoja de ventas, el CRM y la pasarela de pago) para armar el reporte. Le lleva ~3 horas, y su
+hora vale ~30 dólares. Son ~12 horas y ~360 dólares al mes.
+
+Se automatiza para que el reporte llegue hecho el lunes a las ocho. Herramientas: la
+plataforma de automatización, ~20 dólares al mes. El gerente lo lee y lo interpreta, que es
+lo que debía hacer desde el principio: ~30 minutos, ~15 dólares por semana.
+
+| | Antes | Después |
+|---|---|---|
+| Horas al mes | ~12 | ~2 |
+| Coste en tiempo | ~360 USD | ~60 USD |
+| Herramientas | 0 | ~20 USD |
+| **Total mensual** | **~360 USD** | **~80 USD** |
+
+Ahorro mensual: ~280 dólares. Con un proyecto de ~1.200 dólares, ~4 meses y medio. Es un
+proceso más barato de automatizar que el primero (menos lógica, sin WhatsApp) y con una hora
+más cara detrás, y por eso se recupera parecido.
+
+## ¿Cuándo NO compensa automatizar?
+
+Cuando el proceso se hace poco, cuando lo hace alguien cuya hora vale poco y no tiene otra
+cosa mejor que hacer, o cuando el proceso cambia cada semana y no tiene una forma correcta de
+hacerse.
+
+En los dos primeros casos el ahorro mensual no cubre las cuotas y el proyecto no se recupera
+nunca. En el tercero, lo que hay que hacer primero es ordenar el proceso, y eso no es un
+trabajo de software. En [qué procesos compensa automatizar](/recursos/que-procesos-automatizar-pyme/)
+está el criterio para detectar estos casos antes de gastar nada.
+
+Un diagnóstico serio dice cuándo no compensa. Si todo lo que te ofrecen es automatizable y
+rentable, desconfía.
+
+## ¿Qué pedir en un presupuesto para no llevarse sorpresas?
+
+Cuatro cosas, por escrito:
+
+1. **El alcance**: qué procesos, con qué herramientas, qué entrega quien automatiza y qué
+   tienes que aportar tú.
+2. **El precio del proyecto y cómo se paga.**
+3. **Las cuotas mensuales de las herramientas**, listadas una a una aunque no las cobre él.
+4. **Qué pasa si algo no funciona como se acordó**: si se ajusta, hasta cuándo y a qué coste.
+
+Con esas cuatro cosas delante, el cálculo de este artículo se hace en cinco minutos y la
+decisión deja de ser una apuesta.

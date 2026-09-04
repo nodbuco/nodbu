@@ -1,4 +1,5 @@
 import { countryNames } from '@/content/countries';
+import type { Integration } from '@/content/integraciones';
 import { categoryLabels } from '@/content/recursos';
 import { site } from '@/content/site';
 import type { ArticleMeta, Article } from '@/types/article';
@@ -58,6 +59,16 @@ export function articlePath(slug: string): string {
 /** URL canonica de un artículo. */
 export function articleUrl(slug: string): string {
   return absoluteUrl(articlePath(slug));
+}
+
+/** Ruta relativa de una integracion. Mismo principio que articlePath: se pide, no se compone. */
+export function integrationPath(slug: string): string {
+  return `${site.routes.integrations}${slug}/`;
+}
+
+/** URL canonica de una integracion. */
+export function integrationUrl(slug: string): string {
+  return absoluteUrl(integrationPath(slug));
 }
 
 export const ORGANIZATION_ID = `${site.url}/#organization`;
@@ -302,4 +313,139 @@ export function aboutGraph({
       breadcrumbNode(url, breadcrumbs),
     ],
   };
+}
+
+/**
+ * Grafo de /casos/: una pagina normal con sus migas.
+ *
+ * NO se marca como Review ni AggregateRating a proposito. Google no muestra
+ * estrellas para resenas que una empresa publica de si misma en su propio
+ * sitio (las considera "self-serving") y marcarlas asi es la clase de cosa
+ * que acaba en una accion manual. Los casos son contenido, no valoracion.
+ */
+export function casesGraph({
+  title,
+  description,
+  breadcrumbs,
+}: {
+  title: string;
+  description: string;
+  breadcrumbs: BreadcrumbEntry[];
+}) {
+  const url = absoluteUrl(site.routes.cases);
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': `${url}#webpage`,
+        url,
+        name: title,
+        description,
+        inLanguage: 'es',
+        isPartOf: ref(WEBSITE_ID),
+        about: ref(ORGANIZATION_ID),
+        breadcrumb: ref(`${url}#breadcrumb`),
+      },
+      breadcrumbNode(url, breadcrumbs),
+    ],
+  };
+}
+
+/** Grafo del hub de integraciones: coleccion + lista + migas. */
+export function integrationsHubGraph({
+  title,
+  description,
+  integrations,
+  breadcrumbs,
+}: {
+  title: string;
+  description: string;
+  integrations: Integration[];
+  breadcrumbs: BreadcrumbEntry[];
+}) {
+  const url = absoluteUrl(site.routes.integrations);
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'CollectionPage',
+        '@id': `${url}#webpage`,
+        url,
+        name: title,
+        description,
+        inLanguage: 'es',
+        isPartOf: ref(WEBSITE_ID),
+        publisher: ref(ORGANIZATION_ID),
+        breadcrumb: ref(`${url}#breadcrumb`),
+        mainEntity: ref(`${url}#itemlist`),
+      },
+      {
+        '@type': 'ItemList',
+        '@id': `${url}#itemlist`,
+        numberOfItems: integrations.length,
+        itemListElement: integrations.map((item, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          url: integrationUrl(item.slug),
+          name: item.title,
+        })),
+      },
+      breadcrumbNode(url, breadcrumbs),
+    ],
+  };
+}
+
+/**
+ * Grafo de una integracion: la pagina, el servicio que describe y sus
+ * preguntas.
+ *
+ * Se marca como `Service` y no como `Product` porque es eso: un trabajo de
+ * conexion que presta la organizacion, sin precio de lista. `provider` apunta
+ * al nodo global por @id, como todo lo demas.
+ */
+export function integrationGraph(integration: Integration, breadcrumbs: BreadcrumbEntry[]) {
+  const url = integrationUrl(integration.slug);
+
+  const graph: Record<string, unknown>[] = [
+    {
+      '@type': 'WebPage',
+      '@id': `${url}#webpage`,
+      url,
+      name: integration.headline,
+      description: integration.description,
+      inLanguage: 'es',
+      isPartOf: ref(WEBSITE_ID),
+      breadcrumb: ref(`${url}#breadcrumb`),
+      mainEntity: ref(`${url}#service`),
+    },
+    {
+      '@type': 'Service',
+      '@id': `${url}#service`,
+      name: `Integración ${integration.title}`,
+      description: integration.description,
+      serviceType: `Integración ${integration.title}`,
+      provider: ref(ORGANIZATION_ID),
+      areaServed: countryNames.map((name) => ({ '@type': 'Country', name })),
+      availableLanguage: [{ '@type': 'Language', name: 'Español' }],
+      url,
+    },
+    breadcrumbNode(url, breadcrumbs),
+  ];
+
+  if (integration.faq.length > 0) {
+    graph.push({
+      '@type': 'FAQPage',
+      '@id': `${url}#faq`,
+      mainEntity: integration.faq.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: { '@type': 'Answer', text: item.a },
+      })),
+    });
+  }
+
+  return { '@context': 'https://schema.org', '@graph': graph };
 }

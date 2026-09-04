@@ -1,0 +1,158 @@
+---
+title: "Cómo automatizar el agendamiento de citas y reducir las inasistencias"
+description: "Agenda conectada, confirmación y recordatorios por WhatsApp y reprogramación desde el chat: cómo automatizar las citas paso a paso y qué errores evitar."
+tldr: "Se automatiza el agendamiento conectando la agenda (Google Calendar u otra) con el canal por el que el cliente ya habla, casi siempre WhatsApp: el cliente elige un hueco libre, recibe la confirmación al instante y un recordatorio antes de la cita, y si no puede, reprograma desde el chat. Las inasistencias bajan porque el recordatorio llega por donde se lee y cambiar la cita cuesta un mensaje."
+publishedAt: 2026-09-04
+updatedAt: 2026-09-04
+category: automatizacion
+tags: [citas, agendamiento, whatsapp, google-calendar]
+featured: false
+draft: false
+faq:
+  - q: "¿Cuántas inasistencias se evitan con recordatorios automáticos?"
+    a: "Depende del sector, del tipo de cita y de con cuánta antelación se avise, y no hay una cifra que valga para todos. Lo que sí se puede hacer es medirlo en tu caso: cuántas citas se pierden hoy al mes, activar los recordatorios y contar de nuevo a los dos meses. Es el único dato fiable, y es gratis."
+  - q: "¿Hace falta cambiar de agenda?"
+    a: "No. Google Calendar, Outlook, Calendly y la mayoría de las agendas del sector permiten conectarse. La agenda sigue siendo la misma; lo que se añade es que WhatsApp la consulte y la actualice. Si la agenda es un cuaderno o una hoja de cálculo sin estructura, ese es el primer trabajo."
+  - q: "¿Puedo cobrar una seña al reservar?"
+    a: "Sí. El flujo puede enviar un enlace de pago junto con la confirmación y marcar la cita como confirmada solo cuando el pago entra. Es la forma más efectiva de reducir inasistencias en servicios con lista de espera, y también la que más fricción añade: conviene reservarla para las citas que más cuesta perder."
+  - q: "¿Qué pasa si el cliente no responde al recordatorio?"
+    a: "Se decide antes de montarlo. Lo habitual es que un recordatorio sin respuesta no cancele nada (mucha gente lee y no contesta), y que se avise al equipo de qué citas del día no están confirmadas para que decida si llama. Cancelar automáticamente por silencio suele quitar más citas buenas de las que evita."
+---
+
+"¿Qué horario te queda bien?" "¿Y el jueves?" "El jueves no puedo, ¿el viernes?" "A las diez
+está ocupado, ¿a las once?" Seis mensajes para fijar una cita, repetidos veinte veces al día, y
+al final el cliente no aparece porque nadie le recordó.
+
+Automatizar el agendamiento resuelve las dos cosas a la vez: **la cita se fija en un mensaje y
+el cliente recibe el recordatorio por donde de verdad lo lee.** Este artículo explica cómo se
+monta, qué decisiones hay que tomar antes y qué errores conviene no cometer.
+
+## ¿Qué significa automatizar el agendamiento?
+
+Significa conectar la agenda de la empresa con el canal por el que el cliente ya escribe, para
+que reservar, confirmar, recordar y cambiar una cita no requiera que nadie del equipo
+intervenga. La agenda sigue siendo Google Calendar, Outlook o la del sector; el canal, casi
+siempre, WhatsApp.
+
+El flujo completo, tal como suele quedar:
+
+1. **El cliente pide cita** por WhatsApp, por la web o por teléfono.
+2. **El sistema ofrece los huecos libres** de verdad, leídos de la agenda en ese momento.
+3. **El cliente elige uno** y la cita se crea en la agenda, con sus datos.
+4. **Recibe la confirmación** al instante: fecha, hora, lugar o enlace, y cómo cambiarla.
+5. **Recibe el recordatorio** con la antelación acordada (el día antes, dos horas antes).
+6. **Si no puede, responde** y el sistema le ofrece otros huecos; la agenda se actualiza sola.
+7. **Si no confirma**, el equipo recibe la lista de citas del día sin confirmar y decide.
+
+Cada paso quita una tarea que hoy hace alguien a mano. El que más tiempo devuelve es el 2: el
+ir y venir de "¿y el jueves?" desaparece porque el cliente ve los huecos y elige.
+
+## ¿Por qué se pierden citas y qué parte se puede evitar?
+
+Se pierden por tres motivos, y la automatización actúa sobre los dos primeros:
+
+| Motivo | Qué lo causa | Qué hace el flujo |
+|---|---|---|
+| **Olvido** | Reservó hace días y no lo tiene presente | Recordatorio por WhatsApp con la antelación justa |
+| **Cambiar es un fastidio** | Llamar, esperar, explicar; es más fácil no ir | Reprogramar cuesta responder un mensaje |
+| **No le importaba** | Reservó por si acaso, sin intención real | Una seña al reservar, si el servicio lo justifica |
+
+El tercero es el que ninguna automatización arregla del todo, y el que más se sobreestima.
+Cobrar una seña ayuda, pero añade fricción a quien sí iba a ir. Se decide por tipo de cita, no
+de forma general.
+
+Lo que no conviene es inventarse el porcentaje de inasistencias que se va a evitar. Se mide
+antes, se activa y se mide después. Es lo único que dice la verdad.
+
+## ¿Qué hace falta tener antes de conectar nada?
+
+Cuatro cosas, y ninguna es técnica:
+
+- **Una agenda con estructura.** Horarios de atención, duración de cada tipo de cita, quién
+  atiende cada una y cuánto margen entre citas. Si esto vive en la cabeza de la recepcionista,
+  lo primero es escribirlo.
+- **El número de WhatsApp Business en la API oficial.** La aplicación normal no permite que un
+  sistema envíe mensajes por tu número. La migración conserva el número; está explicado en
+  [cómo automatizar la atención por WhatsApp](/recursos/automatizar-whatsapp-pyme/).
+- **Las plantillas de mensaje aprobadas por Meta** para confirmación y recordatorio. Son
+  textos fijos con huecos (nombre, fecha, hora) que WhatsApp revisa una vez.
+- **El consentimiento del cliente** para recibir avisos por WhatsApp, recogido al reservar. Sin
+  él no se envía nada.
+
+Con esto listo, la conexión entre la agenda y WhatsApp se monta; sin esto, se monta algo que
+ofrece huecos que no existen y manda mensajes que no llegan.
+
+## ¿Cómo se decide la antelación del recordatorio?
+
+Se decide por tipo de cita, y suele haber dos recordatorios, no uno:
+
+1. **El primero, el día anterior**, con tiempo para reprogramar si no puede. Es el que evita
+   el olvido.
+2. **El segundo, una o dos horas antes**, corto: hora, lugar y "¿confirmas?". Es el que
+   reduce el retraso.
+
+Para citas que se reservan con semanas de antelación (una revisión, una consulta de
+especialista), conviene un tercero a los pocos días de reservar, para que el cliente la tenga
+presente. Para citas del mismo día, basta el segundo.
+
+Lo que no funciona es un recordatorio con tres días de antelación: se lee, se olvida, y el día
+de la cita nadie lo tiene en la cabeza.
+
+## ¿Qué pasa cuando el cliente responde?
+
+Depende de qué responda, y las tres respuestas posibles se resuelven de forma distinta:
+
+- **"Confirmo."** La cita se marca como confirmada en la agenda. El equipo la ve en verde.
+- **"No puedo."** El sistema ofrece los próximos huecos libres; el cliente elige uno; la cita
+  antigua se libera y la nueva se crea. El hueco liberado puede ofrecerse a la lista de espera,
+  si la hay.
+- **Cualquier otra cosa** ("¿puedo ir con mi hijo?", "¿tengo que llevar algo?"). Es una
+  pregunta real y la responde una persona: la conversación pasa a la bandeja del equipo con la
+  cita delante.
+
+Esa última regla es la que separa un flujo bien montado de un bot que frustra. **El sistema
+gestiona las tres o cuatro respuestas previsibles; todo lo demás va a alguien.**
+
+## ¿Se puede conectar con otras cosas además de la agenda?
+
+Sí, y es donde el flujo empieza a devolver más que tiempo:
+
+- **Con el CRM o la ficha del cliente**, para que cada cita quede en su historial y para que
+  quien atiende sepa si es la primera visita o la décima.
+- **Con el cobro**, para pedir una seña al reservar o enviar el enlace de pago después de la
+  cita. En [MercadoPago + WhatsApp](/integraciones/mercadopago-whatsapp/) está el flujo de
+  cobro por chat.
+- **Con la encuesta posterior**, para preguntar cómo fue un día después, solo a quien
+  asistió.
+
+El flujo base, el de agenda y WhatsApp, está descrito paso a paso en
+[Google Calendar + WhatsApp](/integraciones/google-calendar-whatsapp/), con lo que hace falta
+tener y las preguntas que suelen surgir.
+
+## ¿Qué errores conviene evitar?
+
+Los que se repiten en casi todos los proyectos que se montan con prisa:
+
+1. **Ofrecer huecos que no están libres.** Pasa cuando la agenda no es la única fuente de
+   verdad y alguien apunta citas en otro sitio. La agenda tiene que ser una.
+2. **Cancelar por silencio.** Un recordatorio sin respuesta no significa que el cliente no
+   vaya. Cancelar automáticamente quita más citas buenas de las que evita.
+3. **Mensajes que parecen spam.** Sin nombre, sin contexto, en mayúsculas. Se escriben una vez,
+   con calma, y se leen como los escribiría la persona de recepción.
+4. **Recordar demasiado.** Tres recordatorios para una cita del mismo día molestan. Dos bien
+   puestos bastan.
+5. **No decidir qué pasa fuera de horario.** Alguien escribe un domingo para pedir cita: el
+   sistema tiene que ofrecer huecos igual, o decir a qué hora responde alguien. Lo que no puede
+   es callarse.
+
+## ¿Por dónde empezar?
+
+Por confirmaciones y recordatorios sobre las citas que ya se reservan como hasta ahora. Es la
+mitad del flujo, la que más inasistencias evita, y no cambia cómo trabaja el equipo el primer
+día. La reserva desde el chat y la reprogramación automática se añaden cuando lo primero lleva
+unas semanas funcionando.
+
+En NODBU, agencia de automatización de procesos y desarrollo a medida para PyMEs, el
+agendamiento es de los flujos que antes se notan: la tarde de llamadas de confirmación deja de
+existir la primera semana. Si quieres saber cómo quedaría con tu agenda y tu volumen, el
+[diagnóstico de 15 minutos](/#contacto) es para eso.

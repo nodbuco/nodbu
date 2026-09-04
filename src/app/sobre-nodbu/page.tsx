@@ -91,7 +91,22 @@ export default function SobreNodbuPage() {
             <p className="mt-4 text-body-s text-paper-faint text-pretty">{aboutPage.identityNote}</p>
 
             <dl className="glass-flat mt-6 grid gap-x-8 gap-y-4 p-6 sm:grid-cols-2 sm:p-7">
-
+              {/* Nombre, NIT y domicilio: es lo que convierte a NODBU en una
+                  entidad identificable para un buscador. Salen de site.ts. */}
+              <div>
+                <dt className="eyebrow">Titular</dt>
+                <dd className="mt-2 text-body-s text-paper">{legalEntity.holder}</dd>
+              </div>
+              <div>
+                <dt className="eyebrow">NIT</dt>
+                <dd className="mt-2 font-mono text-body-s text-paper">{legalEntity.taxId}</dd>
+              </div>
+              <div>
+                <dt className="eyebrow">Domicilio</dt>
+                <dd className="mt-2 text-body-s text-paper">
+                  {legalEntity.address}, {legalEntity.city}, {legalEntity.country}
+                </dd>
+              </div>
               <div>
                 <dt className="eyebrow">Correo</dt>
                 <dd className="mt-2 text-body-s">

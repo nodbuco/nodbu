@@ -12,8 +12,11 @@ import { articlePath } from '@/lib/seo';
  * articulos mas recientes: es lo que convierte el pie en una via de entrada a
  * la seccion desde cualquier pagina, en vez de un enlace suelto al hub.
  *
- * La columna "Secciones" solo lista las ANCLAS de la landing; Recursos tiene
- * su propia columna, asi que se filtra para no enlazarlo dos veces.
+ * La columna "Secciones" sale de `site.footerNav`: las anclas de la landing
+ * mas las subpaginas (casos, integraciones, sobre). Es una lista aparte de
+ * `site.nav` porque la barra esta limitada a cinco entradas y el pie no:
+ * aqui cabe todo. Recursos tiene su propia columna y por eso no esta en esa
+ * lista.
  *
  * El ano del copyright se calcula en el momento del build. Como el sitio es
  * estatico, en enero hay que reconstruir para que cambie: esta anotado en el
@@ -22,7 +25,6 @@ import { articlePath } from '@/lib/seo';
 export function Footer() {
   const year = new Date().getFullYear();
   const latest = getAllArticles().slice(0, 3);
-  const sections = site.nav.filter((item) => item.href.includes('#'));
 
   const linkStyles = 'text-body-s text-paper-muted transition-colors hover:text-paper';
 
@@ -51,18 +53,13 @@ export function Footer() {
           <nav aria-label="Secciones de la página" className="lg:col-span-3">
             <h2 className="font-mono text-mono uppercase text-paper-faint">Secciones</h2>
             <ul className="mt-5 flex flex-col gap-3">
-              {sections.map((item) => (
+              {site.footerNav.map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className={linkStyles}>
                     {item.label}
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link href={site.routes.about} className={linkStyles}>
-                  Sobre NODBU
-                </Link>
-              </li>
             </ul>
           </nav>
 

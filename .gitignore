@@ -58,3 +58,6 @@ pnpm-debug.log*
 
 # ajustes locales de Claude Code (rutas absolutas de esta maquina)
 .claude/settings.local.json
+
+# configuracion del panel de vista previa de Claude Code (local a esta maquina)
+.claude/launch.json

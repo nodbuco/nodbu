@@ -20,10 +20,14 @@ import { WhatsAppFloat } from '@/components/sections/WhatsAppFloat';
  * que pasar por encima de seis objeciones para llegar a los campos, y quien
  * todavia duda encuentra las respuestas justo debajo.
  *
- * Se quitaron dos secciones: "Casos de uso" (los testimonios reales cumplen la
- * misma funcion de prueba social) y "Cobertura" (los 14 paises siguen en el
- * metadata, en el JSON-LD y en el <select> del formulario, que es donde de
- * verdad servian).
+ * Se quitaron dos secciones: "Casos de uso" y "Cobertura" (los 14 paises
+ * siguen en el metadata, en el JSON-LD y en el <select> del formulario, que
+ * es donde de verdad servian). Los casos EXISTEN, pero como subpagina
+ * (/casos/): aqui las resenas ya hacen de prueba social en su carrusel, y
+ * desarrollarlas alargaria la portada para quien solo quiere saber que hace
+ * NODBU. Lo mismo con /integraciones/: la portada lleva el carrusel de
+ * logos, el directorio vive aparte. La portada no crece; crecen las
+ * subpaginas.
  */
 export default function Home() {
   return (

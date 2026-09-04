@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next';
+import { site } from '@/content/site';
 import { getAllArticles } from '@/lib/articles';
-import { absoluteUrl, articleUrl } from '@/lib/seo';
+import { getAllIntegrations } from '@/lib/integraciones';
+import { absoluteUrl, articleUrl, integrationUrl } from '@/lib/seo';
 
 /**
  * Con output: 'export' esto se resuelve en el build y deja un sitemap.xml
@@ -41,6 +43,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     })),
+    {
+      url: absoluteUrl(site.routes.integrations),
+      lastModified: buildDate,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    // Las integraciones no llevan fecha propia: cambian cuando se recompila.
+    ...getAllIntegrations().map((integration) => ({
+      url: integrationUrl(integration.slug),
+      lastModified: buildDate,
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    })),
+    {
+      url: absoluteUrl(site.routes.cases),
+      lastModified: buildDate,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
     {
       url: absoluteUrl('/sobre-nodbu'),
       lastModified: buildDate,

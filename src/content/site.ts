@@ -69,6 +69,10 @@ export const site = {
   routes: {
     home: '/',
     resources: '/recursos/',
+    /** Casos de uso: una subpagina, no una seccion de la landing (ver CLAUDE.md). */
+    cases: '/casos/',
+    /** Directorio de integraciones. Cada par de herramientas cuelga de aqui. */
+    integrations: '/integraciones/',
     about: '/sobre-nodbu/',
     privacy: '/privacidad/',
     /** Ancla del formulario de contacto, en la landing. */
@@ -85,14 +89,36 @@ export const site = {
    * esa seccion DENTRO del articulo, no la encuentra y no pasa nada. Con la
    * barra delante, el navegador va a la portada y baja a la seccion.
    *
+   * CINCO ENTRADAS, NI UNA MAS: la barra es una pastilla de vidrio y con seis
+   * se rompe en portatiles de 13". Cuando se anadieron /casos/ e
+   * /integraciones/ salieron "Cómo funciona" y "Preguntas": son secciones que
+   * se leen bajando por la portada, no destinos, y siguen en el pie
+   * (`footerNav`). Las subpaginas si necesitan estar aqui, porque son la
+   * unica forma de llegar a ellas desde cualquier sitio.
+   *
    * Las secciones ancladas tienen que coincidir con los id de la landing.
    */
   nav: [
     { label: 'Servicios', href: '/#servicios' },
+    { label: 'Casos', href: '/casos/' },
+    { label: 'Integraciones', href: '/integraciones/' },
+    { label: 'Recursos', href: '/recursos/' },
+    { label: 'Planes', href: '/#planes' },
+  ],
+
+  /**
+   * Columna "Secciones" del pie. Es la lista COMPLETA: las cuatro anclas de la
+   * landing mas las subpaginas. Aqui no hay limite de espacio, asi que no se
+   * recorta nada. Recursos va aparte porque tiene su propia columna.
+   */
+  footerNav: [
+    { label: 'Servicios', href: '/#servicios' },
     { label: 'Cómo funciona', href: '/#como-funciona' },
     { label: 'Planes', href: '/#planes' },
-    { label: 'Recursos', href: '/recursos/' },
     { label: 'Preguntas', href: '/#faq' },
+    { label: 'Casos de uso', href: '/casos/' },
+    { label: 'Integraciones', href: '/integraciones/' },
+    { label: 'Sobre NODBU', href: '/sobre-nodbu/' },
   ],
 
   /** Columna legal del pie. */

@@ -17,7 +17,7 @@ Todos salen de `src/content/site.ts` y **de ningún otro sitio**.
 | WhatsApp | `+57 313 793 8618` (E.164: `573137938618`) |
 | Agenda | `https://cal.com/nodbu/15min` |
 | Duración de la llamada | 15 minutos |
-| Titular | [NOMBRE FISCAL] · [NIT] |
+| Titular | Diego Alonso Torres Alvarado · NIT 1005259304 |
 | Domicilio | CR 1 G # 38 Sur - 09, Bogotá, Colombia |
 | Mercados | España + 13 países de Latinoamérica (`countries.ts`) |
 
@@ -34,15 +34,15 @@ Los literales viven **solo** en `tailwind.config.ts` → `themeTokens.{dark,ligh
 
 | Token | Oscuro (default) | Claro |
 |---|---|---|
-| `ink` (fondo) | `#090909` | `#FFF6ED` |
+| `ink` (fondo) | `#090909` | `#E8E5E3` |
 | `ink-raised` | `#101010` | `#FFFFFF` |
 | `paper` (texto) | `#FFFFFF` | `#0D0D0D` |
 | `paper-muted` | `rgba(255,255,255,.62)` | `rgba(13,13,13,.68)` |
 | `paper-faint` | `rgba(255,255,255,.48)` | `rgba(13,13,13,.58)` |
 | `hairline` | `rgba(255,255,255,.10)` | `rgba(13,13,13,.12)` |
 | `dot` (malla) | `rgba(255,255,255,.07)` | `rgba(13,13,13,.07)` |
-| `nodbu` | `#FF5C00` | **`#C94300`** |
-| `nodbu-glow` | `rgba(255,92,0,.28)` | `rgba(201,67,0,.30)` |
+| `nodbu` | `#FF5C00` | **`#B54100`** |
+| `nodbu-glow` | `rgba(255,92,0,.28)` | `rgba(181,65,0,.30)` |
 
 Además hay dos familias de tokens que **no son de marca**, para el portátil de la sección 2:
 `device-*` (carcasa: aluminio, bisel, lente, LED) y `node-*` (los iconos de la interfaz que se
@@ -53,11 +53,13 @@ razonada en `DESIGN.md §13.4`. No son una excepción a la regla del hexadecimal
 ⚠️ **`dot` está en `.07` y `DESIGN.md §11.4` decidió `.12`/`.11`.** Ver el aviso de la
 sección 4.
 
-**El naranja cambia en claro y no es negociable:** `#FF5C00` sobre `#FAF9F7` da 2.94:1 y
-suspende AA incluso para texto grande. `#C94300` da 4.66:1. La única excepción es el punto del
-logotipo, que va dentro del SVG del kit.
+**El naranja cambia en claro y no es negociable:** `#FF5C00` sobre el crema real `#E8E5E3` da
+2.47:1 y suspende AA incluso para texto grande. `#B54100` da 4.50:1, medido en el navegador sobre
+la página compilada: es el naranja más claro que pasa. (El `#C94300` anterior daba 3.91:1: la
+auditoría original lo midió contra blanco puro, no contra el crema.) La única excepción es el
+punto del logotipo, que va dentro del SVG del kit.
 
-Los 217 textos de la página cumplen AA en los dos modos. Peor caso: **4.66:1**.
+Los 217 textos de la página cumplen AA en los dos modos. Peor caso: **4.50:1**.
 
 ### Tipografía
 
@@ -117,14 +119,17 @@ Detalle completo, con las mediciones que justifican cada número, en `DESIGN.md 
 
 ## 3. Estructura del sitio
 
-Ya no es una sola página. Son **seis rutas fijas más una por artículo**, todas con barra final
-(el sitio se compila con `trailingSlash: true`).
+Ya no es una sola página. Son **ocho rutas fijas más una por artículo y una por integración**,
+todas con barra final (el sitio se compila con `trailingSlash: true`).
 
 | Ruta | Qué es | Archivo |
 |---|---|---|
 | `/` | La landing larga con anclas (tabla de abajo) | `src/app/page.tsx` |
 | `/recursos/` | Hub de artículos: destacado + rejilla filtrable por categoría | `src/app/recursos/page.tsx` |
 | `/recursos/<slug>/` | Un artículo. Una ruta por `.mdx` | `src/app/recursos/[slug]/page.tsx` |
+| `/casos/` | Las seis reseñas contadas como caso: problema, flujo, resultado. Tarjetas con entrada 3D ligada al scroll | `src/app/casos/page.tsx` |
+| `/integraciones/` | Directorio de pares de herramientas (SEO programático) | `src/app/integraciones/page.tsx` |
+| `/integraciones/<slug>/` | Una integración. Una ruta por entrada de `content/integraciones.ts` | `src/app/integraciones/[slug]/page.tsx` |
 | `/sobre-nodbu/` | Página de **entidad**: quién está detrás, NIT, domicilio, cobertura | `src/app/sobre-nodbu/page.tsx` |
 | `/privacidad/` | Política de privacidad | `src/app/privacidad/page.tsx` |
 | `/aviso-legal/` | Aviso legal (condiciones de uso **del sitio web**) | `src/app/aviso-legal/page.tsx` |
@@ -498,3 +503,56 @@ propia comprobación automática y se cambió a interpolar `site.domain`.
    páginas de artículo. Las OG individuales por artículo, fuera de alcance de esta sesión por
    instrucción expresa.
 4. Sigue abierta la decisión de la malla de puntos (32px + `.07`).
+
+### 2026-09-04 — Casos, directorio de integraciones y seis artículos nuevos
+
+Sesión de posicionamiento y conversión. **La portada no creció**: todo lo nuevo son subpáginas,
+y la home pasó de 18,7 kB a 16,4 kB de JS propio porque la barra perdió dos entradas.
+
+**Estructura nueva**
+
+- `/casos/`: los seis testimonios contados como caso (problema → flujo implantado → resultado).
+  Contenido en `src/content/casos.ts`, que referencia a cada persona por su nombre exacto en
+  `testimonials.ts` y **tumba el build si no existe**. No se añadió ninguna cifra que el cliente
+  no diera; el campo `metric` existe para un dato medido y autorizado, y va vacío en los seis.
+  Componente `CaseStudies.tsx`: entrada 3D por tarjeta ligada al scroll (`rotateX` + `y` +
+  `scale` con muelle), sin animar opacidad, menos inclinación en móvil, nada con
+  `prefers-reduced-motion`.
+- `/integraciones/` y `/integraciones/<slug>/`: directorio de pares de herramientas pensado para
+  SEO programático **con contenido real por página** (problema, flujo, usos, requisitos, FAQ).
+  Contenido en `src/content/integraciones.ts`; `lib/integraciones.ts` valida al cargar
+  (slug, longitud de la description, 3–5 preguntas, mínimo 3 pasos) y las guías relacionadas
+  se validan contra los `.mdx` reales. Seis pares publicados: HubSpot + WhatsApp, Stripe +
+  Facturación electrónica, Shopify + WhatsApp, Excel + HubSpot, MercadoPago + WhatsApp y
+  Google Calendar + WhatsApp. Añadir uno es una entrada nueva y recompilar.
+- **Barra de cinco entradas**: Servicios · Casos · Integraciones · Recursos · Planes. Salieron
+  "Cómo funciona" y "Preguntas", que pasan a `site.footerNav` (lista completa para el pie,
+  incluidas las subpáginas). El pie ya no filtra `site.nav` por anclas.
+- Sitemap, `llms.txt` (sección "Integraciones" y las dos páginas nuevas en "Páginas
+  principales") y el workflow de despliegue (comprueba `out/casos`, `out/integraciones` y que
+  el recuento de integraciones cuadre) actualizados.
+- `/sobre-nodbu/` vuelve a mostrar titular, NIT y domicilio en "Datos del titular": la `<dl>`
+  había perdido esas entradas cuando eran marcadores y quedó solo el correo.
+
+**Seis artículos nuevos** (9 en total), todos con fecha 2026-09-04 y pasando la lista de
+`GUIA.md` (1.200–1.800 palabras, `h2` en pregunta, tabla o lista, dos enlaces internos,
+entidad nombrada una vez, 3–5 FAQ, sin cifras sin fuente):
+
+| Slug | Categoría |
+|---|---|
+| `make-vs-zapier-vs-n8n` | herramientas (precios con enlace a las webs oficiales, a fecha de redacción) |
+| `procesos-automatizar-con-ia` | inteligencia-artificial |
+| `cuanto-cuesta-automatizar-procesos` | gestión — **destacado**; ejemplos marcados como estimación ilustrativa |
+| `cotizaciones-automaticas-crm-whatsapp` | automatización |
+| `automatizar-onboarding-clientes-empleados` | gestión |
+| `automatizar-agendamiento-citas` | automatización |
+
+**Lo que se descartó a propósito**
+
+- Poner "Horas ahorradas" con números en los casos. Son personas reales que autorizaron su
+  reseña, no un dato medido; inventarlo rompería la regla de las cifras y la confianza en los
+  seis a la vez. El hueco existe (`metric`) para cuando haya un dato real.
+- Marcar los casos como `Review`/`AggregateRating` en el JSON-LD: Google no muestra estrellas
+  de reseñas que una empresa publica de sí misma y es terreno de acción manual.
+- Meter los casos o el directorio en la portada. Regla explícita: las subpáginas crecen, la
+  portada no.

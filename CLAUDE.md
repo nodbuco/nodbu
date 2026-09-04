@@ -328,15 +328,64 @@ Y comprueba que existen:
 
 ```
 out/index.html            out/recursos/index.html       out/sobre-nodbu/index.html
+out/casos/index.html      out/integraciones/index.html
 out/privacidad/index.html out/aviso-legal/index.html    out/terminos/index.html
 out/gracias/index.html    out/.htaccess                 out/sitemap.xml
 out/robots.txt            out/rss.xml                   out/llms.txt
 out/og.png                out/404.html
-out/recursos/<slug>/index.html  (uno por artículo)
+out/recursos/<slug>/index.html       (uno por artículo)
+out/integraciones/<slug>/index.html  (uno por par de herramientas)
 ```
 
 El workflow de despliegue comprueba esta lista y además que el número de carpetas en
-`out/recursos` coincida con el de `.mdx` publicados. Si no cuadra, cancela la subida.
+`out/recursos` coincida con el de `.mdx` publicados, y el de `out/integraciones` con el de
+entradas de `src/content/integraciones.ts`. Si no cuadra, cancela la subida.
+
+## Las subpáginas crecen; la portada no
+
+Desde septiembre de 2026 hay dos secciones nuevas y **las dos son subpáginas a propósito**:
+`/casos/` y `/integraciones/`. La portada no cambió de peso (de hecho bajó). Si alguien pide
+"meter los casos en la home", la respuesta razonada está en el comentario de `src/app/page.tsx`
+y en el registro de cambios de `CONTEXT.md` (2026-09-04): la portada ya tiene su prueba social (el carrusel de reseñas) y su
+carrusel de logos; lo desarrollado vive aparte, para quien ya está comparando.
+
+### `/casos/` — seis reseñas contadas como caso
+
+- **Todo sale de `src/content/testimonials.ts`.** `casos.ts` referencia a cada persona por
+  su nombre exacto y el módulo lanza (y el build falla) si no existe. Un caso sin reseña real
+  detrás no se publica.
+- **No se inventan cifras.** El bloque "Resultado" es un antes/después en palabras del
+  cliente. Existe un campo opcional `metric` para un dato medido y **autorizado por escrito**;
+  hoy va vacío en los seis. Si se rellena, va con `~` y diciendo de quién es la estimación.
+- **El 3D es scroll-scrub con muelle** (`CaseStudies.tsx`): `rotateX` + `y` + `scale` sobre
+  el borde superior, `perspective` en el `<ol>`. Sin opacidad animada, para que el HTML
+  exportado sea legible sin JavaScript. Menos inclinación por debajo de `md`. Con
+  `prefers-reduced-motion` no se aplica ningún `style`. **No le apiles `Reveal` encima**: la
+  entrada 3D ya es la aparición.
+- Gasto de naranja por tarjeta: dos (insignia de verificado + flecha del resultado).
+
+### `/integraciones/` — SEO programático con contenido de verdad
+
+- **Una entrada en `src/content/integraciones.ts` y `npm run build`.** Entra sola en el hub,
+  el sitemap, `llms.txt` y las migas. `lib/integraciones.ts` valida al cargar: slug en
+  minúsculas, `description` de 120 a 165, 3 a 5 preguntas, mínimo 3 pasos. Si falla, tumba el
+  build con el nombre del par y el campo.
+- **Cada par es una página completa** (problema, flujo, usos, requisitos, FAQ), no una
+  plantilla con dos nombres cambiados. Si no hay 400 palabras propias que decir de un par, no
+  se publica: seis páginas finas hunden el dominio entero.
+- Las guías relacionadas (`articles`) se validan en la página contra los `.mdx` reales; un
+  slug inexistente tumba el build en vez de salir como enlace roto.
+- `tools[].mark` tiene que existir en `components/logos/index.ts`; sin él sale un icono
+  genérico (es el caso de "Facturación electrónica", que es una categoría, no una marca).
+- JSON-LD: `WebPage` + `Service` (proveedor por `@id`) + `FAQPage` + migas. **No** `Product`:
+  no hay precio de lista.
+
+### La barra tiene cinco entradas y el pie las tiene todas
+
+`site.nav` son **cinco** enlaces, ni uno más: la pastilla de vidrio se rompe con seis en un
+portátil de 13". Al entrar Casos e Integraciones salieron "Cómo funciona" y "Preguntas", que
+son secciones que se leen bajando y no destinos. Siguen en `site.footerNav`, que es la lista
+completa para la columna "Secciones" del pie.
 
 ## Cosas que ya se decidieron (no las deshagas sin motivo)
 

@@ -1,0 +1,142 @@
+---
+title: "Cotizaciones automáticas del CRM a WhatsApp en 3 pasos"
+description: "Tutorial para que la cotización salga del CRM ya montada y llegue al cliente por WhatsApp: qué preparar, cómo se conecta y qué revisar antes de enviar."
+tldr: "Para enviar cotizaciones automáticas desde el CRM a WhatsApp hacen falta tres cosas: que los precios y los datos del cliente estén en el CRM y no en la cabeza de nadie, una plantilla de cotización con huecos fijos, y un flujo que al marcar un trato como 'cotizar' monte el documento y lo envíe por la API de WhatsApp. El comercial revisa y confirma; el resto ocurre solo."
+publishedAt: 2026-09-04
+updatedAt: 2026-09-04
+category: automatizacion
+tags: [cotizaciones, crm, whatsapp, tutorial]
+featured: false
+draft: false
+faq:
+  - q: "¿Funciona con cualquier CRM?"
+    a: "Con cualquiera que permita conectarse desde fuera, que hoy son casi todos: HubSpot, Pipedrive, Salesforce, Zoho y los principales del mercado. Con una hoja de cálculo usada como CRM también se puede, aunque con menos garantías de que los datos estén limpios. Lo que no funciona es un CRM que no exporta nada ni tiene conexión, y eso se revisa antes de empezar."
+  - q: "¿La cotización sale sin que nadie la revise?"
+    a: "Puede, pero no conviene al principio. Lo habitual es que el flujo monte la cotización y la deje en espera de un clic del comercial; cuando llevan semanas saliendo bien, se decide qué tipos de cotización (las estándar, sin descuentos) salen solas y cuáles siguen pasando por una persona."
+  - q: "¿Necesito la API de WhatsApp o vale la aplicación normal?"
+    a: "Hace falta la API de WhatsApp Business, la versión oficial para empresas. La aplicación normal no permite que otro sistema envíe mensajes por tu número. La migración conserva el número; lo que cambia es que se atiende desde una bandeja compartida en vez del móvil."
+  - q: "¿Y si el cliente responde a la cotización?"
+    a: "La respuesta llega a la bandeja del equipo con la cotización y el historial delante, y el comercial la atiende como cualquier conversación. Lo que se puede automatizar además es registrar en el CRM que el cliente respondió y mover el trato de etapa; la negociación sigue siendo de la persona."
+---
+
+Adiós a la escena de todos los días: el cliente pide precio por WhatsApp, el comercial abre el
+CRM, busca los datos, abre la plantilla, copia los precios, exporta el PDF, vuelve a WhatsApp
+y lo adjunta. Diez minutos por cotización, con un error de copia cada tantas.
+
+Este es el tutorial para que ese trabajo ocurra solo. Son tres pasos, y **el primero no es
+técnico**: es el que decide si los otros dos salen bien.
+
+## ¿Qué hace falta tener antes de empezar?
+
+Hace falta que la información viva en un sitio y que ese sitio sea el CRM. Si los precios
+están en la cabeza de cada comercial o en un Excel que cada uno tiene distinto, no hay nada
+que automatizar todavía.
+
+Lo mínimo, comprobado antes de tocar ninguna herramienta:
+
+- **Los productos o servicios con su precio** dentro del CRM, actualizados. Si hay precios por
+  volumen o por tipo de cliente, escritos como regla, no como costumbre.
+- **Los datos del cliente completos** en su ficha: nombre, empresa, identificación fiscal si
+  la cotización la necesita, y el número de WhatsApp con prefijo de país.
+- **Una plantilla de cotización** que la empresa ya use, con los huecos identificados: dónde
+  va el cliente, dónde los conceptos, dónde el total, dónde las condiciones.
+- **El número de WhatsApp Business en la API oficial de Meta.** Sin esto, ningún sistema puede
+  enviar mensajes por tu número. En [cómo automatizar la atención por
+  WhatsApp](/recursos/automatizar-whatsapp-pyme/) está explicado qué implica y cómo se hace
+  conservando el número.
+
+Si algo de esta lista falta, ese es el trabajo previo, y es más importante que el flujo.
+
+## Paso 1: ¿Cómo se define qué dispara la cotización?
+
+Se define un momento concreto en el CRM que signifique "esta cotización tiene que salir". Lo
+más limpio es una **etapa del embudo** llamada *Cotizar*, o una casilla en el trato. Cuando el
+comercial mueve el trato ahí, el flujo arranca.
+
+Por qué una etapa y no otra cosa:
+
+1. Es un gesto que el comercial ya hace: mover tratos por el embudo.
+2. Deja rastro: se sabe cuándo se pidió cada cotización y quién la pidió.
+3. Se puede deshacer: si se movió por error, se devuelve y no pasa nada.
+
+Lo que **no** conviene es disparar la cotización desde un mensaje del cliente ("mándame
+precio"). Un cliente puede pedir precio de algo que no está claro, y entonces la decisión de
+qué cotizar tiene que ser de una persona. El disparador es el comercial, no el cliente.
+
+En este paso se decide también **qué trato es cotizable**: el flujo comprueba que tenga
+productos asociados, cantidades y un número de WhatsApp. Si falta algo, no genera nada: avisa
+al comercial de qué falta y se para. Una cotización con huecos vacíos es peor que ninguna.
+
+## Paso 2: ¿Cómo se monta el documento con los datos del CRM?
+
+El flujo toma del trato lo que necesita y rellena la plantilla. En orden:
+
+1. **Lee el trato**: cliente, productos, cantidades, comercial responsable.
+2. **Calcula los importes** con las reglas escritas en el paso previo: precio por unidad,
+   descuentos por volumen si los hay, impuestos según el país.
+3. **Rellena la plantilla** en el formato de la empresa (un documento, un PDF, una página).
+4. **Guarda el documento** en la carpeta del cliente y **enlaza el archivo al trato** en el
+   CRM, para que cualquiera lo encuentre después.
+5. **Numera la cotización** con un correlativo, para que no haya dos con el mismo número.
+
+Hay dos decisiones aquí que conviene tomar antes y no sobre la marcha:
+
+| Decisión | Opción prudente | Cuándo cambiarla |
+|---|---|---|
+| ¿Descuentos automáticos? | Solo los que están escritos como regla fija | Nunca los que dependen de criterio |
+| ¿Validez de la cotización? | Un plazo fijo (por ejemplo, 15 o 30 días) impreso en el documento | Si el sector tiene otra costumbre |
+| ¿Sale sin revisar? | No: se queda en espera de un clic del comercial | Cuando lleve semanas sin correcciones |
+
+Esa última fila es la que más tranquilidad da. Las primeras semanas el flujo **prepara** la
+cotización y el comercial la **aprueba** con un clic. Lo que el comercial corrige en esas
+semanas es lo que faltaba por definir, y se ajusta. Cuando deja de corregir, se decide qué
+tipos salen solos.
+
+## Paso 3: ¿Cómo se envía por WhatsApp y qué pasa después?
+
+Se envía con una **plantilla de mensaje aprobada por WhatsApp**, que es el formato que Meta
+exige para que una empresa inicie o retome una conversación. La plantilla lleva un texto fijo
+con huecos (nombre, número de cotización, validez) y el documento adjunto o un enlace.
+
+El flujo completo del envío:
+
+1. **Comprueba el consentimiento**: el cliente tiene que haber aceptado recibir mensajes de la
+   empresa por WhatsApp. Si no consta, el flujo no envía y avisa.
+2. **Envía la plantilla** con la cotización por la API, desde el número de la empresa.
+3. **Registra el envío en el CRM**: fecha, hora, número de cotización, estado de entrega.
+4. **Mueve el trato** a la etapa siguiente (*Cotización enviada*).
+5. **Programa el seguimiento**: si el cliente no responde en el plazo acordado, el CRM crea
+   la tarea de seguimiento al comercial. No escribe al cliente por su cuenta.
+
+Cuando el cliente responde, la conversación llega a la bandeja del equipo con la cotización y
+el historial delante. A partir de ahí es una venta normal: la negociación, el descuento y el
+cierre son del comercial, no del flujo.
+
+## ¿Qué suele salir mal la primera vez?
+
+Tres cosas, y las tres son de datos, no de software:
+
+- **Precios desactualizados en el CRM.** El flujo cotiza lo que el CRM dice. Si el CRM dice el
+  precio del año pasado, sale el precio del año pasado. La solución es que el CRM sea el único
+  sitio donde viven los precios.
+- **Números de WhatsApp sin prefijo.** Un número guardado como "313 793 8618" no es un destino
+  válido para la API. Hay que limpiarlos una vez y guardarlos bien desde entonces.
+- **Cotizaciones que necesitaban criterio.** Un cliente especial, un proyecto raro, una
+  condición distinta. El flujo la monta como estándar y el comercial la corrige. Está bien que
+  pase: es la señal de que ese tipo de cotización no debe salir sola.
+
+Ninguna de las tres se arregla con más automatización. Se arreglan ordenando los datos.
+
+## ¿Con qué herramientas se monta?
+
+Con las que la empresa ya tenga, casi siempre. HubSpot, Pipedrive o Salesforce como CRM; Make
+o n8n para el flujo; la API de WhatsApp Business para el envío. Si el CRM es HubSpot, el flujo
+de conexión con WhatsApp está descrito paso a paso en
+[HubSpot + WhatsApp](/integraciones/hubspot-whatsapp/), y la elección entre plataformas de
+automatización en [Make vs Zapier vs n8n](/recursos/make-vs-zapier-vs-n8n/).
+
+En NODBU, agencia de automatización de procesos y desarrollo a medida para PyMEs, este es
+uno de los flujos que más se piden y uno de los que antes se nota: la cotización que tardaba
+diez minutos pasa a tardar lo que tarda un clic. Lo que decide si sale bien no es la
+herramienta: es haber hecho el paso previo. Si quieres saber cuánto te llevaría en tu caso,
+[cuéntanos cómo cotizas hoy](/#contacto).
