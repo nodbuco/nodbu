@@ -35,6 +35,33 @@ Options -Indexes
   RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
   RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
 
+  # 3. La pagina de aparcamiento de Hostinger, a la portada.
+  #    /default.php es el archivo que el plan trae de fabrica (16.417 bytes,
+  #    titulo "Pagina por defecto"). Mientras el despliegue apunto a la
+  #    carpeta equivocada, ESO era lo que respondia en nodbu.com, y Google
+  #    lo rastreo. Sigue vivo en la raiz del dominio, con 200, sin canonica
+  #    y con un contenido identico al de miles de dominios aparcados en
+  #    Hostinger: es el "Duplicada: el usuario no ha indicado ninguna
+  #    version canonica" que salio en Search Console el 6/9/2026.
+  #    Va con 301 a la portada, no con 410, para consolidar ahi el rastreo
+  #    de aquella epoca. No se borra el archivo del servidor a proposito:
+  #    si Hostinger vuelve a dejarlo caer, la regla lo sigue tapando.
+  RewriteRule ^default\.php$ / [R=301,L]
+
+  # 4. /algo/index.html -> /algo/
+  #    Apache sirve las dos formas con 200 y son literalmente el mismo
+  #    archivo. La canonica ya apunta a la version con barra, asi que
+  #    Google no las indexa por duplicado, pero gasta rastreo en ellas.
+  #
+  #    CUIDADO CON EL BUCLE: la condicion mira THE_REQUEST, que es la linea
+  #    original de la peticion ("GET /casos/ HTTP/1.1"), no la ruta ya
+  #    reescrita. mod_dir traduce /casos/ a /casos/index.html POR DENTRO y
+  #    esa traduccion no toca THE_REQUEST, asi que la regla no se dispara
+  #    contra si misma. Si la cambias por %{REQUEST_URI}, el sitio entero
+  #    entra en bucle de redirecciones.
+  RewriteCond %{THE_REQUEST} \s/+(?:[^?\s]*/)?index\.html[\s?] [NC]
+  RewriteRule ^(.*/)?index\.html$ /$1 [R=301,L]
+
   # NOTA: no se anade ninguna regla que quite la barra final. El sitio se
   # genera con trailingSlash: true y mod_dir ya redirige /privacidad a
   # /privacidad/ por su cuenta.

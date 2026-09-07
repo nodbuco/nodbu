@@ -613,3 +613,39 @@ mantienen por decisión del titular: los webhooks de WhatsApp y de n8n necesitan
 así que no se pueden cerrar por IP ni con auth básica sin romperlos; la protección realista es
 2FA en los tres, registros cerrados (ya lo están) y, a medio plazo, moverlos a un dominio que
 no sea el de la marca.
+
+### 2026-09-07 — Search Console: "Página con redirección" y "Duplicada sin canónica"
+
+Aviso de indexación del 6/9/2026, con 17 páginas indexadas y 4 sin indexar por dos motivos.
+Diagnóstico de los dos, medido contra el sitio en producción:
+
+**"Página con redirección" — no es un error y no se toca.** Son las formas alternativas de la
+URL redirigiendo a la canónica, que es exactamente lo que tienen que hacer:
+`www.nodbu.com/` → 301 → `nodbu.com/`, `http://` → 301 → `https://`, y `/recursos` → 301 →
+`/recursos/` (esta última la hace `mod_dir`, no una regla nuestra). Search Console lista las
+redirecciones como "sin indexar" siempre, porque lo que indexa es el destino. Se comprobó
+además que **nada del sitio enlaza a una forma que redirige**: ni el sitemap, ni las
+canónicas, ni el JSON-LD, ni un solo `href` interno usan `www`, `http://` o rutas sin barra
+final.
+
+**"Duplicada: el usuario no ha indicado ninguna versión canónica" — sí era real: era
+`/default.php`.** La página de aparcamiento que Hostinger deja de fábrica seguía viva en la
+raíz del dominio, respondiendo **200 con 16.417 bytes**, sin `<link rel="canonical">`, sin
+`<meta name="robots">` y con un contenido idéntico al de todos los dominios aparcados del
+mismo proveedor. Es **el mismo archivo** que se identificó en agosto cuando el despliegue
+apuntaba a la carpeta equivocada: durante aquella ventana, eso era lo que Google veía al
+rastrear `nodbu.com`, y quedó en el índice como duplicado sin dueño.
+
+Arreglo, en `public/.htaccess` (no borrando el archivo del servidor: si el proveedor lo vuelve
+a dejar caer, la regla lo sigue tapando):
+
+- `RewriteRule ^default\.php$ / [R=301,L]` — 301 a la portada, no 410, para consolidar ahí el
+  rastreo de aquel periodo.
+- `/algo/index.html` → 301 → `/algo/`. Apache servía las dos formas con 200; la canónica ya
+  evitaba el duplicado, pero gastaban rastreo. **La condición mira `THE_REQUEST`, no
+  `REQUEST_URI`**, porque `mod_dir` traduce `/casos/` a `/casos/index.html` por dentro y con
+  `REQUEST_URI` el sitio entero entraría en bucle de redirecciones. Simulado caso por caso
+  antes de subirlo.
+
+Las 12 URL que faltan por descubrir (33 en el sitemap, 21 conocidas por Google) son las
+subpáginas publicadas el 4/9: no es un problema de indexación, es que aún no se han rastreado.
